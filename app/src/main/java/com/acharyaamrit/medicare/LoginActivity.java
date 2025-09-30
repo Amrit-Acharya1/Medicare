@@ -60,6 +60,10 @@ public class LoginActivity extends AppCompatActivity {
         String password = ((EditText) findViewById(R.id.password_login)).getText().toString();
         if (email.isEmpty()) {
             ((EditText) findViewById(R.id.email_login)).setError("Email cannot be empty");
+        }else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            ((EditText) findViewById(R.id.email_login)).setError("Please enter a valid email address");
+            ((EditText) findViewById(R.id.email_login)).requestFocus();
+            return;
         }
         else if (password.isEmpty()) {
             ((EditText) findViewById(R.id.password_login)).setError("Password cannot be empty");
