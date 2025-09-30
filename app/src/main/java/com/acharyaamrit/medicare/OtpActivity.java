@@ -2,7 +2,6 @@ package com.acharyaamrit.medicare;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
@@ -11,52 +10,37 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class ForgetPasswordActivity extends AppCompatActivity {
+public class OtpActivity extends AppCompatActivity {
 
-    private EditText emailInput;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_forget_password);
+        setContentView(R.layout.activity_otp);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
         findViewById(R.id.back_icon).setOnClickListener(v -> finish());
         findViewById(R.id.back_to_login).setOnClickListener(v -> finish());
-        emailInput = findViewById(R.id.email_input);
 
-        findViewById(R.id.send_code_btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               validationFunction();
-            }
+        findViewById(R.id.send_code_btn).setOnClickListener(v -> {
+            validationFunction();
         });
-
-
-
-
-
 
     }
 
     private void validationFunction() {
-        String email = emailInput.getText().toString().trim();
-        if (email.isEmpty()) {
-            emailInput.setError("Email is required");
-            emailInput.requestFocus();
-            return;
+        String otp = ((EditText) findViewById(R.id.otp_input)).getText().toString();
+        if (otp.length() == 6) {
+            Intent intent = new Intent(getApplicationContext(), PasswordResetActivity.class);
+            startActivity(intent);
+            finish();
         }
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailInput.setError("Please enter a valid email address");
-            emailInput.requestFocus();
-            return;
+        else {
+            ((EditText) findViewById(R.id.otp_input)).setError("Invalid OTP");
         }
-        Intent intent = new Intent(ForgetPasswordActivity.this, OtpActivity.class);
-        startActivity(intent);
 
     }
 }

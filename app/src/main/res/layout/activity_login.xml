@@ -42,7 +42,7 @@
             android:layout_gravity="start"
             android:fontFamily="@font/inter_bold"
             android:text="Login Account"
-            android:textColor="#1BC3CC"
+            android:textColor="@color/blue"
             android:textSize="@dimen/_23sdp" />
 
         <TextView
@@ -56,6 +56,7 @@
             android:textSize="@dimen/_13sdp" />
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/email_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_22sdp"
@@ -67,6 +68,7 @@
             android:paddingVertical="@dimen/_12sdp" />
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/password_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_15sdp"
@@ -78,6 +80,7 @@
             android:paddingVertical="@dimen/_12sdp" />
 
         <TextView
+            android:id="@+id/forgot_password"
             android:textColor="@color/black"
             android:layout_gravity="end"
             android:layout_marginTop="@dimen/_8sdp"
@@ -87,6 +90,7 @@
             android:layout_height="wrap_content"/>
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/login_button"
             android:focusableInTouchMode="true"
             android:fontFamily="@font/inter_semibold"
             android:text="Login"
@@ -96,6 +100,7 @@
             android:background="@drawable/button_background"
             android:layout_marginTop="@dimen/_12sdp"
             android:layout_width="match_parent"
+            android:paddingVertical="@dimen/_10sdp"
             android:layout_height="wrap_content"/>
 
         <LinearLayout
@@ -120,6 +125,7 @@
                 android:layout_height="wrap_content">
 
                 <LinearLayout
+                    android:id="@+id/register_patient"
                     android:gravity="center"
                     android:layout_marginEnd="@dimen/_4sdp"
                     android:paddingHorizontal="@dimen/_8sdp"
@@ -137,6 +143,7 @@
                         android:layout_height="wrap_content"/>
                 </LinearLayout>
                 <LinearLayout
+                    android:id="@+id/register_clinic"
                     android:layout_marginTop="@dimen/_15sdp"
                     android:gravity="center"
                     android:paddingHorizontal="@dimen/_8sdp"

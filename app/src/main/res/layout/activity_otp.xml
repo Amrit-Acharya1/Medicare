@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:id="@+id/main"
     android:background="#FFFFFF"
-    tools:context=".ForgetPasswordActivity">
+    tools:context=".OtpActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -29,7 +29,7 @@
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Forgot Password?"
+                android:text="Verification"
                 android:textSize="22sp"
                 android:textStyle="bold"
                 android:textColor="#3366FF"
@@ -41,7 +41,7 @@
                 android:id="@+id/subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="No worries, We got you."
+                android:text="Enter the code to continue"
                 android:textSize="14sp"
                 android:textColor="#666666"
                 android:layout_marginTop="5dp" />
@@ -52,32 +52,49 @@
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
                 android:layout_marginTop="20dp"
-                android:src="@drawable/forgotpasswordimage"
+                android:src="@drawable/otp_verification"
                 android:scaleType="centerInside"
                 android:contentDescription="Forgot password illustration" />
 
             <!-- Info Text -->
-            <TextView
-                android:id="@+id/info_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="We'll send you code to reset it."
-                android:textSize="14sp"
-                android:textColor="#666666"
-                android:fontFamily="@font/inter"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp" />
+
+            <LinearLayout
+                android:layout_marginTop="@dimen/_18sdp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="We sent a code to "
+                    android:textSize="14sp"
+                    android:textColor="#666666"
+                    android:fontFamily="@font/inter"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp" />
+                <TextView
+                    android:id="@+id/verification_email_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="xyz@gmail.com"
+                    android:textSize="14sp"
+                    android:textColor="@color/blue"
+                    android:fontFamily="@font/inter_bold"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp" />
+            </LinearLayout>
 
             <!-- Input field -->
             <EditText
-                android:fontFamily="@font/inter"
-                android:id="@+id/email_input"
+                android:fontFamily="@font/inter_semibold"
+                android:id="@+id/otp_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter email address"
+                android:hint="Enter 6 digits otp"
                 android:textSize="@dimen/_12sdp"
-                android:textColor="@color/black"
-                android:inputType="textEmailAddress"
+                android:inputType="number"
+                android:maxLength="6"
                 android:background="@drawable/edit_text_background"
                 android:padding="12dp"
                 android:layout_marginTop="@dimen/_20sdp" />
@@ -87,7 +104,7 @@
                 android:id="@+id/send_code_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Send Code"
+                android:text="Verify"
                 android:textSize="@dimen/_12sdp"
                 android:fontFamily="@font/inter_bold"
                 android:textAllCaps="false"
@@ -105,7 +122,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/_25sdp"
-                android:text="← Back to log in?"
+                android:text="Back to Forgot password ?"
                 android:textColor="#66000000"
                 android:textSize="14sp" />
         </LinearLayout>
