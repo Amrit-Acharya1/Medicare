@@ -12,14 +12,31 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Medicare">
         <activity
-            android:name=".RegistrationActivity"
+            android:name=".PasswordResetActivity"
             android:exported="false" />
+        <activity
+            android:name=".OtpActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ClinicRegistrationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PatientRegistrationActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ForgetPasswordActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".LoginActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
