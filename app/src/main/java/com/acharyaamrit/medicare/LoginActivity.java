@@ -127,11 +127,16 @@ public class LoginActivity extends AppCompatActivity {
                 alertDialog.setTitle("Error");
                 alertDialog.setMessage("Something went wrong");
                 alertDialog.show();
+
+
             }
         });
 
     }
     private String getFcmToken() {
+
+
+
         return "kri4394032kmfrwelmerwfgj0u";
     }
 }
