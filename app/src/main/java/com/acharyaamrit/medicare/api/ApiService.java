@@ -5,6 +5,8 @@ import com.acharyaamrit.medicare.model.OtpRequest;
 import com.acharyaamrit.medicare.model.OtpValidateRequest;
 import com.acharyaamrit.medicare.model.PasswordResetRequest;
 import com.acharyaamrit.medicare.model.UserRegisterRequest;
+import com.acharyaamrit.medicare.model.UserRequest;
+import com.acharyaamrit.medicare.model.UserResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -33,4 +35,7 @@ public interface ApiService {
 
     @POST("register/user")
     Call<ApiResponseTitleSuccess> registerUser(@Body UserRegisterRequest request);
+
+    @POST("/login")
+    Call<UserResponse> loginUser(@Body UserRequest request);
 }
