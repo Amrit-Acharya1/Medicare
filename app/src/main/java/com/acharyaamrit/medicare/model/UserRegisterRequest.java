@@ -1,13 +1,13 @@
 package com.acharyaamrit.medicare.model;
 
-public class PatientRegisterRequest {
+public class UserRegisterRequest {
     private String name;
     private String email;
     private String password;
 
     // Constructors, getters, and setters
 
-    public PatientRegisterRequest(String name, String email, String password) {
+    public UserRegisterRequest(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;

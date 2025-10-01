@@ -4,7 +4,7 @@ import com.acharyaamrit.medicare.model.ApiResponseTitleSuccess;
 import com.acharyaamrit.medicare.model.OtpRequest;
 import com.acharyaamrit.medicare.model.OtpValidateRequest;
 import com.acharyaamrit.medicare.model.PasswordResetRequest;
-import com.acharyaamrit.medicare.model.PatientRegisterRequest;
+import com.acharyaamrit.medicare.model.UserRegisterRequest;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -31,7 +31,6 @@ public interface ApiService {
     @PUT("password/reset")
     Call<ApiResponseTitleSuccess> resetPassword(@Body PasswordResetRequest request);
 
-    @POST("register/patient")
-    Call<ApiResponseTitleSuccess> registerPatient(@Body PatientRegisterRequest request);
-
+    @POST("register/user")
+    Call<ApiResponseTitleSuccess> registerUser(@Body UserRegisterRequest request);
 }
