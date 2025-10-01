@@ -17,5 +17,4 @@ public class OtpValidateRequest {
         return otp;
     }
 
-
 }
