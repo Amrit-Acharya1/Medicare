@@ -20,6 +20,8 @@ import com.acharyaamrit.medicare.model.ApiResponseTitleSuccess;
 import com.acharyaamrit.medicare.model.UserRegisterRequest;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.util.Objects;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -45,13 +47,13 @@ public class UserRegistrationActivity extends AppCompatActivity {
         findViewById(R.id.back_to_login).setOnClickListener(v -> finish());
 
         Intent intent = getIntent();
-        String userType = intent.getStringExtra("userType");
+        int userType = Integer.parseInt(Objects.requireNonNull(intent.getStringExtra("userType")));
 
         TextView topicTextView = findViewById(R.id.topic_text);
 
-        if (userType.equals("3")) {
+        if (userType == 3) {
             topicTextView.setText("Register as patient");
-        } else if (userType.equals("5")) {
+        } else if (userType == 5) {
             topicTextView.setText("Register as clinic");
         }
 
@@ -67,7 +69,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
 
     }
 
-    private void validationFunction(String userType) {
+    private void validationFunction(int userType) {
         String email = ((EditText) findViewById(R.id.patient_registration_email)).getText().toString();
         String password = ((EditText) findViewById(R.id.patient_registration_password)).getText().toString();
         String confirmPassword = ((EditText) findViewById(R.id.patient_registration_confirm_password)).getText().toString();
@@ -88,19 +90,18 @@ public class UserRegistrationActivity extends AppCompatActivity {
         }
         else {
             //backend API ko code here
-            userResister(name, email, password, userType);
+            userResister( userType, name, email, password);
             finish();
         }
 
     }
 
-    private void userResister(String name, String email, String password, String userType) {
+    private void userResister(int userType, String name, String email, String password) {
         //backend API ko code here
-//        https://medicare.kritishmovie.xyz/api/register/patient
 
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
-        UserRegisterRequest request = new UserRegisterRequest(name, email, password);
+        UserRegisterRequest request = new UserRegisterRequest(userType, name, email, password);
 
         Call<ApiResponseTitleSuccess> call = apiService.registerUser(request);
 
@@ -118,7 +119,12 @@ public class UserRegistrationActivity extends AppCompatActivity {
                     finish();
                     
                 } else {
-                    Toast.makeText(UserRegistrationActivity.this, "something went wrong", Toast.LENGTH_SHORT).show();
+                    AlertDialog alertDialog = new AlertDialog.Builder(UserRegistrationActivity.this)
+                            .setTitle("Error")
+                            .setMessage("Something went wrong")
+                            .setPositiveButton("OK", null)
+                            .create();
+                    alertDialog.show();
                 }
             }
 
