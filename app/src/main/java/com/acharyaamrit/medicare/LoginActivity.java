@@ -1,15 +1,28 @@
 package com.acharyaamrit.medicare;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.acharyaamrit.medicare.api.ApiClient;
+import com.acharyaamrit.medicare.api.ApiService;
+import com.acharyaamrit.medicare.model.UserRequest;
+import com.acharyaamrit.medicare.model.UserResponse;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -64,6 +77,13 @@ public class LoginActivity extends AppCompatActivity {
     private void validationFunction() {
         String email = ((EditText) findViewById(R.id.email_login)).getText().toString();
         String password = ((EditText) findViewById(R.id.password_login)).getText().toString();
+
+        @SuppressLint("HardwareIds")
+        String deviceId = Settings.Secure.getString(
+                getApplicationContext().getContentResolver(),
+                Settings.Secure.ANDROID_ID
+        );
+
         if (email.isEmpty()) {
             ((EditText) findViewById(R.id.email_login)).setError("Email cannot be empty");
         }else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
@@ -76,8 +96,40 @@ public class LoginActivity extends AppCompatActivity {
         }
         else {
             //backend API ko code here
+            login(email, password, deviceId);
             finish();
         }
 
+    }
+
+    private void login(String email, String password, String deviceId) {
+        String fcm_token = getFcmToken();
+
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        Call<UserResponse> call = apiService.loginUser(new UserRequest(email, password, fcm_token, deviceId));
+
+        call.enqueue(new Callback<UserResponse>() {
+            @Override
+            public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                if (response.isSuccessful() && response.body() != null){
+                    UserResponse userResponse = response.body();
+                    Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserResponse> call, Throwable t) {
+                AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
+                alertDialog.setTitle("Error");
+                alertDialog.setMessage("Something went wrong");
+                alertDialog.show();
+            }
+        });
+
+    }
+    private String getFcmToken() {
+        return "kri4394032kmfrwelmerwfgj0u";
     }
 }
