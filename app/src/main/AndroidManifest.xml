@@ -20,10 +20,7 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ClinicRegistrationActivity"
-            android:exported="false" />
-        <activity
-            android:name=".PatientRegistrationActivity"
+            android:name=".UserRegistrationActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity

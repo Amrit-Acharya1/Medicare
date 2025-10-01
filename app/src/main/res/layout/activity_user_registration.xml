@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:background="@color/white"
     android:layout_height="match_parent"
-    tools:context=".ClinicRegistrationActivity">
+    tools:context=".UserRegistrationActivity">
 
     <LinearLayout
         android:layout_marginTop="@dimen/_22sdp"
@@ -23,11 +23,12 @@
             android:layout_width="@dimen/_30sdp"
             android:layout_height="@dimen/_40sdp"/>
         <TextView
+            android:id="@+id/topic_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:fontFamily="@font/inter_bold"
-            android:text="Register as Clinic"
+            android:text="Register as patient"
             android:textColor="@color/blue"
             android:textSize="@dimen/_23sdp" />
 
@@ -59,7 +60,19 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp" />
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/clinic_registration_email"
+            android:id="@+id/patient_registration_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_22sdp"
+            android:background="@drawable/edit_text_background"
+            android:fontFamily="@font/inter_semibold"
+            android:hint="Full name"
+            android:inputType="text"
+            android:paddingHorizontal="@dimen/_11sdp"
+            android:paddingVertical="@dimen/_12sdp" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/patient_registration_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_22sdp"
@@ -71,7 +84,7 @@
             android:paddingVertical="@dimen/_12sdp" />
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/clinic_registration_password"
+            android:id="@+id/patient_registration_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_15sdp"
@@ -82,7 +95,7 @@
             android:paddingHorizontal="@dimen/_11sdp"
             android:paddingVertical="@dimen/_12sdp" />
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/clinic_registration_confirm_password"
+            android:id="@+id/patient_registration_confirm_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_15sdp"
@@ -94,7 +107,7 @@
             android:paddingVertical="@dimen/_12sdp" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/clinic_register_button"
+            android:id="@+id/register_patient_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_26sdp"
@@ -131,11 +144,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/_11sdp"
+                android:layout_marginTop="12dp"
                 android:text="← Back to log in?"
                 android:textColor="#66000000"
                 android:textSize="@dimen/_9sdp" />
 
         </LinearLayout>
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

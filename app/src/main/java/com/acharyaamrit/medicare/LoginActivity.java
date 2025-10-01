@@ -34,14 +34,20 @@ public class LoginActivity extends AppCompatActivity {
         findViewById(R.id.register_patient).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, PatientRegistrationActivity.class);
+                Intent intent = new Intent(LoginActivity.this, UserRegistrationActivity.class);
+
+                intent.putExtra("userType", "3");
+
                 startActivity(intent);
             }
         });
         findViewById(R.id.register_clinic).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, ClinicRegistrationActivity.class);
+                Intent intent = new Intent(LoginActivity.this, UserRegistrationActivity.class);
+
+                intent.putExtra("userType", "5");
+
                 startActivity(intent);
             }
         });
