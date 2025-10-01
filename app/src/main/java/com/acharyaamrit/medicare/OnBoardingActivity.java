@@ -3,6 +3,7 @@ package com.acharyaamrit.medicare;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
@@ -27,8 +28,33 @@ public class OnBoardingActivity extends AppCompatActivity {
         prefs = getSharedPreferences("MedicarePrefs", MODE_PRIVATE);
         boolean hasSeenOnboarding = prefs.getBoolean("hasSeenOnboarding", false);
         if (hasSeenOnboarding) {
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
+
+            //assign the token in new variable
+            prefs = getSharedPreferences("user_preference", MODE_PRIVATE);
+            String token = prefs.getString("token", null);
+            String user_type = prefs.getString("user_type", null);
+
+            if (token == null){
+                startActivity(new Intent(this, LoginActivity.class));
+                finish();
+            }else {
+
+                //user type nikanla parxa
+                if (user_type.equals("3")){
+                    startActivity(new Intent(this, PatientHomepageActivity.class));
+                    finish();
+                }else if (user_type.equals("5")){
+                    Toast.makeText(this, "Clinic", Toast.LENGTH_SHORT).show();
+                } else if (user_type.equals("2")) {
+                    Toast.makeText(this, "Doctor", Toast.LENGTH_SHORT).show();
+                } else if (user_type.equals("4")) {
+                    Toast.makeText(this, "Pharmacy", Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(this, "something went wrong !", Toast.LENGTH_SHORT).show();
+                }
+
+
+            }
             return;
         }
 
@@ -65,6 +91,7 @@ public class OnBoardingActivity extends AppCompatActivity {
             } else {
                 // Mark onboarding as seen
                 prefs.edit().putBoolean("hasSeenOnboarding", true).apply();
+
                 // End of onboarding
                 startActivity(new Intent(OnBoardingActivity.this, LoginActivity.class));
                 finish();
