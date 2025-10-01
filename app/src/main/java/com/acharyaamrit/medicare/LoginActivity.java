@@ -97,6 +97,8 @@ public class LoginActivity extends AppCompatActivity {
         else {
             //backend API ko code here
             login(email, password, deviceId);
+
+
             finish();
         }
 
