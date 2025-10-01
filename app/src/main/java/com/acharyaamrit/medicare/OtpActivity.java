@@ -15,9 +15,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.acharyaamrit.medicare.api.ApiClient;
 import com.acharyaamrit.medicare.api.ApiService;
-import com.acharyaamrit.medicare.model.OtpResponse;
+import com.acharyaamrit.medicare.model.ApiResponseTitleSuccess;
 import com.acharyaamrit.medicare.model.OtpValidateRequest;
-import com.acharyaamrit.medicare.model.OtpValidateResponse;
 import com.google.gson.Gson;
 
 import retrofit2.Call;
@@ -59,11 +58,11 @@ public class OtpActivity extends AppCompatActivity {
             ApiService apiService = ApiClient.getClient().create(ApiService.class);
             OtpValidateRequest request = new OtpValidateRequest(email, otp);
 
-            Call<OtpValidateResponse> call = apiService.validateOtp(request);
+            Call<ApiResponseTitleSuccess> call = apiService.validateOtp(request);
 
-            call.enqueue(new Callback<OtpValidateResponse>() {
+            call.enqueue(new Callback<ApiResponseTitleSuccess>() {
                 @Override
-                public void onResponse(Call<OtpValidateResponse> call, Response<OtpValidateResponse> response) {
+                public void onResponse(Call<ApiResponseTitleSuccess> call, Response<ApiResponseTitleSuccess> response) {
                     if (response.isSuccessful() && response.body() != null){
                         String title = response.body().getTitle();
                         String message = response.body().getMessage();
@@ -82,7 +81,7 @@ public class OtpActivity extends AppCompatActivity {
 
                                 // Parse JSON error into your OtpResponse
                                 Gson gson = new Gson();
-                                OtpValidateResponse errorResponse = gson.fromJson(errorJson, OtpValidateResponse.class);
+                                ApiResponseTitleSuccess errorResponse = gson.fromJson(errorJson, ApiResponseTitleSuccess.class);
 
                                 String title = errorResponse.getTitle();
                                 String message = errorResponse.getMessage();
@@ -108,7 +107,7 @@ public class OtpActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(Call<OtpValidateResponse> call, Throwable t) {
+                public void onFailure(Call<ApiResponseTitleSuccess> call, Throwable t) {
                     Toast.makeText(OtpActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });

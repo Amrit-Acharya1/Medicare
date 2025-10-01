@@ -55,8 +55,16 @@ public class PatientRegistrationActivity extends AppCompatActivity {
         }
         else {
             //backend API ko code here
+            patientResister();
             finish();
         }
+
+    }
+
+    private void patientResister() {
+        //backend API ko code here
+//        https://medicare.kritishmovie.xyz/api/register/patient
+
 
     }
 }

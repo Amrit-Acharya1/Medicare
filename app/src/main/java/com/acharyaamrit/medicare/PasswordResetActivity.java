@@ -14,10 +14,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.acharyaamrit.medicare.api.ApiClient;
 import com.acharyaamrit.medicare.api.ApiService;
-import com.acharyaamrit.medicare.model.OtpRequest;
-import com.acharyaamrit.medicare.model.OtpResponse;
+import com.acharyaamrit.medicare.model.ApiResponseTitleSuccess;
 import com.acharyaamrit.medicare.model.PasswordResetRequest;
-import com.acharyaamrit.medicare.model.PasswordResetResponse;
 import com.google.gson.Gson;
 
 import retrofit2.Call;
@@ -75,10 +73,10 @@ public class PasswordResetActivity extends AppCompatActivity {
 
         PasswordResetRequest request = new PasswordResetRequest(otp, password);
 
-        Call<PasswordResetResponse> call = apiService.resetPassword(request);
-        call.enqueue(new Callback<PasswordResetResponse>() {
+        Call<ApiResponseTitleSuccess> call = apiService.resetPassword(request);
+        call.enqueue(new Callback<ApiResponseTitleSuccess>() {
             @Override
-            public void onResponse(Call<PasswordResetResponse> call, Response<PasswordResetResponse> response) {
+            public void onResponse(Call<ApiResponseTitleSuccess> call, Response<ApiResponseTitleSuccess> response) {
 
                 if (response.isSuccessful() && response.body() != null) {
                     // ✅ Success (200)
@@ -97,9 +95,9 @@ public class PasswordResetActivity extends AppCompatActivity {
                         // ✅ Error case (like 404)
                         String errorJson = response.errorBody().string();
 
-                        // Parse JSON error into your OtpResponse
+                        // Parse JSON error into your ApiResponseTitleSuccess
                         Gson gson = new Gson();
-                        OtpResponse errorResponse = gson.fromJson(errorJson, OtpResponse.class);
+                        ApiResponseTitleSuccess errorResponse = gson.fromJson(errorJson, ApiResponseTitleSuccess.class);
 
                         String title = errorResponse.getTitle();
                         String message = errorResponse.getMessage();
@@ -113,9 +111,7 @@ public class PasswordResetActivity extends AppCompatActivity {
 
                     } catch (Exception e) {
                         e.printStackTrace();
-//                        Toast.makeText(ForgetPasswordActivity.this,
-//                                "Unexpected error: " + response.code(),
-//                                Toast.LENGTH_SHORT).show();
+
                         AlertDialog alertDialog = new AlertDialog.Builder(PasswordResetActivity.this)
                                 .setTitle("Unexpected error")
                                 .setMessage("Unexpected error: " + response.code())
@@ -128,7 +124,7 @@ public class PasswordResetActivity extends AppCompatActivity {
 
 
             @Override
-            public void onFailure(Call<PasswordResetResponse> call, Throwable t) {
+            public void onFailure(Call<ApiResponseTitleSuccess> call, Throwable t) {
                 AlertDialog alertDialog = new AlertDialog.Builder(PasswordResetActivity.this)
                         .setTitle("Error")
                         .setMessage("Error: " + t.getMessage())

@@ -1,6 +1,6 @@
 package com.acharyaamrit.medicare.model;
 
-public class OtpValidateResponse {
+public class ApiResponseTitleSuccess {
     private String title;
     private String message;
 

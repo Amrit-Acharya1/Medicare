@@ -15,8 +15,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.acharyaamrit.medicare.api.ApiClient;
 import com.acharyaamrit.medicare.api.ApiService;
+import com.acharyaamrit.medicare.model.ApiResponseTitleSuccess;
 import com.acharyaamrit.medicare.model.OtpRequest;
-import com.acharyaamrit.medicare.model.OtpResponse;
 import com.google.gson.Gson;
 
 import retrofit2.Call;
@@ -49,12 +49,6 @@ public class ForgetPasswordActivity extends AppCompatActivity {
         });
 
 
-
-
-
-
-
-
     }
 
     private void validationFunction() {
@@ -79,10 +73,10 @@ public class ForgetPasswordActivity extends AppCompatActivity {
 
         OtpRequest request = new OtpRequest(email);
 
-        Call<OtpResponse> call = apiService.sendOtp(request);
-        call.enqueue(new Callback<OtpResponse>() {
+        Call<ApiResponseTitleSuccess> call = apiService.sendOtp(request);
+        call.enqueue(new Callback<ApiResponseTitleSuccess>() {
             @Override
-            public void onResponse(Call<OtpResponse> call, Response<OtpResponse> response) {
+            public void onResponse(Call<ApiResponseTitleSuccess> call, Response<ApiResponseTitleSuccess> response) {
 
                 if (response.isSuccessful() && response.body() != null) {
                     // ✅ Success (200)
@@ -102,7 +96,7 @@ public class ForgetPasswordActivity extends AppCompatActivity {
 
                         // Parse JSON error into your OtpResponse
                         Gson gson = new Gson();
-                        OtpResponse errorResponse = gson.fromJson(errorJson, OtpResponse.class);
+                        ApiResponseTitleSuccess errorResponse = gson.fromJson(errorJson, ApiResponseTitleSuccess.class);
 
                         String title = errorResponse.getTitle();
                         String message = errorResponse.getMessage();
@@ -131,7 +125,7 @@ public class ForgetPasswordActivity extends AppCompatActivity {
 
 
             @Override
-            public void onFailure(Call<OtpResponse> call, Throwable t) {
+            public void onFailure(Call<ApiResponseTitleSuccess> call, Throwable t) {
                 AlertDialog alertDialog = new AlertDialog.Builder(ForgetPasswordActivity.this)
                         .setTitle("Error")
                         .setMessage("Error: " + t.getMessage())
