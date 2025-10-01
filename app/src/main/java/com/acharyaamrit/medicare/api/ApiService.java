@@ -36,6 +36,6 @@ public interface ApiService {
     @POST("register/user")
     Call<ApiResponseTitleSuccess> registerUser(@Body UserRegisterRequest request);
 
-    @POST("/login")
+    @POST("login")
     Call<UserResponse> loginUser(@Body UserRequest request);
 }

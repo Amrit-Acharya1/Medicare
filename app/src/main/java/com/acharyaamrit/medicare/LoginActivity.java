@@ -1,6 +1,7 @@
 package com.acharyaamrit.medicare;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -17,15 +18,17 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.acharyaamrit.medicare.api.ApiClient;
 import com.acharyaamrit.medicare.api.ApiService;
-import com.acharyaamrit.medicare.model.UserRequest;
+import com.acharyaamrit.medicare.model.Patient;
 import com.acharyaamrit.medicare.model.UserResponse;
+import com.acharyaamrit.medicare.model.UserRequest;
+import com.google.gson.Gson;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
-
+    private ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,9 +67,14 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Logging...");
+        progressDialog.setCancelable(false);
+
         findViewById(R.id.login_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressDialog.show();
                 validationFunction();
             }
         });
@@ -77,7 +85,6 @@ public class LoginActivity extends AppCompatActivity {
     private void validationFunction() {
         String email = ((EditText) findViewById(R.id.email_login)).getText().toString();
         String password = ((EditText) findViewById(R.id.password_login)).getText().toString();
-
         @SuppressLint("HardwareIds")
         String deviceId = Settings.Secure.getString(
                 getApplicationContext().getContentResolver(),
@@ -97,8 +104,6 @@ public class LoginActivity extends AppCompatActivity {
         else {
             //backend API ko code here
             login(email, password, deviceId);
-
-            finish();
         }
 
     }
@@ -112,22 +117,68 @@ public class LoginActivity extends AppCompatActivity {
         call.enqueue(new Callback<UserResponse>() {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
-                if (response.isSuccessful() && response.body() != null){
-                    UserResponse userResponse = response.body();
-                    Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
+
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+
+                if (response.isSuccessful() && response.body() != null) {
+                    // ✅ Success (200)
+
+                    Patient patient = response.body().getUser();
+                    String token = response.body().getToken();
+
+                    Intent intentHome = new Intent(LoginActivity.this, HomepageActivity.class);
+                    startActivity(intentHome);
+                    finish();
+
+                } else {
+                    try {
+                        // ✅ Error case (like 404)
+                        String errorJson = response.errorBody().string();
+
+                        // Parse JSON error into your OtpResponse
+                        Gson gson = new Gson();
+                        UserResponse errorResponse = gson.fromJson(errorJson, UserResponse.class);
+
+                        String title = errorResponse.getTitle();
+                        String message = errorResponse.getMessage();
+
+                        AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this)
+                                .setTitle(title)
+                                .setMessage(message)
+                                .setPositiveButton("OK", null)
+                                .create();
+                        alertDialog.show();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+//                        Toast.makeText(ForgetPasswordActivity.this,
+//                                "Unexpected error: " + response.code(),
+//                                Toast.LENGTH_SHORT).show();
+                        AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this)
+                                .setTitle("Unexpected error")
+                                .setMessage("Unexpected error: " + response.code())
+                                .setPositiveButton("OK", null)
+                                .create();
+                        alertDialog.show();
+                    }
                 }
             }
 
+
             @Override
             public void onFailure(Call<UserResponse> call, Throwable t) {
-                AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
-                alertDialog.setTitle("Error");
-                alertDialog.setMessage("Something went wrong");
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+
+                AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this)
+                        .setTitle("Error")
+                        .setMessage("Error: " + t.getMessage())
+                        .setPositiveButton("OK", null)
+                        .create();
                 alertDialog.show();
-
-
             }
         });
 
@@ -136,4 +187,13 @@ public class LoginActivity extends AppCompatActivity {
 
         return "kri4394032kmfrwelmerwfgj0u";
     }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Dismiss dialog to prevent memory leaks
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+    }
+
 }
