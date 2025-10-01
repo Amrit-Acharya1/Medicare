@@ -97,7 +97,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
             //backend API ko code here
             progressDialog.show();
             userResister( userType, name, email, password);
-            finish();
+
         }
 
     }
@@ -122,8 +122,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
                     String title = response.body().getTitle();
                     String message = response.body().getMessage();
 
-                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                    startActivity(intent);
+
 
                     finish();
                     
