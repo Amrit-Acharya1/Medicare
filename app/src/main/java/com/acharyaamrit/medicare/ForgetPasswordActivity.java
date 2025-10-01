@@ -4,12 +4,24 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.acharyaamrit.medicare.api.ApiClient;
+import com.acharyaamrit.medicare.api.ApiService;
+import com.acharyaamrit.medicare.model.OtpRequest;
+import com.acharyaamrit.medicare.model.OtpResponse;
+import com.google.gson.Gson;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ForgetPasswordActivity extends AppCompatActivity {
 
@@ -41,6 +53,8 @@ public class ForgetPasswordActivity extends AppCompatActivity {
 
 
 
+
+
     }
 
     private void validationFunction() {
@@ -55,8 +69,78 @@ public class ForgetPasswordActivity extends AppCompatActivity {
             emailInput.requestFocus();
             return;
         }
-        Intent intent = new Intent(ForgetPasswordActivity.this, OtpActivity.class);
-        startActivity(intent);
+
+        otpSend(email);
 
     }
+
+    private void otpSend(String email) {
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+        OtpRequest request = new OtpRequest(email);
+
+        Call<OtpResponse> call = apiService.sendOtp(request);
+        call.enqueue(new Callback<OtpResponse>() {
+            @Override
+            public void onResponse(Call<OtpResponse> call, Response<OtpResponse> response) {
+
+                if (response.isSuccessful() && response.body() != null) {
+                    // ✅ Success (200)
+                    String title = response.body().getTitle();
+                    String message = response.body().getMessage();
+
+                    Toast.makeText(ForgetPasswordActivity.this, message, Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(ForgetPasswordActivity.this, OtpActivity.class);
+                    intent.putExtra("email", email);
+                    startActivity(intent);
+
+                } else {
+                    try {
+                        // ✅ Error case (like 404)
+                        String errorJson = response.errorBody().string();
+
+                        // Parse JSON error into your OtpResponse
+                        Gson gson = new Gson();
+                        OtpResponse errorResponse = gson.fromJson(errorJson, OtpResponse.class);
+
+                        String title = errorResponse.getTitle();
+                        String message = errorResponse.getMessage();
+
+                        AlertDialog alertDialog = new AlertDialog.Builder(ForgetPasswordActivity.this)
+                                .setTitle(title)
+                                .setMessage(message)
+                                .setPositiveButton("OK", null)
+                                .create();
+                        alertDialog.show();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+//                        Toast.makeText(ForgetPasswordActivity.this,
+//                                "Unexpected error: " + response.code(),
+//                                Toast.LENGTH_SHORT).show();
+                        AlertDialog alertDialog = new AlertDialog.Builder(ForgetPasswordActivity.this)
+                                .setTitle("Unexpected error")
+                                .setMessage("Unexpected error: " + response.code())
+                                .setPositiveButton("OK", null)
+                                .create();
+                        alertDialog.show();
+                    }
+                }
+            }
+
+
+            @Override
+            public void onFailure(Call<OtpResponse> call, Throwable t) {
+                AlertDialog alertDialog = new AlertDialog.Builder(ForgetPasswordActivity.this)
+                        .setTitle("Error")
+                        .setMessage("Error: " + t.getMessage())
+                        .setPositiveButton("OK", null)
+                        .create();
+                alertDialog.show();
+            }
+        });
+    }
+
+
 }
