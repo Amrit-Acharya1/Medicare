@@ -135,8 +135,6 @@ public class LoginActivity extends AppCompatActivity {
     }
     private String getFcmToken() {
 
-
-
         return "kri4394032kmfrwelmerwfgj0u";
     }
 }
