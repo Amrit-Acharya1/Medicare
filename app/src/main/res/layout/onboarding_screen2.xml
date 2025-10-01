@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <!-- Illustration -->
+    <ImageView
+        android:id="@+id/onboarding_image"
+        android:layout_width="@dimen/_300sdp"
+        android:layout_height="300dp"
+        android:src="@drawable/onboarding_image3"
+        android:scaleType="centerInside"
+        android:contentDescription="Appointment booking illustration" />
+
+    <!-- Header Text -->
+    <TextView
+        android:id="@+id/onboarding_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Find Medicine Easily"
+        android:textSize="@dimen/_23sdp"
+        android:textColor="@color/blue"
+        android:fontFamily="@font/inter_bold"
+        android:layout_marginTop="@dimen/_20sdp" />
+
+    <!-- Description Text -->
+    <TextView
+        android:id="@+id/onboarding_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Doctor will prescribe the medicine\nfrom nearby store."
+        android:textSize="@dimen/_13sdp"
+        android:textColor="#A3000000"
+        android:fontFamily="@font/inter_medium"
+        android:gravity="center"
+        android:layout_marginHorizontal="@dimen/_12sdp"
+        android:layout_marginTop="@dimen/_10sdp" />
+
+</LinearLayout>

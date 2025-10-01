@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity">
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_12sdp"
+        android:layout_marginTop="@dimen/_22sdp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="@dimen/_43sdp"
+            android:layout_height="@dimen/_43sdp"
+            android:src="@drawable/logo" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginHorizontal="@dimen/_12sdp"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/_30sdp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:fontFamily="@font/inter_bold"
+            android:text="Login Account"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/_23sdp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:fontFamily="@font/inter_medium"
+            android:text="Welcome to Medicare"
+            android:textColor="#A3000000"
+            android:textSize="@dimen/_13sdp" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/email_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_22sdp"
+            android:background="@drawable/edit_text_background"
+            android:fontFamily="@font/inter_semibold"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:paddingHorizontal="@dimen/_11sdp"
+            android:paddingVertical="@dimen/_12sdp" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/password_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:background="@drawable/edit_text_background"
+            android:fontFamily="@font/inter_semibold"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:paddingHorizontal="@dimen/_11sdp"
+            android:paddingVertical="@dimen/_12sdp" />
+
+        <TextView
+            android:id="@+id/forgot_password"
+            android:textColor="@color/black"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:fontFamily="@font/inter_semibold"
+            android:text="Forgot Password ?"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/login_button"
+            android:focusableInTouchMode="true"
+            android:fontFamily="@font/inter_semibold"
+            android:text="Login"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:textSize="@dimen/_15sdp"
+            android:background="@drawable/button_background"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_width="match_parent"
+            android:paddingVertical="@dimen/_10sdp"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_marginVertical="@dimen/_12sdp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:fontFamily="@font/inter_semibold"
+                android:text="Don't have an account ?"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <LinearLayout
+                android:layout_marginTop="@dimen/_12sdp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/register_patient"
+                    android:gravity="center"
+                    android:layout_marginEnd="@dimen/_4sdp"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:paddingVertical="@dimen/_13sdp"
+                    android:background="@drawable/register_button"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:fontFamily="@font/inter_semibold"
+                        android:textSize="@dimen/_13sdp"
+                        android:textColor="@color/black"
+                        android:text="Register as patient"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/register_clinic"
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:paddingVertical="@dimen/_13sdp"
+                    android:background="@drawable/register_button"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:fontFamily="@font/inter_semibold"
+                        android:textSize="@dimen/_13sdp"
+                        android:textColor="@color/black"
+                        android:text="Register as Clinic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
