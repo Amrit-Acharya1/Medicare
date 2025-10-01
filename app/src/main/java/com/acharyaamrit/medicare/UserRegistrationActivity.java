@@ -1,5 +1,6 @@
 package com.acharyaamrit.medicare;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -27,7 +28,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class UserRegistrationActivity extends AppCompatActivity {
-
+    private ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +58,10 @@ public class UserRegistrationActivity extends AppCompatActivity {
             topicTextView.setText("Register as clinic");
         }
 
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Registering...");
+        progressDialog.setCancelable(false);
 
         findViewById(R.id.register_patient_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,8 +95,8 @@ public class UserRegistrationActivity extends AppCompatActivity {
         }
         else {
             //backend API ko code here
+            progressDialog.show();
             userResister( userType, name, email, password);
-            finish();
         }
 
     }
@@ -108,13 +113,14 @@ public class UserRegistrationActivity extends AppCompatActivity {
         call.enqueue(new Callback<ApiResponseTitleSuccess>() {
             @Override
             public void onResponse(Call<ApiResponseTitleSuccess> call, Response<ApiResponseTitleSuccess> response) {
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
                 if (response.isSuccessful() && response.body() != null){
 
                     String title = response.body().getTitle();
                     String message = response.body().getMessage();
 
-                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                    startActivity(intent);
 
                     finish();
                     
@@ -130,6 +136,9 @@ public class UserRegistrationActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ApiResponseTitleSuccess> call, Throwable t) {
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
                 Toast.makeText(UserRegistrationActivity.this, "something went wrong", Toast.LENGTH_SHORT).show();
 
                 AlertDialog alertDialog = new AlertDialog.Builder(UserRegistrationActivity.this)
@@ -143,5 +152,12 @@ public class UserRegistrationActivity extends AppCompatActivity {
         });
 
 
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 }
