@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Medicare">
         <activity
-            android:name=".HomepageActivity"
+            android:name=".PatientHomepageActivity"
             android:exported="false" />
         <activity
             android:name=".OnBoardingActivity"

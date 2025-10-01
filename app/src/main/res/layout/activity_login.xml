@@ -91,7 +91,6 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/login_button"
-            android:focusableInTouchMode="true"
             android:fontFamily="@font/inter_semibold"
             android:text="Login"
             android:textColor="@color/white"
