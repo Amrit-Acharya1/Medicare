@@ -21,7 +21,10 @@ import androidx.core.view.WindowInsetsCompat;
 import com.acharyaamrit.medicare.api.ApiClient;
 import com.acharyaamrit.medicare.api.ApiService;
 import com.acharyaamrit.medicare.database.DatabaseHelper;
+import com.acharyaamrit.medicare.model.Clicnic;
+import com.acharyaamrit.medicare.model.Doctor;
 import com.acharyaamrit.medicare.model.Patient;
+import com.acharyaamrit.medicare.model.Pharmacy;
 import com.acharyaamrit.medicare.model.UserResponse;
 import com.acharyaamrit.medicare.model.UserRequest;
 import com.google.gson.Gson;
@@ -124,23 +127,18 @@ public class LoginActivity extends AppCompatActivity {
                 loginButton.setEnabled(true); // Re-enable button after response
 
                 if (response.isSuccessful() && response.body() != null) {
-                    Patient patient = response.body().getUser();
+                    String user_type = response.body().getUser_type();
                     String token = response.body().getToken();
-
-                    //store token in shared preference
+                    Intent intentHome = null;
                     SharedPreferences sharedPreferences = getSharedPreferences("user_preference", MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
 
+                    if (user_type != null && user_type.equals("3")){
+                    Patient patient = response.body().getPatient();
+                    //store token in shared preference
                     editor.putString("token", token);
-                    editor.putString("user_type", patient.getUser_type());
-
+                    editor.putString("user_type", user_type);
                     editor.apply();
-
-
-                    String user_type = patient.getUser_type();
-                    Intent intentHome = null;
-
-                    if (user_type.equals("3")){
                         try {
                             intentHome = new Intent(LoginActivity.this, PatientHomepageActivity.class);
                             databaseHelper.insertPatient(patient, token);
@@ -151,6 +149,51 @@ public class LoginActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
 
+                    } else if (user_type != null && user_type.equals("2")) {
+                        Doctor doctor = response.body().getDoctor();
+                        //store token in shared preference
+                        editor.putString("token", token);
+                        editor.putString("user_type", user_type);
+                        editor.apply();
+                        try {
+                            intentHome = new Intent(LoginActivity.this, DoctorHomePageActivity.class);
+                            databaseHelper.insertDoctor(doctor, token);
+                            startActivity(intentHome);
+
+                        }catch (Exception e){
+                            Toast.makeText(LoginActivity.this, "Database error", Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
+                        }
+                    }else if (user_type != null && user_type.equals("5")) {
+                        Clicnic clicnic = response.body().getClicnic();
+                        //store token in shared preference
+                        editor.putString("token", token);
+                        editor.putString("user_type", user_type);
+                        editor.apply();
+                        try {
+                            intentHome = new Intent(LoginActivity.this, ClicnicHomePageActivity.class);
+                            databaseHelper.insertClicnic(clicnic, token);
+                            startActivity(intentHome);
+
+                        }catch (Exception e){
+                            Toast.makeText(LoginActivity.this, "Database error", Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
+                        }
+                    }else if (user_type != null && user_type.equals("4")) {
+                        Pharmacy pharmacy = response.body().getPharmacy();
+                        //store token in shared preference
+                        editor.putString("token", token);
+                        editor.putString("user_type", user_type);
+                        editor.apply();
+                        try {
+                            intentHome = new Intent(LoginActivity.this, PharmacyHomeActivity.class);
+                            databaseHelper.insertPharmacy(pharmacy, token);
+                            startActivity(intentHome);
+
+                        }catch (Exception e){
+                            Toast.makeText(LoginActivity.this, "Database error", Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
+                        }
                     }
                     finish();
                 } else {

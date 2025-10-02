@@ -14,6 +14,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Medicare">
         <activity
+            android:name=".ClicnicHomePageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PharmacyHomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DoctorHomePageActivity"
+            android:exported="false" />
+        <activity
             android:name=".PatientHomepageActivity"
             android:exported="false" />
         <activity

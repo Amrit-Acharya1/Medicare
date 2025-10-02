@@ -44,11 +44,14 @@ public class OnBoardingActivity extends AppCompatActivity {
                     startActivity(new Intent(this, PatientHomepageActivity.class));
                     finish();
                 }else if (user_type.equals("5")){
-                    Toast.makeText(this, "Clinic", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(this, ClicnicHomePageActivity.class));
+                    finish();
                 } else if (user_type.equals("2")) {
-                    Toast.makeText(this, "Doctor", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(this, DoctorHomePageActivity.class));
+                    finish();
                 } else if (user_type.equals("4")) {
-                    Toast.makeText(this, "Pharmacy", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(this, PharmacyHomeActivity.class));
+                    finish();
                 }else {
                     Toast.makeText(this, "something went wrong !", Toast.LENGTH_SHORT).show();
                 }

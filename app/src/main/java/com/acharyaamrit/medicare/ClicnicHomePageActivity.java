@@ -11,32 +11,31 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.acharyaamrit.medicare.database.DatabaseHelper;
-import com.acharyaamrit.medicare.model.Patient;
+import com.acharyaamrit.medicare.model.Clicnic;
+import com.acharyaamrit.medicare.model.Doctor;
 
-public class PatientHomepageActivity extends AppCompatActivity {
+public class ClicnicHomePageActivity extends AppCompatActivity {
 
     DatabaseHelper databaseHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_patient_homepage);
+        setContentView(R.layout.activity_clicnic_home_page);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        TextView textpatient = findViewById(R.id.textpatient);
-
         databaseHelper = new DatabaseHelper(this);
         SharedPreferences sharedPreferences = getSharedPreferences("user_preference", MODE_PRIVATE);
         String token = sharedPreferences.getString("token", null);
+        TextView clicnicText = findViewById(R.id.clicnicText);
 
+        Clicnic clicnic = databaseHelper.getClicnicByToken(token);
+        if(clicnic != null) {
 
-        Patient patient = databaseHelper.getPatientByToken(token);
-        if(patient != null){
-        textpatient.setText(patient.getName());
+            clicnicText.setText(clicnic.getName());
         }
-
     }
 }
