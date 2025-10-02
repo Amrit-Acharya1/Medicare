@@ -402,7 +402,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete("prescription_items", null, null);
     }
 
-    public CurrentPreciptionResponse getCurrentPreciptionWithItems(int id) {
+    public CurrentPreciptionResponse getCurrentPreciptionWithItems() {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT " +
                 "cp.id AS prescription_id, cp.doctor_id, cp.patient_id, " +
@@ -411,10 +411,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "pi.frequency, pi.duration, pi.duration_type, " +
                 "pi.qty, pi.note, pi.created_at AS item_created_at " +
                 "FROM current_prescriptions cp " +
-                "LEFT JOIN prescription_items pi ON cp.id = pi.prescription_relation_id " +
-                "WHERE cp.id = ?";
+                "LEFT JOIN prescription_items pi ON cp.id = pi.prescription_relation_id ";
 
-        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(id)});
+        Cursor cursor = db.rawQuery(query, null);
         CurrentPreciptionResponse response = new CurrentPreciptionResponse();
         CurrentPreciption prescription = null;
         List<Preciption> items = new ArrayList<>();
@@ -462,7 +461,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     }
                 } while (cursor.moveToNext());
             } else {
-                android.util.Log.w("Database", "No prescription found with id: " + id);
+                android.util.Log.w("Database", "No prescription found  " );
             }
         } catch (IllegalArgumentException e) {
             android.util.Log.e("Database", "Column not found in cursor: " + e.getMessage(), e);

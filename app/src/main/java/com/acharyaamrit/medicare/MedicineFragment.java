@@ -48,7 +48,7 @@ public class MedicineFragment extends Fragment {
         DatabaseHelper dbHelper2 = new DatabaseHelper(getContext());
 
 
-        CurrentPreciptionResponse currentPreciptionResponse = dbHelper2.getCurrentPreciptionWithItems(5);
+        CurrentPreciptionResponse currentPreciptionResponse = dbHelper2.getCurrentPreciptionWithItems();
         CurrentPreciption currentPreciption = currentPreciptionResponse.getCurrentPreciption();
 
         Toast.makeText(getContext(), currentPreciption.getDoctor_id(), Toast.LENGTH_SHORT).show();
@@ -135,11 +135,19 @@ public class MedicineFragment extends Fragment {
                         String title = errorResponse.getTitle();
                         String message = errorResponse.getMessage();
 
+                        if(message.equalsIgnoreCase("No preciption Found")){
+
+                            //here to code the part where there is no current preciption......
+                        }
+
+                        if(message.equalsIgnoreCase("No Patient Found")){
+
                         new AlertDialog.Builder(getContext())
                                 .setTitle(title)
                                 .setMessage(message)
                                 .setPositiveButton("OK", null)
                                 .show();
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                         new AlertDialog.Builder(getContext())
@@ -153,11 +161,12 @@ public class MedicineFragment extends Fragment {
 
             @Override
             public void onFailure(Call<CurrentPreciptionResponse> call, Throwable t) {
-                new AlertDialog.Builder(getContext())
-                        .setTitle("Network Error")
-                        .setMessage("Failed to fetch data: " + t.getMessage())
-                        .setPositiveButton("OK", null)
-                        .show();
+//                new AlertDialog.Builder(getContext())
+//                        .setTitle("Network Error")
+//                        .setMessage("Failed to fetch data ):")
+//                        .setPositiveButton("OK", null)
+//                        .show();
+                Toast.makeText(getContext(), "No Internet Connection, Please Connect to Internet", Toast.LENGTH_SHORT).show();
             }
         });
     }
