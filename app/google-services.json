@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "615842733813",
+    "project_id": "medicare-500bb",
+    "storage_bucket": "medicare-500bb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:615842733813:android:28fc3f808b519002fd2fbc",
+        "android_client_info": {
+          "package_name": "com.acharyaamrit.medicare"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkrXV8v7Oa21shCsX3IYSl2tPB3TbfcfU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

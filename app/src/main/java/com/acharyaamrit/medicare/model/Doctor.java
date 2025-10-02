@@ -12,8 +12,11 @@ public class Doctor {
     private  String speciality;
     private String clicnic;
     private String gender;
+    private String[] topic;
 
-    public Doctor(int id, int doctor_id, String user_type, String name, String email, String contact, String dob, String address, String speciality, String clicnic, String gender) {
+
+
+    public Doctor(int id, int doctor_id, String user_type, String name, String email, String contact, String dob, String address, String speciality, String clicnic, String gender, String[] topic) {
         this.id = id;
         this.doctor_id = doctor_id;
         this.user_type = user_type;
@@ -25,11 +28,19 @@ public class Doctor {
         this.speciality = speciality;
         this.clicnic = clicnic;
         this.gender = gender;
+        this.topic = topic;
     }
 
     public Doctor() {
     }
 
+    public String[] getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String[] topic) {
+        this.topic = topic;
+    }
     public int getId() {
         return id;
     }

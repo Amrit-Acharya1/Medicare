@@ -13,12 +13,13 @@ public class Pharmacy {
     private String lat;
     private String longt;
     private String clicnic;
+    private String[] topic;
 
     public Pharmacy() {
     }
 
 
-    public Pharmacy(int id, int pharmacy_id, String user_type, String name, String email, String contact, String dob, String address, String pan_no, String lat, String longt, String clicnic) {
+    public Pharmacy(int id, int pharmacy_id, String user_type, String name, String email, String contact, String dob, String address, String pan_no, String lat, String longt, String clicnic, String[] topic) {
         this.id = id;
         this.pharmacy_id = pharmacy_id;
         this.user_type = user_type;
@@ -31,6 +32,14 @@ public class Pharmacy {
         this.lat = lat;
         this.longt = longt;
         this.clicnic = clicnic;
+    }
+
+    public String[] getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String[] topic) {
+        this.topic = topic;
     }
 
     public int getId() {

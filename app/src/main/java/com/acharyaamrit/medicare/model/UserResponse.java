@@ -8,6 +8,10 @@ public class UserResponse {
     private String message;
     private String token;
 
+
+
+
+
     @SerializedName("user_type")
     private String user_type;
 

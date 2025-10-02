@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -8,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.acharyaamrit.medicare"
-        minSdk = 22
+        minSdk = 23
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -47,4 +48,6 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:5.0.5")
 
     implementation("com.intuit.sdp:sdp-android:1.1.1")
+    implementation(platform("com.google.firebase:firebase-bom:34.3.0"))
+    implementation("com.google.firebase:firebase-messaging:25.0.1")
 }
