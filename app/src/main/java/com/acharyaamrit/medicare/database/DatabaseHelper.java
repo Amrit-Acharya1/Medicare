@@ -8,9 +8,15 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.acharyaamrit.medicare.model.Clicnic;
+import com.acharyaamrit.medicare.model.CurrentPreciptionResponse;
 import com.acharyaamrit.medicare.model.Doctor;
 import com.acharyaamrit.medicare.model.Patient;
 import com.acharyaamrit.medicare.model.Pharmacy;
+import com.acharyaamrit.medicare.model.patientModel.CurrentPreciption;
+import com.acharyaamrit.medicare.model.patientModel.Preciption;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "medicare.db";
@@ -86,6 +92,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "lat TEXT," +
                 "longt TEXT)";
         db.execSQL(createClinicTable);
+
+        String CREATE_CURRENT_PRESCRIPTIONS_TABLE = "CREATE TABLE current_prescriptions (" +
+                "id INTEGER PRIMARY KEY," +
+                "doctor_id TEXT ," +
+                "patient_id TEXT ," +
+                "created_at TEXT )";
+        db.execSQL(CREATE_CURRENT_PRESCRIPTIONS_TABLE);
+
+
+        String CREATE_PRESCRIPTION_ITEMS_TABLE = "CREATE TABLE prescription_items (" +
+                "id INTEGER PRIMARY KEY," +
+                "prescription_relation_id INTEGER NOT NULL," +
+                "medicine_id INTEGER NOT NULL," +
+                "frequency TEXT NOT NULL," +
+                "duration TEXT NOT NULL," +
+                "duration_type TEXT NOT NULL," +
+                "qty TEXT NOT NULL," +
+                "note TEXT," +
+                "created_at TEXT NOT NULL," +
+                "FOREIGN KEY (prescription_relation_id) REFERENCES current_prescriptions(id) ON DELETE CASCADE)";
+
+        db.execSQL(CREATE_PRESCRIPTION_ITEMS_TABLE);
 
     }
 
@@ -331,6 +359,127 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return clicnic;
+    }
+
+    public long insertCurrentPreciption(CurrentPreciption prescription) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("id", prescription.getId());
+        values.put("doctor_id", prescription.getDoctor_id());
+        values.put("patient_id", prescription.getPatient_id());
+        values.put("created_at", prescription.getCreated_at());
+        long data =  db.insert("current_prescriptions", null, values);
+
+        return data;
+    }
+
+    public long insertPreciptionItem(Preciption item) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("id", item.getId());
+        values.put("prescription_relation_id", item.getPreciption_relation_id());
+        values.put("medicine_id", item.getMedicine_id());
+        values.put("frequency", item.getFrequency());
+        values.put("duration", item.getDuration());
+        values.put("duration_type", item.getDuration_type());
+        values.put("qty", item.getQty());
+        values.put("note", item.getNote());
+        values.put("created_at", item.getCreated_at());
+        long data= db.insert("prescription_items", null, values);
+        db.close();
+        return data;
+    }
+
+
+    public void deleteCurrentPreciption() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("current_prescriptions", null, null);
+    }
+
+    // Delete a specific Preciption item
+    public void deletePreciptionItem() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("prescription_items", null, null);
+    }
+
+    public CurrentPreciptionResponse getCurrentPreciptionWithItems(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT " +
+                "cp.id AS prescription_id, cp.doctor_id, cp.patient_id, " +
+                "cp.created_at AS prescription_created_at, " +
+                "pi.id AS item_id, pi.prescription_relation_id, pi.medicine_id, " +
+                "pi.frequency, pi.duration, pi.duration_type, " +
+                "pi.qty, pi.note, pi.created_at AS item_created_at " +
+                "FROM current_prescriptions cp " +
+                "LEFT JOIN prescription_items pi ON cp.id = pi.prescription_relation_id " +
+                "WHERE cp.id = ?";
+
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(id)});
+        CurrentPreciptionResponse response = new CurrentPreciptionResponse();
+        CurrentPreciption prescription = null;
+        List<Preciption> items = new ArrayList<>();
+
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+                // Initialize prescription with data from the first row
+                prescription = new CurrentPreciption();
+
+                int prescriptionIdIndex = cursor.getColumnIndexOrThrow("prescription_id");
+                int doctorIdIndex = cursor.getColumnIndexOrThrow("doctor_id");
+                int patientIdIndex = cursor.getColumnIndexOrThrow("patient_id");
+                int prescriptionCreatedAtIndex = cursor.getColumnIndexOrThrow("prescription_created_at");
+
+                prescription.setId(cursor.getInt(prescriptionIdIndex));
+                prescription.setDoctor_id(cursor.isNull(doctorIdIndex) ? null : cursor.getString(doctorIdIndex));
+                prescription.setPatient_id(cursor.isNull(patientIdIndex) ? null : cursor.getString(patientIdIndex));
+                prescription.setCreated_at(cursor.isNull(prescriptionCreatedAtIndex) ? null : cursor.getString(prescriptionCreatedAtIndex));
+
+                // Get column indices for items (do this once outside the loop for performance)
+                int itemIdIndex = cursor.getColumnIndexOrThrow("item_id");
+                int prescriptionRelationIdIndex = cursor.getColumnIndexOrThrow("prescription_relation_id");
+                int medicineIdIndex = cursor.getColumnIndexOrThrow("medicine_id");
+                int frequencyIndex = cursor.getColumnIndexOrThrow("frequency");
+                int durationIndex = cursor.getColumnIndexOrThrow("duration");
+                int durationTypeIndex = cursor.getColumnIndexOrThrow("duration_type");
+                int qtyIndex = cursor.getColumnIndexOrThrow("qty");
+                int noteIndex = cursor.getColumnIndexOrThrow("note");
+                int itemCreatedAtIndex = cursor.getColumnIndexOrThrow("item_created_at");
+
+                do {
+                    // Check if there is a valid prescription item
+                    if (!cursor.isNull(itemIdIndex)) {
+                        Preciption item = new Preciption();
+                        item.setId(cursor.getInt(itemIdIndex));
+                        item.setPreciption_relation_id(cursor.isNull(prescriptionRelationIdIndex) ? null : String.valueOf(cursor.getInt(prescriptionRelationIdIndex)));
+                        item.setMedicine_id(cursor.isNull(medicineIdIndex) ? null : cursor.getString(medicineIdIndex));
+                        item.setFrequency(cursor.isNull(frequencyIndex) ? null : cursor.getString(frequencyIndex));
+                        item.setDuration(cursor.isNull(durationIndex) ? null : cursor.getString(durationIndex));
+                        item.setDuration_type(cursor.isNull(durationTypeIndex) ? null : cursor.getString(durationTypeIndex));
+                        item.setQty(cursor.isNull(qtyIndex) ? null : cursor.getString(qtyIndex));
+                        item.setNote(cursor.isNull(noteIndex) ? null : cursor.getString(noteIndex));
+                        item.setCreated_at(cursor.isNull(itemCreatedAtIndex) ? null : cursor.getString(itemCreatedAtIndex));
+                        items.add(item);
+                    }
+                } while (cursor.moveToNext());
+            } else {
+                android.util.Log.w("Database", "No prescription found with id: " + id);
+            }
+        } catch (IllegalArgumentException e) {
+            android.util.Log.e("Database", "Column not found in cursor: " + e.getMessage(), e);
+        } catch (Exception e) {
+            android.util.Log.e("Database", "Error fetching prescription with items: " + e.getMessage(), e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        if (prescription != null) {
+            prescription.setPreciptionList(items); // Set the list (even if empty)
+            response.setCurrentPreciption(prescription);
+        }
+
+        return response;
     }
 
 }
