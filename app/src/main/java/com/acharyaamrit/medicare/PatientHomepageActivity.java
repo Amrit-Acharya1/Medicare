@@ -1,21 +1,26 @@
 package com.acharyaamrit.medicare;
 
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.FragmentContainerView;
 
 import com.acharyaamrit.medicare.database.DatabaseHelper;
 import com.acharyaamrit.medicare.model.Patient;
 
 public class PatientHomepageActivity extends AppCompatActivity {
 
-    DatabaseHelper databaseHelper;
+//    DatabaseHelper databaseHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,20 +28,75 @@ public class PatientHomepageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_patient_homepage);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            v.setPadding(systemBars.left,systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        TextView textpatient = findViewById(R.id.textpatient);
 
-        databaseHelper = new DatabaseHelper(this);
-        SharedPreferences sharedPreferences = getSharedPreferences("user_preference", MODE_PRIVATE);
-        String token = sharedPreferences.getString("token", null);
+        findViewById(R.id.home_button_background)
+                .setBackground(ContextCompat.getDrawable(this, R.drawable.bottom_selected_back));
+
+        FragmentContainerView fragmentContainerView= findViewById(R.id.fragmentContainer);
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainer, new HomeFragment())
+                .commit();
 
 
-        Patient patient = databaseHelper.getPatientByToken(token);
-        if(patient != null){
-        textpatient.setText(patient.getName());
-        }
+        findViewById(R.id.home_button).setOnClickListener(v -> {
+            findViewById(R.id.home_button_background)
+                    .setBackground(ContextCompat.getDrawable(this, R.drawable.bottom_selected_back));
+
+            findViewById(R.id.medicine_button_background)
+                    .setBackground(ContextCompat.getDrawable(this, R.color.blue));
+
+            findViewById(R.id.profile_button_background)
+                    .setBackground(ContextCompat.getDrawable(this, R.color.blue));
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainer, new HomeFragment())
+                    .commit();
+        });
+
+        findViewById(R.id.qr_button).setOnClickListener(v -> {
+            // Handle QR button click
+        });
+
+
+        findViewById(R.id.medicine_button).setOnClickListener(v -> {
+            findViewById(R.id.medicine_button_background)
+                    .setBackground(ContextCompat.getDrawable(this, R.drawable.bottom_selected_back));
+            findViewById(R.id.home_button_background)
+                    .setBackground(ContextCompat.getDrawable(this, R.color.blue));
+            findViewById(R.id.profile_button_background)
+                    .setBackground(ContextCompat.getDrawable(this, R.color.blue));
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainer, new MedicineFragment())
+                    .commit();
+
+        });
+        findViewById(R.id.profile_button).setOnClickListener(v -> {
+            findViewById(R.id.profile_button_background)
+                    .setBackground(ContextCompat.getDrawable(this, R.drawable.bottom_selected_back));
+            findViewById(R.id.home_button_background)
+                    .setBackground(ContextCompat.getDrawable(this, R.color.blue));
+            findViewById(R.id.medicine_button_background)
+                    .setBackground(ContextCompat.getDrawable(this, R.color.blue));
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainer, new ProfileFragment())
+                    .commit();
+
+        });
+//        TextView textpatient = findViewById(R.id.textpatient);
+//
+//        databaseHelper = new DatabaseHelper(this);
+//        SharedPreferences sharedPreferences = getSharedPreferences("user_preference", MODE_PRIVATE);
+//        String token = sharedPreferences.getString("token", null);
+
+
+//        Patient patient = databaseHelper.getPatientByToken(token);
+//        if(patient != null){
+//        textpatient.setText(patient.getName());
+//        }
 
     }
 }
