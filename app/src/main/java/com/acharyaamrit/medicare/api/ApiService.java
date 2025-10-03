@@ -45,4 +45,9 @@ public interface ApiService {
     Call<CurrentPreciptionResponse> getCurrentPreciption(
             @Header("Authorization") String bearerToken
     );
+
+    @GET("logout")
+    Call<UserResponse> logout(
+            @Header("Authorization") String bearerToken
+    );
 }
