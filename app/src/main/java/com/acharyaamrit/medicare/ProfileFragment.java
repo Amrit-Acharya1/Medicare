@@ -3,6 +3,7 @@ package com.acharyaamrit.medicare;
 import static android.content.Context.MODE_PRIVATE;
 import  com.acharyaamrit.medicare.R;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -90,19 +91,21 @@ public class ProfileFragment extends Fragment {
            TextView contact = view.findViewById(R.id.contact);
            TextView dob = view.findViewById(R.id.dob);
            TextView address2 = view.findViewById(R.id.address2);
+           TextView emergency_contact = view.findViewById(R.id.emergency_contact);
 
-           String myAge = calculateAge(patient.getDob());
 
-           name.setText(patient.getName());
-           address.setText(patient.getAddress());
-           age.setText(myAge);
-           blood_group.setText(patient.getBlood_group());
-           gender.setText(patient.getGender());
-           email.setText(patient.getEmail());
-           contact.setText(patient.getContact());
-           dob.setText(patient.getDob());
-           address2.setText(patient.getAddress());
 
+
+           name.setText(patient.getName() !=null  ? patient.getName(): "xxxx");
+           address.setText(patient.getAddress() !=null  ? patient.getAddress(): "xxxx");
+           age.setText(patient.getDob() != null ? calculateAge(patient.getDob()): "xxxx");
+           blood_group.setText(patient.getBlood_group() !=null  ? patient.getBlood_group(): "xxxx");
+           gender.setText(patient.getGender() !=null  ? patient.getGender(): "xxxx");
+           email.setText(patient.getEmail()!=null  ? patient.getEmail(): "xxxx");
+           contact.setText(patient.getContact()!=null  ? patient.getContact(): "xxxx");
+           dob.setText(patient.getDob()!=null  ? patient.getDob(): "xxxx");
+           address2.setText(patient.getAddress()!=null  ? patient.getAddress(): "xxxx");
+           emergency_contact.setText(patient.getEmergency_contact()!=null  ? patient.getEmergency_contact(): "xxxxx" );
        }
 
 
@@ -129,6 +132,18 @@ public class ProfileFragment extends Fragment {
                         startActivity(intent);
                         getActivity().finish();
 
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }else{
+                    try {
+                    SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.clear();
+                    editor.apply();
+                    Intent intent = new Intent(getContext(), LoginActivity.class);
+                    startActivity(intent);
+                    getActivity().finish();
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }

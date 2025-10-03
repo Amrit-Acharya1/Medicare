@@ -24,6 +24,7 @@ import com.acharyaamrit.medicare.api.ApiService;
 import com.acharyaamrit.medicare.database.DatabaseHelper;
 import com.acharyaamrit.medicare.model.CurrentPreciptionResponse;
 import com.acharyaamrit.medicare.model.Patient;
+import com.acharyaamrit.medicare.model.RoutineMedicineResponse;
 import com.acharyaamrit.medicare.model.UserResponse;
 import com.acharyaamrit.medicare.model.patientModel.CurrentPreciption;
 import com.acharyaamrit.medicare.model.patientModel.Preciption;
@@ -52,6 +53,7 @@ public class PatientHomepageActivity extends AppCompatActivity {
         String token = sharedPreferences.getString("token", null);
 
         storeToDatabase(token);
+        storeRoutineMedicine(token);
 
         findViewById(R.id.home_button_background)
                 .setBackground(ContextCompat.getDrawable(this, R.drawable.bottom_selected_back));
@@ -106,6 +108,78 @@ public class PatientHomepageActivity extends AppCompatActivity {
                     .commit();
 
         });
+    }
+
+    private void storeRoutineMedicine(String token) {
+
+        try {
+            ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+            Call<RoutineMedicineResponse> call = apiService.getRoutineMedicine("Bearer " + token);
+            call.enqueue(new Callback<RoutineMedicineResponse>() {
+                @Override
+                public void onResponse(Call<RoutineMedicineResponse> call, Response<RoutineMedicineResponse> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+
+
+                        RoutineMedicineResponse routineMedicineResponse = response.body();
+
+                        Gson gson = new Gson();
+                        String routineJson = gson.toJson(routineMedicineResponse);
+
+
+                        SharedPreferences sharedPreferences = getSharedPreferences("user_preference", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("routine_medicine_data", routineJson);
+                        editor.apply();
+
+
+                    }else{
+                        try {
+                            String errorJson = response.errorBody().string();
+                            Gson gson = new Gson();
+                            UserResponse errorResponse = gson.fromJson(errorJson, UserResponse.class);
+
+                            String title = errorResponse.getTitle();
+                            String message = errorResponse.getMessage();
+
+
+                            if(title.equalsIgnoreCase("Unauthenticated")){
+
+                                SharedPreferences sharedPreferences = getSharedPreferences("user_preference", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.clear();
+                                editor.apply();
+                                Intent intent = new Intent(PatientHomepageActivity.this, LoginActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+
+
+                        } catch (Exception e) {
+
+                            new AlertDialog.Builder(PatientHomepageActivity.this)
+                                    .setTitle("Error")
+                                    .setMessage("Unexpected error: " + response.code())
+                                    .setPositiveButton("OK", null)
+                                    .show();
+                        }
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<RoutineMedicineResponse> call, Throwable t) {
+                    //already handle in preception api
+                }
+            });
+
+
+        }catch(Exception e){
+        }
+
+
+
     }
 
     private void storeToDatabase(String token) {
@@ -225,11 +299,7 @@ public class PatientHomepageActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<CurrentPreciptionResponse> call, Throwable t) {
-//                new AlertDialog.Builder(getContext())
-//                        .setTitle("Network Error")
-//                        .setMessage("Failed to fetch data ):")
-//                        .setPositiveButton("OK", null)
-//                        .show();
+
                     Toast.makeText(PatientHomepageActivity.this, "No Internet Connection, Please Connect to Internet", Toast.LENGTH_SHORT).show();
                 }
             });

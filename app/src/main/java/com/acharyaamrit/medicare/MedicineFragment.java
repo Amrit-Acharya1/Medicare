@@ -48,7 +48,13 @@ public class MedicineFragment extends Fragment {
         CurrentPreciptionResponse currentPreciptionResponse = dbHelper2.getCurrentPreciptionWithItems();
         CurrentPreciption currentPreciption = currentPreciptionResponse.getCurrentPreciption();
 
+        if(currentPreciption != null){
+
         Toast.makeText(getContext(), currentPreciption.getDoctor_id(), Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(getContext(), "No preciption haiii", Toast.LENGTH_SHORT).show();
+
+        }
 
         return view;
     }

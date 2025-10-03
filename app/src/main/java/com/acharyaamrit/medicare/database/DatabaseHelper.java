@@ -115,6 +115,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL(CREATE_PRESCRIPTION_ITEMS_TABLE);
 
+//
+//        String CREATE_ROUTINE_MEDICINE_TABLE = "CREATE TABLE routine_medicine (" +
+//                "id INTEGER PRIMARY KEY," +
+//                "medicine_id TEXT ," +
+//                "note TEXT ," +
+//                "qty TEXT )";
+//        db.execSQL(CREATE_ROUTINE_MEDICINE_TABLE);
+
     }
 
     @Override
@@ -124,6 +132,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS doctor");
         db.execSQL("DROP TABLE IF EXISTS pharmacy");
         db.execSQL("DROP TABLE IF EXISTS clinic");
+        db.execSQL("DROP TABLE IF EXISTS current_prescriptions");
+        db.execSQL("DROP TABLE IF EXISTS prescription_items");
+//        db.execSQL("DROP TABLE IF EXISTS routine_medicine");
 
         onCreate(db);
     }
@@ -480,5 +491,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return response;
     }
+
+
+
+
+
+//    public long insertRoutineMedicine(CurrentPreciption prescription) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        ContentValues values = new ContentValues();
+//        values.put("id", prescription.getId());
+//        values.put("doctor_id", prescription.getDoctor_id());
+//        values.put("patient_id", prescription.getPatient_id());
+//        values.put("created_at", prescription.getCreated_at());
+//        long data =  db.insert("current_prescriptions", null, values);
+//
+//        return data;
+//    }
 
 }
