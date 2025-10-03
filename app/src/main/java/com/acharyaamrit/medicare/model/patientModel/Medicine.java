@@ -9,17 +9,7 @@ public class Medicine {
     private String doasage_qty;
 
     private String company_name;
-
-    public Medicine() {
-    }
-
-    public Medicine(int id, String medicine_name, String doasage_unit, String doasage_qty, String company_name) {
-        this.id = id;
-        this.medicine_name = medicine_name;
-        this.doasage_unit = doasage_unit;
-        this.doasage_qty = doasage_qty;
-        this.company_name = company_name;
-    }
+    private String frequency;
 
     public int getId() {
         return id;
@@ -59,5 +49,26 @@ public class Medicine {
 
     public void setCompany_name(String company_name) {
         this.company_name = company_name;
+    }
+
+    public String getFrequency() {
+        return frequency;
+    }
+
+    public void setFrequency(String frequency) {
+        this.frequency = frequency;
+    }
+
+    public Medicine() {
+
+    }
+
+    public Medicine(int id, String medicine_name, String doasage_unit, String doasage_qty, String company_name, String frequency) {
+        this.id = id;
+        this.medicine_name = medicine_name;
+        this.doasage_unit = doasage_unit;
+        this.doasage_qty = doasage_qty;
+        this.company_name = company_name;
+        this.frequency = frequency;
     }
 }

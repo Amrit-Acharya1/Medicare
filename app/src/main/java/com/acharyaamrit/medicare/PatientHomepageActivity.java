@@ -1,12 +1,16 @@
 package com.acharyaamrit.medicare;
 
+import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +32,7 @@ import com.acharyaamrit.medicare.model.RoutineMedicineResponse;
 import com.acharyaamrit.medicare.model.UserResponse;
 import com.acharyaamrit.medicare.model.patientModel.CurrentPreciption;
 import com.acharyaamrit.medicare.model.patientModel.Preciption;
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -49,65 +54,77 @@ public class PatientHomepageActivity extends AppCompatActivity {
             v.setPadding(systemBars.left,0, systemBars.right, systemBars.bottom);
             return insets;
         });
+        LottieAnimationView lottieAnimationView = findViewById(R.id.loading_lottie);
+
         SharedPreferences sharedPreferences = getSharedPreferences("user_preference", MODE_PRIVATE);
         String token = sharedPreferences.getString("token", null);
 
         storeToDatabase(token);
         storeRoutineMedicine(token);
 
-        findViewById(R.id.home_button_background)
-                .setBackground(ContextCompat.getDrawable(this, R.drawable.bottom_selected_back));
+
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                lottieAnimationView.setVisibility(GONE);
+
+                findViewById(R.id.home_button_background)
+                        .setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bottom_selected_back));
+
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainer, new HomeFragment())
+                        .commit();
 
 
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentContainer, new HomeFragment())
-                .commit();
+                findViewById(R.id.home_button).setOnClickListener(v -> {
+                    findViewById(R.id.home_button_background)
+                            .setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bottom_selected_back));
+
+                    findViewById(R.id.medicine_button_background)
+                            .setBackground(ContextCompat.getDrawable(getApplicationContext(), R.color.blue));
+
+                    findViewById(R.id.profile_button_background)
+                            .setBackground(ContextCompat.getDrawable(getApplicationContext(), R.color.blue));
+
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragmentContainer, new HomeFragment())
+                            .commit();
+                });
+
+                findViewById(R.id.qr_button).setOnClickListener(v -> {
+                    // Handle QR button click
+                });
 
 
-        findViewById(R.id.home_button).setOnClickListener(v -> {
-            findViewById(R.id.home_button_background)
-                    .setBackground(ContextCompat.getDrawable(this, R.drawable.bottom_selected_back));
+                findViewById(R.id.medicine_button).setOnClickListener(v -> {
+                    findViewById(R.id.medicine_button_background)
+                            .setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bottom_selected_back));
+                    findViewById(R.id.home_button_background)
+                            .setBackground(ContextCompat.getDrawable(getApplicationContext(), R.color.blue));
+                    findViewById(R.id.profile_button_background)
+                            .setBackground(ContextCompat.getDrawable(getApplicationContext(), R.color.blue));
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragmentContainer, new MedicineFragment())
+                            .commit();
 
-            findViewById(R.id.medicine_button_background)
-                    .setBackground(ContextCompat.getDrawable(this, R.color.blue));
+                });
+                findViewById(R.id.profile_button).setOnClickListener(v -> {
+                    findViewById(R.id.profile_button_background)
+                            .setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bottom_selected_back));
+                    findViewById(R.id.home_button_background)
+                            .setBackground(ContextCompat.getDrawable(getApplicationContext(), R.color.blue));
+                    findViewById(R.id.medicine_button_background)
+                            .setBackground(ContextCompat.getDrawable(getApplicationContext(), R.color.blue));
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragmentContainer, new ProfileFragment())
+                            .commit();
 
-            findViewById(R.id.profile_button_background)
-                    .setBackground(ContextCompat.getDrawable(this, R.color.blue));
-
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragmentContainer, new HomeFragment())
-                    .commit();
-        });
-
-        findViewById(R.id.qr_button).setOnClickListener(v -> {
-            // Handle QR button click
-        });
+                });
+            }
+        }, 2000);
 
 
-        findViewById(R.id.medicine_button).setOnClickListener(v -> {
-            findViewById(R.id.medicine_button_background)
-                    .setBackground(ContextCompat.getDrawable(this, R.drawable.bottom_selected_back));
-            findViewById(R.id.home_button_background)
-                    .setBackground(ContextCompat.getDrawable(this, R.color.blue));
-            findViewById(R.id.profile_button_background)
-                    .setBackground(ContextCompat.getDrawable(this, R.color.blue));
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragmentContainer, new MedicineFragment())
-                    .commit();
-
-        });
-        findViewById(R.id.profile_button).setOnClickListener(v -> {
-            findViewById(R.id.profile_button_background)
-                    .setBackground(ContextCompat.getDrawable(this, R.drawable.bottom_selected_back));
-            findViewById(R.id.home_button_background)
-                    .setBackground(ContextCompat.getDrawable(this, R.color.blue));
-            findViewById(R.id.medicine_button_background)
-                    .setBackground(ContextCompat.getDrawable(this, R.color.blue));
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragmentContainer, new ProfileFragment())
-                    .commit();
-
-        });
     }
 
     private void storeRoutineMedicine(String token) {
