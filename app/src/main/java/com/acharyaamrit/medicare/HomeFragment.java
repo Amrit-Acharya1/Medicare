@@ -107,8 +107,11 @@ public class HomeFragment extends Fragment {
 
             if (morningMedicine.isEmpty() && afternoonMedicine.isEmpty() && eveningMedicine.isEmpty() && nightMedicine.isEmpty()){
                 view.findViewById(R.id.no_routine_medicine).setVisibility(VISIBLE);
+                view.findViewById(R.id.currentMedicineTextHeading).setVisibility(GONE);
             }else{
                 view.findViewById(R.id.no_routine_medicine).setVisibility(GONE);
+                view.findViewById(R.id.currentMedicineTextHeading).setVisibility(VISIBLE);
+
             }
 
 
