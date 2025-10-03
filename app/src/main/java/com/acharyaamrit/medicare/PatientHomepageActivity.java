@@ -136,31 +136,31 @@ public class PatientHomepageActivity extends AppCompatActivity {
 
                     }else{
                         try {
-                            String errorJson = response.errorBody().string();
-                            Gson gson = new Gson();
-                            UserResponse errorResponse = gson.fromJson(errorJson, UserResponse.class);
-
-                            String title = errorResponse.getTitle();
-                            String message = errorResponse.getMessage();
-
-
-//                            if(title.equalsIgnoreCase("Unauthenticated")){
+//                            String errorJson = response.errorBody().string();
+//                            Gson gson = new Gson();
+//                            UserResponse errorResponse = gson.fromJson(errorJson, UserResponse.class);
 //
-//                                SharedPreferences sharedPreferences = getSharedPreferences("user_preference", MODE_PRIVATE);
-//                                SharedPreferences.Editor editor = sharedPreferences.edit();
-//                                editor.clear();
-//                                editor.apply();
-//                                Intent intent = new Intent(PatientHomepageActivity.this, LoginActivity.class);
-//                                startActivity(intent);
-//                                finish();
-//                            }
+//                            String title = errorResponse.getTitle();
+//                            String message = errorResponse.getMessage();
+//
+//
+////                            if(title.equalsIgnoreCase("Unauthenticated")){
+////
+////                                SharedPreferences sharedPreferences = getSharedPreferences("user_preference", MODE_PRIVATE);
+////                                SharedPreferences.Editor editor = sharedPreferences.edit();
+////                                editor.clear();
+////                                editor.apply();
+////                                Intent intent = new Intent(PatientHomepageActivity.this, LoginActivity.class);
+////                                startActivity(intent);
+////                                finish();
+////                            }
 
 
                         } catch (Exception e) {
 
                             new AlertDialog.Builder(PatientHomepageActivity.this)
                                     .setTitle("Error")
-                                    .setMessage("Unexpected error: " + response.code())
+                                    .setMessage("Unexpected error bbb: " + response.code())
                                     .setPositiveButton("OK", null)
                                     .show();
                         }
