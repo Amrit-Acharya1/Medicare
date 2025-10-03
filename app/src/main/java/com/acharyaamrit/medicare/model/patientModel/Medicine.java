@@ -3,17 +3,22 @@ package com.acharyaamrit.medicare.model.patientModel;
 public class Medicine {
     private int id;
     private String medicine_name;
-    private String note;
-    private String qty;
+
+
+    private String doasage_unit;
+    private String doasage_qty;
+
+    private String company_name;
 
     public Medicine() {
     }
 
-    public Medicine(int id, String medicine_name, String note, String qty) {
+    public Medicine(int id, String medicine_name, String doasage_unit, String doasage_qty, String company_name) {
         this.id = id;
         this.medicine_name = medicine_name;
-        this.note = note;
-        this.qty = qty;
+        this.doasage_unit = doasage_unit;
+        this.doasage_qty = doasage_qty;
+        this.company_name = company_name;
     }
 
     public int getId() {
@@ -32,19 +37,27 @@ public class Medicine {
         this.medicine_name = medicine_name;
     }
 
-    public String getNote() {
-        return note;
+    public String getDoasage_unit() {
+        return doasage_unit;
     }
 
-    public void setNote(String note) {
-        this.note = note;
+    public void setDoasage_unit(String doasage_unit) {
+        this.doasage_unit = doasage_unit;
     }
 
-    public String getQty() {
-        return qty;
+    public String getDoasage_qty() {
+        return doasage_qty;
     }
 
-    public void setQty(String qty) {
-        this.qty = qty;
+    public void setDoasage_qty(String doasage_qty) {
+        this.doasage_qty = doasage_qty;
+    }
+
+    public String getCompany_name() {
+        return company_name;
+    }
+
+    public void setCompany_name(String company_name) {
+        this.company_name = company_name;
     }
 }

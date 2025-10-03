@@ -144,16 +144,16 @@ public class PatientHomepageActivity extends AppCompatActivity {
                             String message = errorResponse.getMessage();
 
 
-                            if(title.equalsIgnoreCase("Unauthenticated")){
-
-                                SharedPreferences sharedPreferences = getSharedPreferences("user_preference", MODE_PRIVATE);
-                                SharedPreferences.Editor editor = sharedPreferences.edit();
-                                editor.clear();
-                                editor.apply();
-                                Intent intent = new Intent(PatientHomepageActivity.this, LoginActivity.class);
-                                startActivity(intent);
-                                finish();
-                            }
+//                            if(title.equalsIgnoreCase("Unauthenticated")){
+//
+//                                SharedPreferences sharedPreferences = getSharedPreferences("user_preference", MODE_PRIVATE);
+//                                SharedPreferences.Editor editor = sharedPreferences.edit();
+//                                editor.clear();
+//                                editor.apply();
+//                                Intent intent = new Intent(PatientHomepageActivity.this, LoginActivity.class);
+//                                startActivity(intent);
+//                                finish();
+//                            }
 
 
                         } catch (Exception e) {
