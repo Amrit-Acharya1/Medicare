@@ -1,6 +1,7 @@
 package com.acharyaamrit.medicare.api;
 
 import com.acharyaamrit.medicare.model.ApiResponseTitleSuccess;
+import com.acharyaamrit.medicare.model.CurrentPreciptionResponse;
 import com.acharyaamrit.medicare.model.OtpRequest;
 import com.acharyaamrit.medicare.model.OtpValidateRequest;
 import com.acharyaamrit.medicare.model.PasswordResetRequest;
@@ -10,6 +11,8 @@ import com.acharyaamrit.medicare.model.UserResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 
@@ -38,4 +41,8 @@ public interface ApiService {
 
     @POST("login")
     Call<UserResponse> loginUser(@Body UserRequest request);
+    @GET("fetchCurrentPreciptions")
+    Call<CurrentPreciptionResponse> getCurrentPreciption(
+            @Header("Authorization") String bearerToken
+    );
 }
