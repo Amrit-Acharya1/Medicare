@@ -28,14 +28,13 @@ public class PatientHomepageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_patient_homepage);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left,systemBars.top, systemBars.right, systemBars.bottom);
+            v.setPadding(systemBars.left,0, systemBars.right, systemBars.bottom);
             return insets;
         });
 
         findViewById(R.id.home_button_background)
                 .setBackground(ContextCompat.getDrawable(this, R.drawable.bottom_selected_back));
 
-        FragmentContainerView fragmentContainerView= findViewById(R.id.fragmentContainer);
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragmentContainer, new HomeFragment())
@@ -86,17 +85,5 @@ public class PatientHomepageActivity extends AppCompatActivity {
                     .commit();
 
         });
-//        TextView textpatient = findViewById(R.id.textpatient);
-//
-//        databaseHelper = new DatabaseHelper(this);
-//        SharedPreferences sharedPreferences = getSharedPreferences("user_preference", MODE_PRIVATE);
-//        String token = sharedPreferences.getString("token", null);
-
-
-//        Patient patient = databaseHelper.getPatientByToken(token);
-//        if(patient != null){
-//        textpatient.setText(patient.getName());
-//        }
-
     }
 }
