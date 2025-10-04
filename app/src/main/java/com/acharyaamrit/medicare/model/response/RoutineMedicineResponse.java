@@ -1,4 +1,4 @@
-package com.acharyaamrit.medicare.model;
+package com.acharyaamrit.medicare.model.response;
 
 import com.acharyaamrit.medicare.model.patientModel.RoutineMedicine;
 import com.google.gson.annotations.SerializedName;

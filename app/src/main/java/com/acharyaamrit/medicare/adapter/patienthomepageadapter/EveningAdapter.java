@@ -1,4 +1,4 @@
-package com.acharyaamrit.medicare.adapter;
+package com.acharyaamrit.medicare.adapter.patienthomepageadapter;
 
 import android.content.Context;
 import android.view.View;

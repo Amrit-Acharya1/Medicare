@@ -31,7 +31,7 @@ import com.acharyaamrit.medicare.model.Clicnic;
 import com.acharyaamrit.medicare.model.Doctor;
 import com.acharyaamrit.medicare.model.Patient;
 import com.acharyaamrit.medicare.model.Pharmacy;
-import com.acharyaamrit.medicare.model.UserResponse;
+import com.acharyaamrit.medicare.model.response.UserResponse;
 import com.acharyaamrit.medicare.model.UserRequest;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

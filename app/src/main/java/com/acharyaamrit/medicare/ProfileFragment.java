@@ -1,9 +1,7 @@
 package com.acharyaamrit.medicare;
 
 import static android.content.Context.MODE_PRIVATE;
-import  com.acharyaamrit.medicare.R;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,23 +14,17 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.acharyaamrit.medicare.api.ApiClient;
 import com.acharyaamrit.medicare.api.ApiService;
 import com.acharyaamrit.medicare.database.DatabaseHelper;
-import com.acharyaamrit.medicare.model.CurrentPreciptionResponse;
 import com.acharyaamrit.medicare.model.Patient;
-import com.acharyaamrit.medicare.model.UserResponse;
-import com.acharyaamrit.medicare.model.patientModel.CurrentPreciption;
+import com.acharyaamrit.medicare.model.response.UserResponse;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;

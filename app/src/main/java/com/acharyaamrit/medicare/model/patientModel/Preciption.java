@@ -6,35 +6,39 @@ public class Preciption {
 
     @SerializedName("id")
     int id;
-    @SerializedName("preciption_relation_id")
-    String preciption_relation_id;
-    @SerializedName("medicine_id")
-    String medicine_id;
+    @SerializedName("prescription_relation_id")
+    int prescription_relation_id;
+    @SerializedName("medicine_name")
+    String medicine_name;
     @SerializedName("frequency")
     String frequency;
-    @SerializedName("duration")
-    String duration;
-    @SerializedName("duration_type")
-    String duration_type;
+    @SerializedName("doasage_unit")
+    String doasage_unit;
+    @SerializedName("doasage_qty")
+    String doasage_qty;
     @SerializedName("qty")
     String qty;
-    @SerializedName("note")
-    String note;
+    @SerializedName("company_name")
+    String company_name;
+    @SerializedName("price")
+    String price;
+
     @SerializedName("created_at")
     String created_at;
 
     public Preciption() {
     }
 
-    public Preciption(int id, String preciption_relation_id, String medicine_id, String frequency, String duration, String duration_type, String qty, String note, String created_at) {
+    public Preciption(int id, int prescription_relation_id, String medicine_name, String frequency, String doasage_unit, String doasage_qty, String qty, String company_name, String price, String created_at) {
         this.id = id;
-        this.preciption_relation_id = preciption_relation_id;
-        this.medicine_id = medicine_id;
+        this.prescription_relation_id = prescription_relation_id;
+        this.medicine_name = medicine_name;
         this.frequency = frequency;
-        this.duration = duration;
-        this.duration_type = duration_type;
+        this.doasage_unit = doasage_unit;
+        this.doasage_qty = doasage_qty;
         this.qty = qty;
-        this.note = note;
+        this.company_name = company_name;
+        this.price = price;
         this.created_at = created_at;
     }
 
@@ -46,20 +50,20 @@ public class Preciption {
         this.id = id;
     }
 
-    public String getPreciption_relation_id() {
-        return preciption_relation_id;
+    public int getPrescription_relation_id() {
+        return prescription_relation_id;
     }
 
-    public void setPreciption_relation_id(String preciption_relation_id) {
-        this.preciption_relation_id = preciption_relation_id;
+    public void setPrescription_relation_id(int prescription_relation_id) {
+        this.prescription_relation_id = prescription_relation_id;
     }
 
-    public String getMedicine_id() {
-        return medicine_id;
+    public String getMedicine_name() {
+        return medicine_name;
     }
 
-    public void setMedicine_id(String medicine_id) {
-        this.medicine_id = medicine_id;
+    public void setMedicine_name(String medicine_name) {
+        this.medicine_name = medicine_name;
     }
 
     public String getFrequency() {
@@ -70,20 +74,20 @@ public class Preciption {
         this.frequency = frequency;
     }
 
-    public String getDuration() {
-        return duration;
+    public String getDoasage_unit() {
+        return doasage_unit;
     }
 
-    public void setDuration(String duration) {
-        this.duration = duration;
+    public void setDoasage_unit(String doasage_unit) {
+        this.doasage_unit = doasage_unit;
     }
 
-    public String getDuration_type() {
-        return duration_type;
+    public String getDoasage_qty() {
+        return doasage_qty;
     }
 
-    public void setDuration_type(String duration_type) {
-        this.duration_type = duration_type;
+    public void setDoasage_qty(String doasage_qty) {
+        this.doasage_qty = doasage_qty;
     }
 
     public String getQty() {
@@ -94,12 +98,20 @@ public class Preciption {
         this.qty = qty;
     }
 
-    public String getNote() {
-        return note;
+    public String getCompany_name() {
+        return company_name;
     }
 
-    public void setNote(String note) {
-        this.note = note;
+    public void setCompany_name(String company_name) {
+        this.company_name = company_name;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
     }
 
     public String getCreated_at() {

@@ -1,26 +1,32 @@
 package com.acharyaamrit.medicare;
 
 import static android.content.Context.MODE_PRIVATE;
+import static android.view.View.GONE;
 
-import android.app.AlertDialog;
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.acharyaamrit.medicare.adapter.patientmedicineadapter.CurrentPrescriptionAdapter;
+import com.acharyaamrit.medicare.adapter.patientmedicineadapter.NearbyPharmacyAdapter;
 import com.acharyaamrit.medicare.api.ApiClient;
 import com.acharyaamrit.medicare.api.ApiService;
 import com.acharyaamrit.medicare.database.DatabaseHelper;
-import com.acharyaamrit.medicare.model.CurrentPreciptionResponse;
-import com.acharyaamrit.medicare.model.UserResponse;
+import com.acharyaamrit.medicare.model.patientModel.PharmacyMap;
+import com.acharyaamrit.medicare.model.response.CurrentPreciptionResponse;
 import com.acharyaamrit.medicare.model.patientModel.CurrentPreciption;
 import com.acharyaamrit.medicare.model.patientModel.Preciption;
-import com.google.gson.Gson;
+import com.acharyaamrit.medicare.model.response.NearbyPharmacyResponse;
 
 import java.util.List;
 
@@ -34,29 +40,81 @@ public class MedicineFragment extends Fragment {
     public MedicineFragment() {
         // Required empty public constructor
     }
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_medicine, container, false);
 
+        RecyclerView recyclerView = view.findViewById(R.id.currentPrescription_medicine);
+        RecyclerView nearby_location_patient = view.findViewById(R.id.nearby_location_patient);
+
 
 
         DatabaseHelper dbHelper2 = new DatabaseHelper(getContext());
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
+        String token = sharedPreferences.getString("token", null);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        TextView total_price = view.findViewById(R.id.totalPrice);
 
 
         CurrentPreciptionResponse currentPreciptionResponse = dbHelper2.getCurrentPreciptionWithItems();
         CurrentPreciption currentPreciption = currentPreciptionResponse.getCurrentPreciption();
 
+
+
         if(currentPreciption != null){
+            List<Preciption> preciptionList = currentPreciption.getPreciptionList();
 
-        Toast.makeText(getContext(), currentPreciption.getDoctor_id(), Toast.LENGTH_SHORT).show();
+            CurrentPrescriptionAdapter adapter = new CurrentPrescriptionAdapter(preciptionList, getContext());
+            recyclerView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+
+
         }else{
-            Toast.makeText(getContext(), "No preciption haiii", Toast.LENGTH_SHORT).show();
-
+            view.findViewById(R.id.current_prescription).setVisibility(GONE);
         }
+        nearby_location_patient.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        fetchNearbyPharmacyFromApi(token, nearby_location_patient);
 
         return view;
+    }
+
+    private void fetchNearbyPharmacyFromApi(String token, RecyclerView nearby_location_patient) {
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        Call<NearbyPharmacyResponse> call = apiService.getNearbyPharmancy("Bearer " + token);
+
+        call.enqueue(new Callback<NearbyPharmacyResponse>() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onResponse(Call<NearbyPharmacyResponse> call, Response<NearbyPharmacyResponse> response) {
+                if (response.isSuccessful() && response.body() != null){
+                    try {
+                        NearbyPharmacyResponse nearbyPharmacyResponse = response.body();
+                        List<PharmacyMap> nearbyPharmacies = nearbyPharmacyResponse.getPharmacy_map();
+
+                        for(PharmacyMap pharmacy : nearbyPharmacies){
+
+                            Toast.makeText(getContext(), pharmacy.getPharmacy_name(), Toast.LENGTH_SHORT).show();
+                        }
+
+                        NearbyPharmacyAdapter adapter = new NearbyPharmacyAdapter(nearbyPharmacies, getContext());
+
+                        nearby_location_patient.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+
+                    }catch (Exception e){}
+                }
+            }
+
+            @Override
+            public void onFailure(Call<NearbyPharmacyResponse> call, Throwable t) {
+                Toast.makeText(getContext(), "No Internet Connection, Please Connect to Internet", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 

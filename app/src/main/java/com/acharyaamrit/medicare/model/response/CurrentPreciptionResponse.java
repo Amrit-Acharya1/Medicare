@@ -1,10 +1,7 @@
-package com.acharyaamrit.medicare.model;
+package com.acharyaamrit.medicare.model.response;
 
 import com.acharyaamrit.medicare.model.patientModel.CurrentPreciption;
-import com.acharyaamrit.medicare.model.patientModel.Preciption;
 import com.google.gson.annotations.SerializedName;
-
-import java.util.List;
 
 public class CurrentPreciptionResponse {
 

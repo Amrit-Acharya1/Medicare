@@ -7,15 +7,15 @@ import java.util.List;
 public class CurrentPreciption {
 
     int id;
-    String doctor_id;
+    String doctor_name;
     String patient_id;
     String created_at;
     @SerializedName("preciption")
     private List<Preciption> preciptionList;
 
-    public CurrentPreciption(int id, String doctor_id, String patient_id, String created_at) {
+    public CurrentPreciption(int id, String doctor_name, String patient_id, String created_at) {
         this.id = id;
-        this.doctor_id = doctor_id;
+        this.doctor_name = doctor_name;
         this.patient_id = patient_id;
         this.created_at = created_at;
     }
@@ -31,12 +31,12 @@ public class CurrentPreciption {
         this.id = id;
     }
 
-    public String getDoctor_id() {
-        return doctor_id;
+    public String getDoctor_name() {
+        return doctor_name;
     }
 
-    public void setDoctor_id(String doctor_id) {
-        this.doctor_id = doctor_id;
+    public void setDoctor_name(String doctor_name) {
+        this.doctor_name = doctor_name;
     }
 
     public String getPatient_id() {
