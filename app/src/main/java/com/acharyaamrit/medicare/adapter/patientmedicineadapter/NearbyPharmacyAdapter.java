@@ -45,7 +45,11 @@ public class NearbyPharmacyAdapter extends RecyclerView.Adapter<NearbyPharmacyAd
     public void onBindViewHolder(@NonNull NearbyPharmacyAdapter.ViewHolder holder, int position) {
         PharmacyMap pharmacyMap = pharmacyMapList.get(position);
         holder.pharmacy_name.setText(pharmacyMap.getPharmacy_name());
-        holder.pharmacy_distance.setText(pharmacyMap.getDistance());
+
+        //converted to km
+        String distance = pharmacyMap.getDistance();
+        String formatted = distance.length() > 4 ? distance.substring(0, 4) : distance;
+        holder.pharmacy_distance.setText(formatted + " Km");
 
         holder.pharmacy_visit_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,22 +58,15 @@ public class NearbyPharmacyAdapter extends RecyclerView.Adapter<NearbyPharmacyAd
             }
         });
 
-        holder.pharmacy_call_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //redirect to phone call
-                if (pharmacyMap.getContact() != null) {
-                    String phoneNumber = "tel:" + pharmacyMap.getContact();
-                    Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse(phoneNumber));
-                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
-                        context.startActivity(callIntent);
-                    } else {
-                        ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.CALL_PHONE}, 1);
-                    }
-                }
+        holder.pharmacy_call_btn.setOnClickListener(v -> {
+            if (pharmacyMap.getContact() != null) {
+                String phoneNumber = "tel:" + pharmacyMap.getContact();
+                Intent dialIntent = new Intent(Intent.ACTION_DIAL);
+                dialIntent.setData(Uri.parse(phoneNumber));
+                context.startActivity(dialIntent);
             }
         });
+
     }
 
     @Override

@@ -131,12 +131,13 @@
                 android:padding="@dimen/_14sdp">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:orientation="horizontal">
 
                     <LinearLayout
+                        android:layout_weight="1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
@@ -150,6 +151,7 @@
                             android:textSize="@dimen/_14sdp" />
 
                         <TextView
+                            android:id="@+id/doctor_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/inter"
@@ -157,20 +159,17 @@
                             android:textColor="#84000000"
                             android:textSize="@dimen/_11sdp" />
                     </LinearLayout>
-
-                    <androidx.appcompat.widget.AppCompatButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_6sdp"
+                    <LinearLayout
+                        android:padding="@dimen/_7sdp"
                         android:background="@drawable/edit_text_background"
-                        android:drawableEnd="@drawable/qr_code_icon"
-                        android:drawablePadding="@dimen/_2sdp"
-                        android:drawableTint="@color/black"
-                        android:fontFamily="@font/inter"
-                        android:paddingHorizontal="@dimen/_7sdp"
-                        android:text="Tap to Qr "
-                        android:textAllCaps="false"
-                        android:textSize="@dimen/_11sdp" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <ImageView
+                            android:tint="@color/black"
+                            android:src="@drawable/qr_code_icon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -209,7 +208,7 @@
                         android:fontFamily="@font/inter_semibold"
                         android:text=" Rs.12982"
                         android:textColor="#F1000000"
-                        android:textSize="@dimen/_10sdp" />
+                        android:textSize="@dimen/_12sdp" />
                 </LinearLayout>
             </LinearLayout>
 
