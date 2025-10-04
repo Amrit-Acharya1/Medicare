@@ -18,9 +18,9 @@ import androidx.core.view.WindowInsetsCompat;
 import com.acharyaamrit.medicare.api.ApiClient;
 import com.acharyaamrit.medicare.api.ApiService;
 import com.acharyaamrit.medicare.database.DatabaseHelper;
-import com.acharyaamrit.medicare.model.CurrentPreciptionResponse;
-import com.acharyaamrit.medicare.model.RoutineMedicineResponse;
-import com.acharyaamrit.medicare.model.UserResponse;
+import com.acharyaamrit.medicare.model.response.CurrentPreciptionResponse;
+import com.acharyaamrit.medicare.model.response.RoutineMedicineResponse;
+import com.acharyaamrit.medicare.model.response.UserResponse;
 import com.acharyaamrit.medicare.model.patientModel.CurrentPreciption;
 import com.acharyaamrit.medicare.model.patientModel.Preciption;
 import com.airbnb.lottie.LottieAnimationView;
@@ -211,7 +211,7 @@ public class PatientHomepageActivity extends AppCompatActivity {
             if (preciptionItems != null && !preciptionItems.isEmpty()) {
                 int successCount = 0;
                 for (Preciption item : preciptionItems) {
-                    item.setPreciption_relation_id(String.valueOf(localPrescriptionId));
+                    item.setPrescription_relation_id(localPrescriptionId);
                     if (dbHelper.insertPreciptionItem(item) != -1) {
                         successCount++;
                     }
@@ -237,6 +237,13 @@ public class PatientHomepageActivity extends AppCompatActivity {
 
             String title = errorResponse.getTitle();
             String message = errorResponse.getMessage();
+
+
+            if (message.equalsIgnoreCase("No preciption Found")){
+                DatabaseHelper dbHelper = new DatabaseHelper(this);
+                dbHelper.deleteCurrentPreciption();
+                dbHelper.deletePreciptionItem();
+            }
 
             if ("Unauthenticated".equalsIgnoreCase(title)) {
                 navigateToLogin();

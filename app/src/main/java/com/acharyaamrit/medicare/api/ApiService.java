@@ -1,14 +1,15 @@
 package com.acharyaamrit.medicare.api;
 
 import com.acharyaamrit.medicare.model.ApiResponseTitleSuccess;
-import com.acharyaamrit.medicare.model.CurrentPreciptionResponse;
+import com.acharyaamrit.medicare.model.response.CurrentPreciptionResponse;
 import com.acharyaamrit.medicare.model.OtpRequest;
 import com.acharyaamrit.medicare.model.OtpValidateRequest;
 import com.acharyaamrit.medicare.model.PasswordResetRequest;
-import com.acharyaamrit.medicare.model.RoutineMedicineResponse;
+import com.acharyaamrit.medicare.model.response.NearbyPharmacyResponse;
+import com.acharyaamrit.medicare.model.response.RoutineMedicineResponse;
 import com.acharyaamrit.medicare.model.UserRegisterRequest;
 import com.acharyaamrit.medicare.model.UserRequest;
-import com.acharyaamrit.medicare.model.UserResponse;
+import com.acharyaamrit.medicare.model.response.UserResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -54,6 +55,11 @@ public interface ApiService {
 
     @GET("getRoutineMedicine")
     Call<RoutineMedicineResponse> getRoutineMedicine(
+            @Header("Authorization") String bearerToken
+    );
+
+    @GET("getPharmacy")
+    Call<NearbyPharmacyResponse> getNearbyPharmancy(
             @Header("Authorization") String bearerToken
     );
 }

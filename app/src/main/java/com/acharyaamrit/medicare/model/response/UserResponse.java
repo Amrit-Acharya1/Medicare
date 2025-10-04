@@ -1,5 +1,9 @@
-package com.acharyaamrit.medicare.model;
+package com.acharyaamrit.medicare.model.response;
 
+import com.acharyaamrit.medicare.model.Clicnic;
+import com.acharyaamrit.medicare.model.Doctor;
+import com.acharyaamrit.medicare.model.Patient;
+import com.acharyaamrit.medicare.model.Pharmacy;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 

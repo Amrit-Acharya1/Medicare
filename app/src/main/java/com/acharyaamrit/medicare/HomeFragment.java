@@ -4,7 +4,6 @@ import static android.content.Context.MODE_PRIVATE;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -16,15 +15,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.acharyaamrit.medicare.adapter.AfternoonAdapter;
-import com.acharyaamrit.medicare.adapter.EveningAdapter;
-import com.acharyaamrit.medicare.adapter.MorningAdapter;
-import com.acharyaamrit.medicare.adapter.NightAdapter;
+import com.acharyaamrit.medicare.adapter.patienthomepageadapter.AfternoonAdapter;
+import com.acharyaamrit.medicare.adapter.patienthomepageadapter.EveningAdapter;
+import com.acharyaamrit.medicare.adapter.patienthomepageadapter.MorningAdapter;
+import com.acharyaamrit.medicare.adapter.patienthomepageadapter.NightAdapter;
 import com.acharyaamrit.medicare.database.DatabaseHelper;
 import com.acharyaamrit.medicare.model.Patient;
-import com.acharyaamrit.medicare.model.RoutineMedicineResponse;
+import com.acharyaamrit.medicare.model.response.RoutineMedicineResponse;
 import com.acharyaamrit.medicare.model.patientModel.Medicine;
 import com.acharyaamrit.medicare.model.patientModel.RoutineMedicine;
 import com.google.gson.Gson;

@@ -1,10 +1,10 @@
-package com.acharyaamrit.medicare.adapter;
+package com.acharyaamrit.medicare.adapter.patienthomepageadapter;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,30 +13,25 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.acharyaamrit.medicare.R;
 import com.acharyaamrit.medicare.model.patientModel.Medicine;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class MorningAdapter extends RecyclerView.Adapter<MorningAdapter.ViewHolder> {
-
-    private List<Medicine> medicineList;
-    private Context context;
-
-    public MorningAdapter(List<Medicine> medicineList, Context context) {
-        this.medicineList = medicineList != null ? medicineList : new ArrayList<>();
+public class AfternoonAdapter extends RecyclerView.Adapter<AfternoonAdapter.ViewHolder>{
+    public List<Medicine> medicineList;
+    public Context context;
+    public AfternoonAdapter(List<Medicine> medicineList, Context context) {
+        this.medicineList = medicineList;
         this.context = context;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Use parent.getContext() instead of context
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_homepage_layout, parent, false);
-        return new ViewHolder(view);
+    public AfternoonAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LinearLayout.inflate(context, R.layout.item_homepage_layout, null);
+        return new AfternoonAdapter.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull AfternoonAdapter.ViewHolder holder, int position) {
         if (medicineList == null || position >= medicineList.size()) {
             return;
         }
@@ -70,25 +65,19 @@ public class MorningAdapter extends RecyclerView.Adapter<MorningAdapter.ViewHold
         }
 
         // Optional: Set manufacturer if the field exists
-         if (medicine.getCompany_name() != null) {
-             holder.textViewManufacturer.setText(medicine.getCompany_name());
-         }
-
-         if (position == medicineList.size() - 1){
-             holder.line_view.setVisibility(View.GONE);
+        if (medicine.getCompany_name() != null) {
+            holder.textViewManufacturer.setText(medicine.getCompany_name());
         }
-
+        if (position == medicineList.size() - 1){
+            holder.line_view.setVisibility(View.GONE);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return medicineList != null ? medicineList.size() : 0;
+        return medicineList.size();
     }
 
-    public void updateData(List<Medicine> newMedicineList) {
-        this.medicineList = newMedicineList != null ? newMedicineList : new ArrayList<>();
-        notifyDataSetChanged();
-    }
     public static class ViewHolder extends RecyclerView.ViewHolder{
         ImageView imageView;
         TextView textViewMedicineName;

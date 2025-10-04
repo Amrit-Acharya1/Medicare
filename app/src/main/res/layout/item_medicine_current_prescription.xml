@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:weightSum="3"
+        android:orientation="horizontal"
+        android:padding="@dimen/_12sdp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/textMedicineName"
+                android:fontFamily="@font/inter_semibold"
+                android:textStyle="italic"
+                android:textSize="@dimen/_12sdp"
+                android:textColor="@color/black"
+                android:text="Paracetamol"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/textMedicineDoseQty"
+                    android:fontFamily="@font/inter"
+                    android:textStyle="normal"
+                    android:textSize="@dimen/_9sdp"
+                    android:textColor="#66000000"
+                    android:text="10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/textMedicineDoseUnit"
+                    android:fontFamily="@font/inter"
+                    android:textStyle="normal"
+                    android:textSize="@dimen/_9sdp"
+                    android:textColor="#66000000"
+                    android:text="mg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/textSeparatorDot"
+                    android:fontFamily="@font/inter"
+                    android:textStyle="normal"
+                    android:textSize="@dimen/_9sdp"
+                    android:textColor="#66000000"
+                    android:text=" • "
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/textDosageFrequency"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:fontFamily="@font/inter"
+                    android:text="2"
+                    android:textColor="#66000000"
+                    android:textSize="@dimen/_9sdp"
+                    android:textStyle="normal" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:fontFamily="@font/inter"
+                    android:text=" times a day"
+                    android:textColor="#66000000"
+                    android:textSize="@dimen/_9sdp"
+                    android:textStyle="normal" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textManufacturer"
+                android:fontFamily="@font/inter"
+                android:textStyle="normal"
+                android:textSize="@dimen/_9sdp"
+                android:textColor="#66000000"
+                android:text="Quest Pharmaceutical PVT .Ltd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+        <TextView
+            android:textAlignment="center"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:id="@+id/medicineQty"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:fontFamily="@font/inter_semibold"
+            android:textSize="@dimen/_12sdp"
+            android:textColor="@color/black"
+            android:text="x2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:textAlignment="textEnd"
+            android:id="@+id/medicinePrice"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:fontFamily="@font/inter_semibold"
+            android:textSize="@dimen/_12sdp"
+            android:textColor="@color/black"
+            android:text=" Nrs.1290"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+
+</LinearLayout>
