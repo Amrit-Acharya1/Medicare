@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -36,6 +37,7 @@ import retrofit2.Response;
 
 
 public class MedicineFragment extends Fragment {
+    private TextView doctor_name, totalPrice;
 
     public MedicineFragment() {
         // Required empty public constructor
@@ -49,6 +51,9 @@ public class MedicineFragment extends Fragment {
 
         RecyclerView recyclerView = view.findViewById(R.id.currentPrescription_medicine);
         RecyclerView nearby_location_patient = view.findViewById(R.id.nearby_location_patient);
+
+        doctor_name = view.findViewById(R.id.doctor_name);
+        totalPrice = view.findViewById(R.id.totalPrice);
 
 
 
@@ -72,11 +77,27 @@ public class MedicineFragment extends Fragment {
             recyclerView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
 
+            doctor_name.setText(String.format("Prescribed by Dr. %s", currentPreciption.getDoctor_name()));
+
+            double totalPrice = 0;
+
+            for(Preciption preciption : preciptionList){
+                totalPrice = totalPrice + Double.parseDouble(preciption.getPrice());
+            }
+
+            total_price.setText(String.format("Rs. %.2f", totalPrice));
 
         }else{
             view.findViewById(R.id.current_prescription).setVisibility(GONE);
         }
-        nearby_location_patient.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+//        nearby_location_patient.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        nearby_location_patient.setLayoutManager(layoutManager);
+
+// Attach a PagerSnapHelper for carousel-like snapping
+        PagerSnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(nearby_location_patient);
 
         fetchNearbyPharmacyFromApi(token, nearby_location_patient);
 
@@ -95,11 +116,6 @@ public class MedicineFragment extends Fragment {
                     try {
                         NearbyPharmacyResponse nearbyPharmacyResponse = response.body();
                         List<PharmacyMap> nearbyPharmacies = nearbyPharmacyResponse.getPharmacy_map();
-
-                        for(PharmacyMap pharmacy : nearbyPharmacies){
-
-                            Toast.makeText(getContext(), pharmacy.getPharmacy_name(), Toast.LENGTH_SHORT).show();
-                        }
 
                         NearbyPharmacyAdapter adapter = new NearbyPharmacyAdapter(nearbyPharmacies, getContext());
 

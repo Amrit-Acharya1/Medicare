@@ -297,7 +297,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    // Add this to your LoginActivity or MainActivity
     private void requestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this,
