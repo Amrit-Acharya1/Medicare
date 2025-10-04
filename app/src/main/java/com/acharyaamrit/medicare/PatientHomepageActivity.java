@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.acharyaamrit.medicare.api.ApiClient;
 import com.acharyaamrit.medicare.api.ApiService;
@@ -24,6 +25,7 @@ import com.acharyaamrit.medicare.model.response.UserResponse;
 import com.acharyaamrit.medicare.model.patientModel.CurrentPreciption;
 import com.acharyaamrit.medicare.model.patientModel.Preciption;
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -37,6 +39,8 @@ public class PatientHomepageActivity extends AppCompatActivity {
 
     private LottieAnimationView lottieAnimationView;
     private final AtomicInteger pendingApiCalls = new AtomicInteger(2);
+
+    private SwipeRefreshLayout swipeRefreshLayout;
     private boolean isInitialized = false;
 
     @Override
@@ -60,6 +64,16 @@ public class PatientHomepageActivity extends AppCompatActivity {
             navigateToLogin();
             return;
         }
+
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            pendingApiCalls.set(2);
+            fetchCurrentPrescription(token);
+            fetchRoutineMedicine(token);
+            runOnUiThread(this::loadHomeFragment);
+            swipeRefreshLayout.setRefreshing(false);
+        });
 
         // Start both API calls
         fetchCurrentPrescription(token);
@@ -104,7 +118,9 @@ public class PatientHomepageActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.qr_button).setOnClickListener(v -> {
-            // Handle QR button click
+            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+            bottomSheetDialog.setContentView(R.layout.item_bottom_sheet_qr);
+            bottomSheetDialog.show();
         });
 
         findViewById(R.id.medicine_button).setOnClickListener(v -> {

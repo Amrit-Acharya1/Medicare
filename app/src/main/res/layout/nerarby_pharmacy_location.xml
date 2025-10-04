@@ -45,6 +45,8 @@
             android:layout_height="wrap_content"/>
 
         <LinearLayout
+            android:layout_gravity="center"
+            android:gravity="center"
             android:weightSum="2"
             android:layout_marginTop="@dimen/_11sdp"
             android:layout_marginHorizontal="@dimen/_4sdp"

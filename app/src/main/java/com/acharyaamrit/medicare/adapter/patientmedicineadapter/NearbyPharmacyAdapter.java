@@ -1,5 +1,8 @@
 package com.acharyaamrit.medicare.adapter.patientmedicineadapter;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -10,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,6 +61,22 @@ public class NearbyPharmacyAdapter extends RecyclerView.Adapter<NearbyPharmacyAd
                 Toast.makeText(v.getContext(), "visiting", Toast.LENGTH_SHORT).show();
             }
         });
+
+        if (pharmacyMap.getContact() != null && !pharmacyMap.getContact().isEmpty()) {
+            // Show call button
+            holder.pharmacy_call_btn.setVisibility(View.VISIBLE);
+            // Restore normal weights
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) holder.pharmacy_visit_btn.getLayoutParams();
+            params.weight = 1;
+            holder.pharmacy_visit_btn.setLayoutParams(params);
+        } else {
+            // Hide call button
+            holder.pharmacy_call_btn.setVisibility(View.GONE);
+            // Make visit button full width
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) holder.pharmacy_visit_btn.getLayoutParams();
+            params.weight = 2;
+            holder.pharmacy_visit_btn.setLayoutParams(params);
+        }
 
         holder.pharmacy_call_btn.setOnClickListener(v -> {
             if (pharmacyMap.getContact() != null) {
