@@ -68,7 +68,7 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:backgroundTint="@color/green"
+                    android:backgroundTint="@color/blue"
                     app:cardCornerRadius="50dp">
 
                     <ImageView
@@ -79,6 +79,7 @@
                         android:visibility="invisible" />
 
                     <TextView
+                        android:id="@+id/iconText"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
@@ -96,6 +97,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/inter_semibold"
@@ -104,12 +106,14 @@
                         android:textSize="@dimen/_14sdp" />
 
                     <TextView
+                        android:id="@+id/pid"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/inter"
                         android:text="PID: P12345"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_10sdp" />
+
                 </LinearLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout

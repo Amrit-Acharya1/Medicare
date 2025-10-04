@@ -15,12 +15,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.acharyaamrit.medicare.adapter.AfternoonAdapter;
 import com.acharyaamrit.medicare.adapter.EveningAdapter;
 import com.acharyaamrit.medicare.adapter.MorningAdapter;
 import com.acharyaamrit.medicare.adapter.NightAdapter;
+import com.acharyaamrit.medicare.database.DatabaseHelper;
+import com.acharyaamrit.medicare.model.Patient;
 import com.acharyaamrit.medicare.model.RoutineMedicineResponse;
 import com.acharyaamrit.medicare.model.patientModel.Medicine;
 import com.acharyaamrit.medicare.model.patientModel.RoutineMedicine;
@@ -41,9 +44,25 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+        DatabaseHelper dbHelper = new DatabaseHelper(getContext());
 
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
         String routineJson = sharedPreferences.getString("routine_medicine_data", null);
+        String token = sharedPreferences.getString("token", null);
+        Patient patient = dbHelper.getPatientByToken(token);
+
+        if(patient !=null){
+           TextView name = view.findViewById(R.id.name);
+           name.setText(patient.getName());
+
+           TextView pid = view.findViewById(R.id.pid);
+           pid.setText("PID: "+ patient.getPatient_id());
+
+           TextView iconText = view.findViewById(R.id.iconText);
+           iconText.setText(String.valueOf((patient.getName()).charAt(0)));
+
+        }
+
 
         RecyclerView morningRecycler = view.findViewById(R.id.morningRecycler);
         RecyclerView afternoonRecycler = view.findViewById(R.id.afternoonRecycler);

@@ -100,7 +100,7 @@ public class ProfileFragment extends Fragment {
            address.setText(patient.getAddress() !=null  ? patient.getAddress(): "xxxx");
            age.setText(patient.getDob() != null ? calculateAge(patient.getDob()): "xxxx");
            blood_group.setText(patient.getBlood_group() !=null  ? patient.getBlood_group(): "xxxx");
-           gender.setText(patient.getGender() !=null  ? patient.getGender(): "xxxx");
+           gender.setText(patient.getGender() !=null  ? (patient.getGender().equals("1") ?"Male" : "Female"): "xxxx");
            email.setText(patient.getEmail()!=null  ? patient.getEmail(): "xxxx");
            contact.setText(patient.getContact()!=null  ? patient.getContact(): "xxxx");
            dob.setText(patient.getDob()!=null  ? patient.getDob(): "xxxx");

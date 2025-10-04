@@ -67,7 +67,7 @@ public class PatientHomepageActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                lottieAnimationView.setVisibility(GONE);
+
 
                 findViewById(R.id.home_button_background)
                         .setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bottom_selected_back));
@@ -121,8 +121,9 @@ public class PatientHomepageActivity extends AppCompatActivity {
                             .commit();
 
                 });
+                lottieAnimationView.setVisibility(GONE);
             }
-        }, 1000);
+        }, 1500);
 
 
     }
