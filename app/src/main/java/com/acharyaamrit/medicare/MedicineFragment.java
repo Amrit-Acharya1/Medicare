@@ -23,6 +23,7 @@ import com.acharyaamrit.medicare.adapter.patientmedicineadapter.NearbyPharmacyAd
 import com.acharyaamrit.medicare.api.ApiClient;
 import com.acharyaamrit.medicare.api.ApiService;
 import com.acharyaamrit.medicare.database.DatabaseHelper;
+import com.acharyaamrit.medicare.model.Patient;
 import com.acharyaamrit.medicare.model.patientModel.PharmacyMap;
 import com.acharyaamrit.medicare.model.response.CurrentPreciptionResponse;
 import com.acharyaamrit.medicare.model.patientModel.CurrentPreciption;
@@ -37,7 +38,7 @@ import retrofit2.Response;
 
 
 public class MedicineFragment extends Fragment {
-    private TextView doctor_name, totalPrice;
+    private TextView doctor_name, totalPrice, name, pid;
 
     public MedicineFragment() {
         // Required empty public constructor
@@ -54,6 +55,8 @@ public class MedicineFragment extends Fragment {
 
         doctor_name = view.findViewById(R.id.doctor_name);
         totalPrice = view.findViewById(R.id.totalPrice);
+        name = view.findViewById(R.id.name);
+        pid = view.findViewById(R.id.pid);
 
 
 
@@ -61,8 +64,17 @@ public class MedicineFragment extends Fragment {
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
         String token = sharedPreferences.getString("token", null);
 
+
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         TextView total_price = view.findViewById(R.id.totalPrice);
+
+        Patient patient = dbHelper2.getPatientByToken(token);
+
+        if(patient != null){
+            name.setText(patient.getName());
+            pid.setText("PID: "+ String.valueOf(patient.getPatient_id()));
+        }
 
 
         CurrentPreciptionResponse currentPreciptionResponse = dbHelper2.getCurrentPreciptionWithItems();
@@ -78,6 +90,9 @@ public class MedicineFragment extends Fragment {
             adapter.notifyDataSetChanged();
 
             doctor_name.setText(String.format("Prescribed by Dr. %s", currentPreciption.getDoctor_name()));
+
+
+
 
             double totalPrice = 0;
 

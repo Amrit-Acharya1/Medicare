@@ -1,0 +1,38 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center"
+    android:background="@drawable/bottom_sheet_dialouge"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:fontFamily="@font/inter_semibold"
+        android:id="@+id/qr_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your QR Code"
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="16dp"/>
+
+    <ImageView
+        android:src="@drawable/qr_code_icon"
+        android:id="@+id/qr_image"
+        android:layout_width="@dimen/_200sdp"
+        android:layout_height="@dimen/_200sdp"
+        android:scaleType="fitCenter"
+        android:background="#f0f0f0"/>
+
+    <Button
+        android:layout_marginHorizontal="@dimen/_12sdp"
+        android:fontFamily="@font/inter_semibold"
+        android:textColor="@color/white"
+        android:background="@drawable/call_background"
+        android:id="@+id/share_qr_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Download Qr"
+        android:layout_marginTop="16dp"/>
+</LinearLayout>
