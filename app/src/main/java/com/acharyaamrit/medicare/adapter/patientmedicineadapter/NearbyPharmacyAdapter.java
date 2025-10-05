@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +19,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.acharyaamrit.medicare.MapFragment;
 import com.acharyaamrit.medicare.R;
 import com.acharyaamrit.medicare.model.patientModel.PharmacyMap;
 
@@ -64,9 +69,25 @@ public class NearbyPharmacyAdapter extends RecyclerView.Adapter<NearbyPharmacyAd
         holder.pharmacy_visit_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(v.getContext(), "visiting", Toast.LENGTH_SHORT).show();
+                AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                Fragment MapFragment = new MapFragment();
+
+                Bundle bundle = new Bundle();
+                bundle.putString("pharmacy_name", pharmacyMap.getPharmacy_name());
+                bundle.putString("latitude", pharmacyMap.getLat());
+                bundle.putString("longitude", pharmacyMap.getLongt());
+
+                MapFragment.setArguments(bundle);
+
+
+                activity.getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragmentContainer, MapFragment)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
+
 
         if (pharmacyMap.getContact() != null && !pharmacyMap.getContact().isEmpty()) {
             // Show call button

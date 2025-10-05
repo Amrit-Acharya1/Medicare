@@ -42,7 +42,7 @@ public class CurrentPrescriptionAdapter extends RecyclerView.Adapter<CurrentPres
         holder.textMedicineDoseUnit.setText(currentPrescription.getDoasage_unit());
         holder.textDosageFrequency.setText(currentPrescription.getFrequency());
         holder.textManufacturer.setText(currentPrescription.getCompany_name());
-        holder.medicineQty.setText(currentPrescription.getQty());
+        holder.medicineQty.setText("X" + currentPrescription.getQty());
         holder.medicinePrice.setText(currentPrescription.getPrice());
 
     }

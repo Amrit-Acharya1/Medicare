@@ -234,6 +234,16 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_12sdp"
                     android:nestedScrollingEnabled="false" />
+                <com.airbnb.lottie.LottieAnimationView
+                    android:layout_marginTop="@dimen/_30sdp"
+                    android:translationZ="1dp"
+                    android:id="@+id/loading_map"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
+                    app:lottie_rawRes="@raw/loadingmap"
+                    android:layout_gravity="center" />
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
