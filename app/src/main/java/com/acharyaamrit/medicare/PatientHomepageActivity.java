@@ -376,9 +376,9 @@ public class PatientHomepageActivity extends AppCompatActivity {
                     }
                 }
 
-                if (successCount > 0) {
-                    showToast(successCount + " prescription items saved successfully");
-                }
+//                if (successCount > 0) {
+//                    showToast(successCount + " prescription items saved successfully");
+//                }
             }
         } catch (Exception e) {
             showToast("Error processing data: " + e.getMessage());
