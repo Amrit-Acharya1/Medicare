@@ -7,21 +7,31 @@ public class PharmacyMap {
     private String contact;
     private String lat;
     private String longt;
+    private String description;
     private String distance;
     private String self;
 
-    public PharmacyMap(String id, String user_id, String pharmacy_name, String contact, String lat, String longt, String distance, String self) {
+    public PharmacyMap(String id, String user_id, String pharmacy_name, String contact, String lat, String longt,String description, String distance, String self) {
         this.id = id;
         this.user_id = user_id;
         this.pharmacy_name = pharmacy_name;
         this.contact = contact;
         this.lat = lat;
         this.longt = longt;
+        this.description = description;
         this.distance = distance;
         this.self = self;
     }
 
     public PharmacyMap() {
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getId() {

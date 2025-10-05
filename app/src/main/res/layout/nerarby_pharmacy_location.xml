@@ -4,7 +4,7 @@
     android:layout_width="@dimen/_190sdp"
     android:layout_height="wrap_content"
     app:cardCornerRadius="12dp"
-    android:layout_margin="@dimen/_4sdp"
+    android:layout_margin="@dimen/_15sdp"
     android:backgroundTint="#F8FAFF"
     app:cardElevation="4dp">
 
@@ -34,15 +34,15 @@
             android:layout_height="wrap_content"/>
 
         <TextView
-            android:id="@+id/pharmacy_distance"
+            android:id="@+id/pharmacy_description"
             android:maxWidth="@dimen/_140sdp"
             android:layout_marginTop="@dimen/_8sdp"
             android:textSize="@dimen/_12sdp"
             android:fontFamily="@font/inter"
             android:textColor="@color/black"
-            android:text="0.5 km"
+            android:text="This is the pharmacy of surya."
+            android:maxLines="2"
             android:drawablePadding="@dimen/_8sdp"
-            android:drawableLeft="@drawable/location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
