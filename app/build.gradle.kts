@@ -57,4 +57,7 @@ dependencies {
 
     implementation("com.google.zxing:core:3.5.2")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+
+    implementation("org.osmdroid:osmdroid-android:6.1.14")
+    implementation("org.osmdroid:osmdroid-mapsforge:6.1.14")
 }

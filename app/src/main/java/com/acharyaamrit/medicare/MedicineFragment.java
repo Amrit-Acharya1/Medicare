@@ -2,6 +2,7 @@ package com.acharyaamrit.medicare;
 
 import static android.content.Context.MODE_PRIVATE;
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
@@ -29,6 +30,7 @@ import com.acharyaamrit.medicare.model.response.CurrentPreciptionResponse;
 import com.acharyaamrit.medicare.model.patientModel.CurrentPreciption;
 import com.acharyaamrit.medicare.model.patientModel.Preciption;
 import com.acharyaamrit.medicare.model.response.NearbyPharmacyResponse;
+import com.airbnb.lottie.LottieAnimationView;
 
 import java.util.List;
 
@@ -39,11 +41,12 @@ import retrofit2.Response;
 
 public class MedicineFragment extends Fragment {
     private TextView doctor_name, totalPrice, name, pid;
+    private LottieAnimationView lottieAnimationView;
 
     public MedicineFragment() {
         // Required empty public constructor
     }
-    @SuppressLint("NotifyDataSetChanged")
+    @SuppressLint({"NotifyDataSetChanged", "CutPasteId"})
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -52,18 +55,19 @@ public class MedicineFragment extends Fragment {
 
         RecyclerView recyclerView = view.findViewById(R.id.currentPrescription_medicine);
         RecyclerView nearby_location_patient = view.findViewById(R.id.nearby_location_patient);
+        lottieAnimationView = view.findViewById(R.id.loading_map);
+
 
         doctor_name = view.findViewById(R.id.doctor_name);
         totalPrice = view.findViewById(R.id.totalPrice);
         name = view.findViewById(R.id.name);
         pid = view.findViewById(R.id.pid);
 
-
+        nearby_location_patient.setVisibility(GONE);
 
         DatabaseHelper dbHelper2 = new DatabaseHelper(getContext());
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
         String token = sharedPreferences.getString("token", null);
-
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -136,6 +140,8 @@ public class MedicineFragment extends Fragment {
 
                         nearby_location_patient.setAdapter(adapter);
                         adapter.notifyDataSetChanged();
+                        nearby_location_patient.setVisibility(VISIBLE);
+                        lottieAnimationView.setVisibility(GONE);
 
                     }catch (Exception e){}
                 }
