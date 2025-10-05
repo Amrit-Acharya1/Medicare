@@ -3,13 +3,26 @@ package com.acharyaamrit.medicare;
 import static android.view.View.GONE;
 
 import android.app.AlertDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -19,6 +32,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.acharyaamrit.medicare.api.ApiClient;
 import com.acharyaamrit.medicare.api.ApiService;
 import com.acharyaamrit.medicare.database.DatabaseHelper;
+import com.acharyaamrit.medicare.model.Patient;
 import com.acharyaamrit.medicare.model.response.CurrentPreciptionResponse;
 import com.acharyaamrit.medicare.model.response.RoutineMedicineResponse;
 import com.acharyaamrit.medicare.model.response.UserResponse;
@@ -27,7 +41,15 @@ import com.acharyaamrit.medicare.model.patientModel.Preciption;
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -118,9 +140,10 @@ public class PatientHomepageActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.qr_button).setOnClickListener(v -> {
-            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
-            bottomSheetDialog.setContentView(R.layout.item_bottom_sheet_qr);
-            bottomSheetDialog.show();
+            showQrBottomSheet();
+//            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+//            bottomSheetDialog.setContentView(R.layout.item_bottom_sheet_qr);
+//            bottomSheetDialog.show();
         });
 
         findViewById(R.id.medicine_button).setOnClickListener(v -> {
@@ -137,6 +160,126 @@ public class PatientHomepageActivity extends AppCompatActivity {
                     .commit();
         });
     }
+
+    private void showQrBottomSheet() {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+        bottomSheetDialog.setContentView(R.layout.item_bottom_sheet_qr);
+
+        ImageView qrImage = bottomSheetDialog.findViewById(R.id.qr_image);
+        Button downloadQr = bottomSheetDialog.findViewById(R.id.download_qr_button);
+
+        // Generate QR data (example)
+        SharedPreferences sharedPreferences = getSharedPreferences("user_preference", MODE_PRIVATE);
+        String token = sharedPreferences.getString("token", "unknown");
+        DatabaseHelper dbhelper = new DatabaseHelper(this);
+        Patient patient = dbhelper.getPatientByToken(token);
+        String qrData = "https://medicare.kritishmovie.xyz/api/patient/" + patient.getId();
+
+        // Generate the QR code
+        Bitmap bitmap = generateQRCode(qrData);
+        if (qrImage != null && bitmap != null) {
+            qrImage.setImageBitmap(bitmap);
+        }
+
+        // Handle download button click
+        if (downloadQr != null && bitmap != null) {
+            downloadQr.setOnClickListener(v -> {
+                saveQRCodeToGallery(bitmap);
+            });
+        }
+
+        bottomSheetDialog.show();
+    }
+
+    private void saveQRCodeToGallery(Bitmap bitmap) {
+        if (bitmap == null) {
+            Toast.makeText(this, "Invalid QR code image", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String filename = "QRCode_" + System.currentTimeMillis() + ".png";
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                saveQRCodeModern(bitmap, filename);
+            } else {
+                saveQRCodeLegacy(bitmap, filename);
+            }
+        } catch (IOException e) {
+            Toast.makeText(this, "Failed to save QR: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    private void saveQRCodeModern(Bitmap bitmap, String filename) throws IOException {
+        ContentResolver resolver = getContentResolver();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, filename);
+        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png");
+        contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH,
+                Environment.DIRECTORY_PICTURES + "/MedicareQR");
+
+        Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+        if (imageUri == null) {
+            throw new IOException("Failed to create media store entry");
+        }
+
+        try (OutputStream fos = resolver.openOutputStream(imageUri)) {
+            if (fos == null) {
+                throw new IOException("Failed to open output stream");
+            }
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        }
+
+        Toast.makeText(this, "QR Code saved to gallery", Toast.LENGTH_SHORT).show();
+    }
+
+    @SuppressWarnings("deprecation")
+    private void saveQRCodeLegacy(Bitmap bitmap, String filename) throws IOException {
+        String imagesDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES).toString() + "/MedicareQR";
+        File dir = new File(imagesDir);
+        if (!dir.exists() && !dir.mkdirs()) {
+            throw new IOException("Failed to create directory");
+        }
+
+        File imageFile = new File(dir, filename);
+        try (OutputStream fos = new FileOutputStream(imageFile)) {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        }
+
+        // Use MediaScannerConnection instead of deprecated broadcast
+        MediaScannerConnection.scanFile(this,
+                new String[]{imageFile.getAbsolutePath()},
+                new String[]{"image/png"},
+                null);
+
+        Toast.makeText(this, "QR Code saved to gallery", Toast.LENGTH_SHORT).show();
+    }
+
+
+
+    private Bitmap generateQRCode(String text) {
+        QRCodeWriter writer = new QRCodeWriter();
+        try {
+            BitMatrix bitMatrix = writer.encode(text, BarcodeFormat.QR_CODE, 512, 512);
+            int width = bitMatrix.getWidth();
+            int height = bitMatrix.getHeight();
+            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    bitmap.setPixel(x, y, bitMatrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
+                }
+            }
+
+            return bitmap;
+        } catch (WriterException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
     /**
      * Load home fragment and set as selected

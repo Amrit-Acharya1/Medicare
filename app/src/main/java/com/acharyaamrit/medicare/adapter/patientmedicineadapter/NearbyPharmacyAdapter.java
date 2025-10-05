@@ -50,6 +50,12 @@ public class NearbyPharmacyAdapter extends RecyclerView.Adapter<NearbyPharmacyAd
         PharmacyMap pharmacyMap = pharmacyMapList.get(position);
         holder.pharmacy_name.setText(pharmacyMap.getPharmacy_name());
 
+        String self = pharmacyMap.getSelf();
+
+        if(self.equals("1")){
+            holder.pharmacy_star.setVisibility(VISIBLE);
+        }
+
         //converted to km
         String distance = pharmacyMap.getDistance();
         String formatted = distance.length() > 4 ? distance.substring(0, 4) : distance;
@@ -99,6 +105,7 @@ public class NearbyPharmacyAdapter extends RecyclerView.Adapter<NearbyPharmacyAd
         ImageView pharmacy_image;
         TextView pharmacy_name;
         TextView pharmacy_distance;
+        ImageView pharmacy_star;
         AppCompatButton pharmacy_visit_btn;
         AppCompatButton pharmacy_call_btn;
 
@@ -111,6 +118,7 @@ public class NearbyPharmacyAdapter extends RecyclerView.Adapter<NearbyPharmacyAd
             pharmacy_distance = itemView.findViewById(R.id.pharmacy_distance);
             pharmacy_visit_btn = itemView.findViewById(R.id.pharmacy_visit_btn);
             pharmacy_call_btn = itemView.findViewById(R.id.pharmacy_call_btn);
+            pharmacy_star = itemView.findViewById(R.id.pharmacy_star_icon);
 
         }
 

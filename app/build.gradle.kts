@@ -54,4 +54,7 @@ dependencies {
 
     implementation("com.airbnb.android:lottie:6.4.1")
     implementation("com.github.bumptech.glide:glide:5.0.5")
+
+    implementation("com.google.zxing:core:3.5.2")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 }

@@ -5,8 +5,10 @@
     android:layout_height="wrap_content"
     app:cardCornerRadius="12dp"
     android:layout_margin="@dimen/_4sdp"
+    android:backgroundTint="#F8FAFF"
     app:cardElevation="4dp">
 
+    <!-- Existing LinearLayout (content) -->
     <LinearLayout
         android:orientation="vertical"
         android:padding="@dimen/_12sdp"
@@ -81,5 +83,19 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <!-- New: Orange/Yellow Star Overlay in Top-Right -->
+    <ImageView
+        android:id="@+id/pharmacy_star_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:layout_marginEnd="@dimen/_8sdp"
+        android:src="@android:drawable/btn_star_big_off"
+        android:tint="#FF9800"
+        android:scaleType="fitXY"
+        android:alpha="0.9" />  <!-- Optional: Slight transparency for subtlety -->
 
 </androidx.cardview.widget.CardView>
