@@ -7,6 +7,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,7 +29,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.acharyaamrit.medicare.MapFragment;
 import com.acharyaamrit.medicare.R;
+import com.acharyaamrit.medicare.database.DatabaseHelper;
+import com.acharyaamrit.medicare.model.Patient;
 import com.acharyaamrit.medicare.model.patientModel.PharmacyMap;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.List;
 
@@ -69,22 +73,88 @@ public class NearbyPharmacyAdapter extends RecyclerView.Adapter<NearbyPharmacyAd
         holder.pharmacy_visit_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppCompatActivity activity = (AppCompatActivity) v.getContext();
-                Fragment MapFragment = new MapFragment();
+                // Create bottom sheet dialog
+                BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(v.getContext());
+                View bottomSheetView = LayoutInflater.from(v.getContext()).inflate(R.layout.item_choose_map, null);
+                bottomSheetDialog.setContentView(bottomSheetView);
 
-                Bundle bundle = new Bundle();
-                bundle.putString("pharmacy_name", pharmacyMap.getPharmacy_name());
-                bundle.putString("latitude", pharmacyMap.getLat());
-                bundle.putString("longitude", pharmacyMap.getLongt());
+                // Find buttons in bottom sheet
+                View inAppMapBtn = bottomSheetView.findViewById(R.id.btnInAppMap);
+                View googleMapBtn = bottomSheetView.findViewById(R.id.btnGoogleMap);
 
-                MapFragment.setArguments(bundle);
+                // Get patient location from SharedPreferences
+                SharedPreferences sharedPreferences = v.getContext().getSharedPreferences("user_preference", Context.MODE_PRIVATE);
+                String token = sharedPreferences.getString("token", null);
 
+                DatabaseHelper dbHelper = new DatabaseHelper(v.getContext());
+                Patient patient = dbHelper.getPatientByToken(token);
 
-                activity.getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragmentContainer, MapFragment)
-                        .addToBackStack(null)
-                        .commit();
+                String patientLat = patient.getLat();
+                String patientLon = patient.getLongt();
+                String pharmacyLat = pharmacyMap.getLat();
+                String pharmacyLon = pharmacyMap.getLongt();
+                String pharmacyName = pharmacyMap.getPharmacy_name();
+
+                // In-App Map Button Click
+                inAppMapBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        bottomSheetDialog.dismiss();
+
+                        AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                        Fragment mapFragment = new MapFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("pharmacy_name", pharmacyName);
+                        bundle.putString("latitude", pharmacyLat);
+                        bundle.putString("longitude", pharmacyLon);
+                        mapFragment.setArguments(bundle);
+
+                        activity.getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.fragmentContainer, mapFragment)
+                                .addToBackStack(null)
+                                .commit();
+                    }
+                });
+
+                // Google Map Button Click
+                googleMapBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        bottomSheetDialog.dismiss();
+
+                        if (patientLat != null && patientLon != null) {
+                            // Open Google Maps with directions from patient location to pharmacy
+                            String uri = String.format(
+                                    "https://www.google.com/maps/dir/?api=1&origin=%s,%s&destination=%s,%s&travelmode=driving",
+                                    patientLat, patientLon, pharmacyLat, pharmacyLon
+                            );
+
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                            intent.setPackage("com.google.android.apps.maps");
+
+                            // Check if Google Maps is installed
+                            if (intent.resolveActivity(v.getContext().getPackageManager()) != null) {
+                                v.getContext().startActivity(intent);
+                            } else {
+                                // If Google Maps not installed, open in browser
+                                intent.setPackage(null);
+                                v.getContext().startActivity(intent);
+                            }
+                        } else {
+                            // If patient location not available, just show pharmacy location
+                            String uri = String.format(
+                                    "https://www.google.com/maps/search/?api=1&query=%s,%s",
+                                    pharmacyLat, pharmacyLon
+                            );
+
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                            v.getContext().startActivity(intent);
+                        }
+                    }
+                });
+
+                bottomSheetDialog.show();
             }
         });
 

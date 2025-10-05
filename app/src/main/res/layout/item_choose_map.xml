@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/_16sdp">
+
+    <TextView
+        android:textAlignment="center"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:textSize="@dimen/_16sdp"
+        android:fontFamily="@font/inter_semibold"
+        android:textColor="@color/black"
+        android:text="Choose Map"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:layout_marginTop="@dimen/_8sdp"
+        android:textAlignment="center"
+        android:text="Choose the map with your choice."
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <!-- Horizontal Layout for Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/_24sdp"
+        android:gravity="center"
+        android:weightSum="2">
+
+        <!-- In-App Map Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnInAppMap"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_48sdp"
+            android:layout_weight="1"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:text="In-App Map"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp"
+            android:background="@drawable/visit_background"
+            android:fontFamily="@font/inter_semibold"
+            android:backgroundTint="@color/black"
+            android:drawablePadding="@dimen/_4sdp"
+            android:padding="@dimen/_8sdp"/>
+
+        <!-- Google Map Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnGoogleMap"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_48sdp"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:text="Google Map"
+            android:textAllCaps="false"
+            android:background="@drawable/call_background"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp"
+            android:fontFamily="@font/inter_semibold"
+            android:drawablePadding="@dimen/_4sdp"
+            android:padding="@dimen/_8sdp"/>
+
+    </LinearLayout>
+
+</LinearLayout>
