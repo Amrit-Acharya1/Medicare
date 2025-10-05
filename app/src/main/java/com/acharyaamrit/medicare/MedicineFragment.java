@@ -5,9 +5,11 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
@@ -42,6 +44,7 @@ import retrofit2.Response;
 public class MedicineFragment extends Fragment {
     private TextView doctor_name, totalPrice, name, pid;
     private LottieAnimationView lottieAnimationView;
+    private ConstraintLayout notificationButton;
 
     public MedicineFragment() {
         // Required empty public constructor
@@ -62,6 +65,8 @@ public class MedicineFragment extends Fragment {
         totalPrice = view.findViewById(R.id.totalPrice);
         name = view.findViewById(R.id.name);
         pid = view.findViewById(R.id.pid);
+        notificationButton = view.findViewById(R.id.notificationButton);
+
 
         nearby_location_patient.setVisibility(GONE);
 
@@ -69,6 +74,14 @@ public class MedicineFragment extends Fragment {
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
         String token = sharedPreferences.getString("token", null);
 
+        notificationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), NotificationActivity.class);
+                intent.putExtra("token", token);
+                startActivity(intent);
+            }
+        });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         TextView total_price = view.findViewById(R.id.totalPrice);
