@@ -488,4 +488,12 @@ public class PatientHomepageActivity extends AppCompatActivity {
                 .setPositiveButton("OK", null)
                 .show());
     }
+
+    public void disableSwipeRefresh() {
+        swipeRefreshLayout.setEnabled(false);
+    }
+
+    public void enableSwipeRefresh() {
+        swipeRefreshLayout.setEnabled(true);
+    }
 }
