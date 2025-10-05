@@ -132,6 +132,9 @@ public class MapFragment extends Fragment {
             pharmacyMarker.setTitle(pharmacyName);
             pharmacyMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
             mapView.getOverlays().add(pharmacyMarker);
+
+            // Focus on pharmacy location initially
+            mapView.getController().animateTo(pharmacyLocation, USER_FOCUS_ZOOM, 800L);
         }
     }
 
@@ -372,6 +375,9 @@ public class MapFragment extends Fragment {
         if (mapView != null) {
             mapView.onResume();
         }
+        if (getActivity() instanceof PatientHomepageActivity) {
+            ((PatientHomepageActivity) getActivity()).disableSwipeRefresh();
+        }
     }
 
     @Override
@@ -379,6 +385,9 @@ public class MapFragment extends Fragment {
         super.onPause();
         if (mapView != null) {
             mapView.onPause();
+        }
+        if (getActivity() instanceof PatientHomepageActivity) {
+            ((PatientHomepageActivity) getActivity()).enableSwipeRefresh();
         }
     }
 
