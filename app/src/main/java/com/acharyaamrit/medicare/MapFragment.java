@@ -39,6 +39,7 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
+import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -108,6 +109,11 @@ public class MapFragment extends Fragment {
         // Configure map
         mapView.setBuiltInZoomControls(true);
         mapView.setMultiTouchControls(true);
+
+        // Enable rotation gestures
+        RotationGestureOverlay rotationGestureOverlay = new RotationGestureOverlay(mapView);
+        rotationGestureOverlay.setEnabled(true);
+        mapView.getOverlays().add(rotationGestureOverlay);
     }
 
     private void initializeServices() {
@@ -266,7 +272,6 @@ public class MapFragment extends Fragment {
         if (currentUserLocation != null) {
             // Animate to user location with higher zoom
             mapView.getController().animateTo(currentUserLocation, USER_FOCUS_ZOOM, 800L);
-            showToast("Centered on your location");
         } else {
             showToast("Location not available");
         }
