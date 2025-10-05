@@ -120,7 +120,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="@dimen/_16sdp">
+            android:paddingBottom="@dimen/_73sdp">
 
             <LinearLayout
                 android:id="@+id/current_prescription"
