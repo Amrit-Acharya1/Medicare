@@ -32,8 +32,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.acharyaamrit.medicare.api.ApiClient;
 import com.acharyaamrit.medicare.api.ApiService;
 import com.acharyaamrit.medicare.database.DatabaseHelper;
+import com.acharyaamrit.medicare.model.Notice;
 import com.acharyaamrit.medicare.model.Patient;
 import com.acharyaamrit.medicare.model.response.CurrentPreciptionResponse;
+import com.acharyaamrit.medicare.model.response.NoticeResponse;
 import com.acharyaamrit.medicare.model.response.RoutineMedicineResponse;
 import com.acharyaamrit.medicare.model.response.UserResponse;
 import com.acharyaamrit.medicare.model.patientModel.CurrentPreciption;
@@ -100,7 +102,10 @@ public class PatientHomepageActivity extends AppCompatActivity {
         // Start both API calls
         fetchCurrentPrescription(token);
         fetchRoutineMedicine(token);
+        fetchNotices(token);
     }
+
+
 
     /**
      * Called when an API call completes (success or failure)
@@ -308,6 +313,54 @@ public class PatientHomepageActivity extends AppCompatActivity {
                 .setBackground(ContextCompat.getDrawable(this, R.drawable.bottom_selected_back));
     }
 
+
+
+
+    private void fetchNotices(String token) {
+        try {
+            ApiService apiService = ApiClient.getClient().create(ApiService.class);
+            Call<NoticeResponse> call = apiService.getNotices("Bearer " + token);
+
+            call.enqueue(new Callback<NoticeResponse>() {
+                @Override
+                public void onResponse(Call<NoticeResponse> call, Response<NoticeResponse> response) {
+                    try {
+                        if (response.isSuccessful() && response.body() != null) {
+                            List<Notice> notices = response.body().getNotice();
+
+
+                            if (notices != null && !notices.isEmpty()) {
+                                // Execute database operations on background thread
+                                new Thread(() -> {
+                                    DatabaseHelper dbHelper = null;
+                                    try {
+                                        dbHelper = new DatabaseHelper(getApplicationContext());
+                                        dbHelper.deleteNotice();
+                                        dbHelper.insertNoticesBatchSafe(dbHelper, notices);
+                                    } finally {
+                                        if (dbHelper != null) {
+                                            dbHelper.close();
+                                        }
+                                    }
+                                }).start();
+                            }
+                        }
+                    } catch (Exception e) {
+                    } finally {
+                        onApiCallComplete();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<NoticeResponse> call, Throwable t) {
+                    onApiCallComplete();
+                }
+            });
+
+        } catch (Exception e) {
+            onApiCallComplete();
+        }
+    }
     /**
      * Fetch current prescription from API
      */

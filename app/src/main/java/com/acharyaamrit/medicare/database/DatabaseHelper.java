@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.acharyaamrit.medicare.model.Clicnic;
+import com.acharyaamrit.medicare.model.Notice;
 import com.acharyaamrit.medicare.model.response.CurrentPreciptionResponse;
 import com.acharyaamrit.medicare.model.Doctor;
 import com.acharyaamrit.medicare.model.Patient;
@@ -115,6 +116,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL(CREATE_PRESCRIPTION_ITEMS_TABLE);
 
+
+
+        String createNoticeTable = "CREATE TABLE notice (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "title TEXT," +
+                "description INTEGER," +
+                "thumbnail TEXT," +
+                "published_at TEXT," +
+                "expires_at TEXT," +
+                "popup INTEGER)";
+        db.execSQL(createNoticeTable);
+
 //
 //        String CREATE_ROUTINE_MEDICINE_TABLE = "CREATE TABLE routine_medicine (" +
 //                "id INTEGER PRIMARY KEY," +
@@ -134,6 +147,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS clinic");
         db.execSQL("DROP TABLE IF EXISTS current_prescriptions");
         db.execSQL("DROP TABLE IF EXISTS prescription_items");
+        db.execSQL("DROP TABLE IF EXISTS notice");
+
 //        db.execSQL("DROP TABLE IF EXISTS routine_medicine");
 
         onCreate(db);
@@ -515,5 +530,77 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //
 //        return data;
 //    }
+
+
+
+    public void insertNoticesBatchSafe(DatabaseHelper dbHelper, List<Notice> notices) {
+        SQLiteDatabase db = null;
+        try {
+            db = dbHelper.getWritableDatabase();
+            db.beginTransaction();
+
+            for (int i = 0; i < notices.size(); i++) {
+                Notice notice = notices.get(i);
+                ContentValues values = new ContentValues();
+                values.put("title", notice.getTitle());
+                values.put("description",notice.getDescription());
+                values.put("thumbnail",notice.getThumbnail());
+                values.put("published_at",notice.getPublished_at());
+                values.put("expires_at",notice.getExpires_at());
+                values.put("popup",notice.getPopup());
+
+
+
+             long data =  db.insertWithOnConflict("notice", null, values,
+                        SQLiteDatabase.CONFLICT_REPLACE);
+
+            }
+
+            db.setTransactionSuccessful();
+
+        } catch (Exception e) {
+        } finally {
+            if (db != null && db.inTransaction()) {
+                db.endTransaction();
+            }
+        }
+    }
+
+    public void deleteNotice(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("notice", null, null);
+    }
+
+    public List<Notice> fetchAllNotice() {
+        List<Notice> noticeList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT * FROM notice";
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Notice notice = new Notice();
+                notice.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
+                notice.setTitle(cursor.getString(cursor.getColumnIndexOrThrow("title")));
+                notice.setDescription(cursor.getString(cursor.getColumnIndexOrThrow("description")));
+                notice.setThumbnail(cursor.getString(cursor.getColumnIndexOrThrow("thumbnail")));
+                notice.setPublished_at(cursor.getString(cursor.getColumnIndexOrThrow("published_at")));
+                notice.setExpires_at(cursor.getString(cursor.getColumnIndexOrThrow("expires_at")));
+
+                int popupInt = cursor.getInt(cursor.getColumnIndexOrThrow("popup"));
+                notice.setPopup(popupInt);
+
+                noticeList.add(notice);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+        return noticeList;
+    }
+
+
 
 }

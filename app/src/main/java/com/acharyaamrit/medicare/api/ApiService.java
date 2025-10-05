@@ -6,6 +6,7 @@ import com.acharyaamrit.medicare.model.OtpRequest;
 import com.acharyaamrit.medicare.model.OtpValidateRequest;
 import com.acharyaamrit.medicare.model.PasswordResetRequest;
 import com.acharyaamrit.medicare.model.response.NearbyPharmacyResponse;
+import com.acharyaamrit.medicare.model.response.NoticeResponse;
 import com.acharyaamrit.medicare.model.response.RoutineMedicineResponse;
 import com.acharyaamrit.medicare.model.UserRegisterRequest;
 import com.acharyaamrit.medicare.model.UserRequest;
@@ -60,6 +61,10 @@ public interface ApiService {
 
     @GET("getPharmacy")
     Call<NearbyPharmacyResponse> getNearbyPharmancy(
+            @Header("Authorization") String bearerToken
+    );
+    @GET("notices")
+    Call<NoticeResponse> getNotices(
             @Header("Authorization") String bearerToken
     );
 }
