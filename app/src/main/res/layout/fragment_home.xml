@@ -105,10 +105,9 @@
                 android:gravity="center"
                 android:minWidth="16dp"
                 android:minHeight="16dp"
-                android:paddingHorizontal="4dp"
-                android:paddingVertical="2dp"
-                android:text="12"
-                android:textColor="@color/white"
+                android:paddingHorizontal="1sp"
+                android:paddingVertical="1sp"
+                android:text=""
                 android:textSize="10sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
