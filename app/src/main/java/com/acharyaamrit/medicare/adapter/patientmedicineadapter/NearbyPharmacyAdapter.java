@@ -43,7 +43,7 @@ public class NearbyPharmacyAdapter extends RecyclerView.Adapter<NearbyPharmacyAd
     @Override
     public NearbyPharmacyAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.nerarby_pharmacy_location, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_nerarby_pharmacy_location, parent, false);
         return new NearbyPharmacyAdapter.ViewHolder(view);
     }
 

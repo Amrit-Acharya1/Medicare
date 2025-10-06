@@ -60,27 +60,22 @@
 
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/mark_as_read"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_12sdp"
-        android:layout_alignParentEnd="true"
-        android:fontFamily="@font/inter_semibold"
-        android:text="Mark as read"
-        android:textColor="@color/blue"
-        android:textSize="@dimen/_12sdp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout6" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:paddingTop="@dimen/_8sdp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mark_as_read"
-        tools:itemCount="5"
-        tools:listitem="@layout/item_notification_layout" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout6">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/notification_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

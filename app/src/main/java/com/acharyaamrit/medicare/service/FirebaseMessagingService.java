@@ -3,13 +3,25 @@ package com.acharyaamrit.medicare.service;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import com.acharyaamrit.medicare.R;
+import com.acharyaamrit.medicare.api.ApiClient;
+import com.acharyaamrit.medicare.api.ApiService;
+import com.acharyaamrit.medicare.database.DatabaseHelper;
+import com.acharyaamrit.medicare.model.Notice;
+import com.acharyaamrit.medicare.model.response.NoticeResponse;
 import com.google.firebase.messaging.RemoteMessage;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class FirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService {
 
@@ -29,6 +41,11 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
             String title = message.getNotification().getTitle();
             String body = message.getNotification().getBody();
             showNotification(title, body);
+
+            SharedPreferences sharedPreferences = getSharedPreferences("user_preference", MODE_PRIVATE);
+            String token = sharedPreferences.getString("token", null);
+
+            fetchNotices(token);
         }
 
 
@@ -38,6 +55,50 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         }
 
     }
+
+    private void fetchNotices(String token) {
+        try {
+            ApiService apiService = ApiClient.getClient().create(ApiService.class);
+            Call<NoticeResponse> call = apiService.getNotices("Bearer " + token);
+
+            call.enqueue(new Callback<NoticeResponse>() {
+                @Override
+                public void onResponse(Call<NoticeResponse> call, Response<NoticeResponse> response) {
+                    try {
+                        if (response.isSuccessful() && response.body() != null) {
+                            List<Notice> notices = response.body().getNotice();
+
+
+                            if (notices != null && !notices.isEmpty()) {
+                                // Execute database operations on background thread
+                                new Thread(() -> {
+                                    DatabaseHelper dbHelper = null;
+                                    try {
+                                        dbHelper = new DatabaseHelper(getApplicationContext());
+                                        dbHelper.deleteNotice();
+                                        dbHelper.insertNoticesBatchSafe(dbHelper, notices);
+                                    } finally {
+                                        if (dbHelper != null) {
+                                            dbHelper.close();
+                                        }
+                                    }
+                                }).start();
+                            }
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<NoticeResponse> call, Throwable t) {
+
+                }
+            });
+
+        } catch (Exception e) {
+        }
+    }
+
     private void showNotification(String title, String body) {
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

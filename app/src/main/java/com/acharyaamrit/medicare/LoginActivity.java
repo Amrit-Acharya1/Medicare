@@ -29,14 +29,18 @@ import com.acharyaamrit.medicare.api.ApiService;
 import com.acharyaamrit.medicare.database.DatabaseHelper;
 import com.acharyaamrit.medicare.model.Clicnic;
 import com.acharyaamrit.medicare.model.Doctor;
+import com.acharyaamrit.medicare.model.Notice;
 import com.acharyaamrit.medicare.model.Patient;
 import com.acharyaamrit.medicare.model.Pharmacy;
+import com.acharyaamrit.medicare.model.response.NoticeResponse;
 import com.acharyaamrit.medicare.model.response.UserResponse;
 import com.acharyaamrit.medicare.model.UserRequest;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -124,6 +128,51 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         login(email, password, deviceId);
+
+
+    }
+
+    private void fetchNotices(String token) {
+        try {
+            ApiService apiService = ApiClient.getClient().create(ApiService.class);
+            Call<NoticeResponse> call = apiService.getNotices("Bearer " + token);
+
+            call.enqueue(new Callback<NoticeResponse>() {
+                @Override
+                public void onResponse(Call<NoticeResponse> call, Response<NoticeResponse> response) {
+                    try {
+                        if (response.isSuccessful() && response.body() != null) {
+                            List<Notice> notices = response.body().getNotice();
+
+
+                            if (notices != null && !notices.isEmpty()) {
+                                // Execute database operations on background thread
+                                new Thread(() -> {
+                                    DatabaseHelper dbHelper = null;
+                                    try {
+                                        dbHelper = new DatabaseHelper(getApplicationContext());
+                                        dbHelper.deleteNotice();
+                                        dbHelper.insertNoticesBatchSafe(dbHelper, notices);
+                                    } finally {
+                                        if (dbHelper != null) {
+                                            dbHelper.close();
+                                        }
+                                    }
+                                }).start();
+                            }
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<NoticeResponse> call, Throwable t) {
+                }
+            });
+
+        } catch (Exception e) {
+
+        }
     }
 
     private void login(String email, String password, String deviceId) {
@@ -211,6 +260,7 @@ public class LoginActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         }
+                        fetchNotices(token);
                         finish();
                     } else {
                         try {
