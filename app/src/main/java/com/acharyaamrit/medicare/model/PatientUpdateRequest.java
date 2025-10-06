@@ -3,18 +3,28 @@ package com.acharyaamrit.medicare.model;
 public class PatientUpdateRequest {
     String name;
     String address;
+    String contact;
     String dob;
     int gender;
     String blood_group;
     String emergency_contact;
 
-    public PatientUpdateRequest(String name, String address, String dob, int gender, String blood_group, String emergency_contact) {
+    public PatientUpdateRequest(String name, String address, String contact, String dob, int gender, String blood_group, String emergency_contact) {
         this.name = name;
         this.address = address;
+        this.contact = contact;
         this.dob = dob;
         this.gender = gender;
         this.blood_group = blood_group;
         this.emergency_contact = emergency_contact;
+    }
+
+    public String getContact() {
+        return contact;
+    }
+
+    public void setContact(String contact) {
+        this.contact = contact;
     }
 
     public PatientUpdateRequest() {
