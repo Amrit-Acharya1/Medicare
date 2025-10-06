@@ -1,6 +1,7 @@
 package com.acharyaamrit.medicare.api;
 
 import com.acharyaamrit.medicare.model.ApiResponseTitleSuccess;
+import com.acharyaamrit.medicare.model.PatientUpdateRequest;
 import com.acharyaamrit.medicare.model.response.CurrentPreciptionResponse;
 import com.acharyaamrit.medicare.model.OtpRequest;
 import com.acharyaamrit.medicare.model.OtpValidateRequest;
@@ -67,4 +68,11 @@ public interface ApiService {
     Call<NoticeResponse> getNotices(
             @Header("Authorization") String bearerToken
     );
+
+    @PUT("update/patient")
+    Call<UserResponse> updatePatient(
+            @Header("Authorization") String bearerToken,
+            @Body PatientUpdateRequest request
+    );
+
 }

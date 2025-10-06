@@ -25,6 +25,7 @@ import com.acharyaamrit.medicare.api.ApiClient;
 import com.acharyaamrit.medicare.api.ApiService;
 import com.acharyaamrit.medicare.database.DatabaseHelper;
 import com.acharyaamrit.medicare.model.Patient;
+import com.acharyaamrit.medicare.model.PatientUpdateRequest;
 import com.acharyaamrit.medicare.model.response.UserResponse;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
@@ -196,9 +197,28 @@ public class ProfileFragment extends Fragment {
 
                         if (isValid) {
                             // Proceed with saving
-                            Toast.makeText(getContext(), "Profile updated", Toast.LENGTH_SHORT).show();
 
-                            updatePatientProfile(name, phone, dob, spinnerGender.getSelectedItem().toString(), spinnerBloodGroup.getSelectedItem().toString(), address, emergencyContactStr);
+                            String gender = spinnerGender.getSelectedItem().toString();
+
+                            int genderInt = 1;
+
+                            if (gender.equals("male")){
+                                genderInt = 1;
+                            }else{
+                                genderInt = 0;
+                            }
+                            updatePatientProfile(name, phone, dob, genderInt, spinnerBloodGroup.getSelectedItem().toString(), address, emergencyContactStr);
+                            fullName.setText("");
+                            phoneNumber.setText("");
+                            editTextDate.setText("");
+                            location.setText("");
+                            emergencyContact.setText("");
+                            spinnerGender.setSelection(0);
+                            spinnerBloodGroup.setSelection(0);
+
+
+
+                            bottomSheetDialog.dismiss();
                         }
                     }
                 });
@@ -227,41 +247,86 @@ public class ProfileFragment extends Fragment {
 
         });
 
-       Patient patient = dbHelper.getPatientByToken(token);
+        loadPatient(token, dbHelper, view);
 
-       if(patient != null){
-           TextView name = view.findViewById(R.id.name);
-           TextView address = view.findViewById(R.id.address);
-           TextView age = view.findViewById(R.id.age);
-           TextView blood_group = view.findViewById(R.id.blood_group);
-           TextView gender = view.findViewById(R.id.gender);
-           TextView email = view.findViewById(R.id.email);
-           TextView contact = view.findViewById(R.id.contact);
-           TextView dob = view.findViewById(R.id.dob);
-           TextView address2 = view.findViewById(R.id.address2);
-           TextView emergency_contact = view.findViewById(R.id.emergency_contact);
-
-
-
-
-           name.setText(patient.getName() !=null  ? patient.getName(): "xxxx");
-           address.setText(patient.getAddress() !=null  ? patient.getAddress(): "xxxx");
-           age.setText(patient.getDob() != null ? calculateAge(patient.getDob()): "xxxx");
-           blood_group.setText(patient.getBlood_group() !=null  ? patient.getBlood_group(): "xxxx");
-           gender.setText(patient.getGender() !=null  ? (patient.getGender().equals("1") ?"Male" : "Female"): "xxxx");
-           email.setText(patient.getEmail()!=null  ? patient.getEmail(): "xxxx");
-           contact.setText(patient.getContact()!=null  ? patient.getContact(): "xxxx");
-           dob.setText(patient.getDob()!=null  ? patient.getDob(): "xxxx");
-           address2.setText(patient.getAddress()!=null  ? patient.getAddress(): "xxxx");
-           emergency_contact.setText(patient.getEmergency_contact()!=null  ? patient.getEmergency_contact(): "xxxxx" );
-       }
 
 
 
         return view;
     }
+    private void loadPatient(String token, DatabaseHelper dbHelper, View view){
 
-    private void updatePatientProfile(String name, String phone, String dob, String string, String string1, String address, String emergencyContactStr) {
+        Patient patient = dbHelper.getPatientByToken(token);
+        if(patient != null){
+            TextView name = view.findViewById(R.id.name);
+            TextView address = view.findViewById(R.id.address);
+            TextView age = view.findViewById(R.id.age);
+            TextView blood_group = view.findViewById(R.id.blood_group);
+            TextView gender = view.findViewById(R.id.gender);
+            TextView email = view.findViewById(R.id.email);
+            TextView contact = view.findViewById(R.id.contact);
+            TextView dob = view.findViewById(R.id.dob);
+            TextView address2 = view.findViewById(R.id.address2);
+            TextView emergency_contact = view.findViewById(R.id.emergency_contact);
+
+
+
+
+            name.setText(patient.getName() !=null  ? patient.getName(): "xxxx");
+            address.setText(patient.getAddress() !=null  ? patient.getAddress(): "xxxx");
+            age.setText(patient.getDob() != null ? calculateAge(patient.getDob()): "xxxx");
+            blood_group.setText(patient.getBlood_group() !=null  ? patient.getBlood_group(): "xxxx");
+            gender.setText(patient.getGender() !=null  ? (patient.getGender().equals("1") ?"Male" : "Female"): "xxxx");
+            email.setText(patient.getEmail()!=null  ? patient.getEmail(): "xxxx");
+            contact.setText(patient.getContact()!=null  ? patient.getContact(): "xxxx");
+            dob.setText(patient.getDob()!=null  ? patient.getDob(): "xxxx");
+            address2.setText(patient.getAddress()!=null  ? patient.getAddress(): "xxxx");
+            emergency_contact.setText(patient.getEmergency_contact()!=null  ? patient.getEmergency_contact(): "xxxxx" );
+        }
+    }
+    private void updatePatientProfile(String name, String phone, String dob, int gender, String blood_group, String address, String emergencyContactStr) {
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        PatientUpdateRequest request = new PatientUpdateRequest(name, address, phone, dob, gender, blood_group, emergencyContactStr);
+
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
+        String token = sharedPreferences.getString("token", null);
+
+        Call<UserResponse> call = apiService.updatePatient("Bearer " + token, request);
+
+        call.enqueue(new Callback<UserResponse>() {
+            @Override
+            public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                if (response.isSuccessful() && response.body() != null){
+                    try {
+                        Toast.makeText(getContext(), "Profile updated", Toast.LENGTH_SHORT).show();
+
+                        if (response.body().getMessage().equals("User updated successfully")){
+                            DatabaseHelper dbHelperTwo = new DatabaseHelper(getContext());
+
+                            dbHelperTwo.insertPatient(response.body().getPatient(), token);
+
+                            loadPatient(token, dbHelperTwo, getView());
+                        }
+
+
+                    }catch (Exception e){
+                        throw new RuntimeException(e);
+                    }
+                }else{
+                    try {
+                        Toast.makeText(getContext(), "Failed to update", Toast.LENGTH_SHORT).show();
+                    }catch (Exception e){
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserResponse> call, Throwable t) {
+
+            }
+        });
+
 
     }
 
