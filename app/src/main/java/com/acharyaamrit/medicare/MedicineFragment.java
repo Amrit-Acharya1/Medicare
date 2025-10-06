@@ -167,5 +167,20 @@ public class MedicineFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getActivity() instanceof PatientHomepageActivity) {
+            ((PatientHomepageActivity) getActivity()).disableSwipeRefresh();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (getActivity() instanceof PatientHomepageActivity) {
+            ((PatientHomepageActivity) getActivity()).enableSwipeRefresh();
+        }
+    }
 
 }

@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/_24sdp">
+        android:paddingBottom="@dimen/_72sdp">
 
         <!-- Header Card with Gradient Background -->
         <androidx.cardview.widget.CardView
@@ -91,6 +91,7 @@
 
                 <!-- Edit Button -->
                 <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/edit_profile"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/_36sdp"
                     android:layout_gravity="center_horizontal"

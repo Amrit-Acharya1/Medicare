@@ -3,6 +3,7 @@ package com.acharyaamrit.medicare;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,6 +15,9 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,11 +26,14 @@ import com.acharyaamrit.medicare.api.ApiService;
 import com.acharyaamrit.medicare.database.DatabaseHelper;
 import com.acharyaamrit.medicare.model.Patient;
 import com.acharyaamrit.medicare.model.response.UserResponse;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import retrofit2.Call;
@@ -34,6 +41,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ProfileFragment extends Fragment {
+
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -50,6 +58,154 @@ public class ProfileFragment extends Fragment {
         String token = sharedPreferences.getString("token", null);
 
         AppCompatButton btn = view.findViewById(R.id.logout_button);
+
+        AppCompatButton edit_profile = view.findViewById(R.id.edit_profile);
+
+
+        edit_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
+                bottomSheetDialog.setContentView(R.layout.item_edit_profile_patient_layout);
+
+                AppCompatButton saveBtn = bottomSheetDialog.findViewById(R.id.btnSave);
+                AppCompatButton btnCancel = bottomSheetDialog.findViewById(R.id.btnCancel);
+                Spinner spinnerGender = bottomSheetDialog.findViewById(R.id.spinnerGender);
+                Spinner spinnerBloodGroup = bottomSheetDialog.findViewById(R.id.spinnerBloodGroup);
+
+                btnCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        bottomSheetDialog.dismiss();
+                    }
+                });
+
+                //editText
+                EditText fullName = bottomSheetDialog.findViewById(R.id.editTextName);
+                EditText phoneNumber = bottomSheetDialog.findViewById(R.id.editTextPhone);
+                EditText location = bottomSheetDialog.findViewById(R.id.editTextAddress);
+                EditText emergencyContact = bottomSheetDialog.findViewById(R.id.editTextEmergencyContact);
+
+                List<String> genderList = new ArrayList<>();
+                genderList.add("male");
+                genderList.add("female");
+
+                List<String> bloodGroupList = new ArrayList<>();
+                bloodGroupList.add("A+");
+                bloodGroupList.add("A-");
+                bloodGroupList.add("B+");
+                bloodGroupList.add("B-");
+                bloodGroupList.add("AB+");
+                bloodGroupList.add("AB-");
+                bloodGroupList.add("O+");
+                bloodGroupList.add("O-");
+
+                ArrayAdapter genderAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, genderList);
+                ArrayAdapter bloodGroupAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, bloodGroupList);
+
+                genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                bloodGroupAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                spinnerGender.setAdapter(genderAdapter);
+                spinnerBloodGroup.setAdapter(bloodGroupAdapter);
+
+                EditText editTextDate = bottomSheetDialog.findViewById(R.id.editTextDOB);
+
+                editTextDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final Calendar calendar = Calendar.getInstance();
+                        int year = calendar.get(Calendar.YEAR);
+                        int month = calendar.get(Calendar.MONTH);
+                        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+                        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                                getContext(),
+                                (view, selectedYear, selectedMonth, selectedDay) -> {
+                                    String selectedDate = selectedYear + "/" + (selectedMonth + 1) + "/" + selectedDay;
+                                    editTextDate.setText(selectedDate);
+                                },
+                                year, month, day
+                        );
+
+                        datePickerDialog.show();
+                    }
+                });
+
+                saveBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        boolean isValid = true;
+
+                        // Validate Full Name
+                        String name = fullName.getText().toString().trim();
+                        if (name.isEmpty()) {
+                            fullName.setError("Name is required");
+                            isValid = false;
+                        } else {
+                            fullName.setError(null);
+                        }
+
+                        // Validate Phone
+                        String phone = phoneNumber.getText().toString().trim();
+                        if (phone.length() != 10) {
+                            phoneNumber.setError("Phone must be exactly 10 digits");
+                            isValid = false;
+                        } else {
+                            phoneNumber.setError(null);
+                        }
+
+                        // Validate DOB
+                        String dob = editTextDate.getText().toString().trim();
+                        if (dob.isEmpty()) {
+                            editTextDate.setError("Date of Birth is required");
+                            isValid = false;
+                        } else {
+                            editTextDate.setError(null);
+                        }
+
+                        // Validate Gender
+                        if (spinnerGender.getSelectedItem() == null) {
+                            Toast.makeText(getContext(), "Gender is required", Toast.LENGTH_SHORT).show();
+                            isValid = false;
+                        }
+
+                        // Validate Blood Group
+                        if (spinnerBloodGroup.getSelectedItem() == null) {
+                            Toast.makeText(getContext(), "Blood Group is required", Toast.LENGTH_SHORT).show();
+                            isValid = false;
+                        }
+
+                        // Validate Address
+                        String address = location.getText().toString().trim();
+                        if (address.isEmpty()) {
+                            location.setError("Address is required");
+                            isValid = false;
+                        } else {
+                            location.setError(null);
+                        }
+
+                        // Validate Emergency Contact
+                        String emergencyContactStr = emergencyContact.getText().toString().trim();
+                        if (emergencyContactStr.length() != 10 || !emergencyContactStr.matches("\\d{10}") || (!emergencyContactStr.startsWith("97") && !emergencyContactStr.startsWith("98"))) {
+                            emergencyContact.setError("Emergency contact must be exactly 10 digits starting with 97 or 98");
+                            isValid = false;
+                        } else {
+                            emergencyContact.setError(null);
+                        }
+
+                        if (isValid) {
+                            // Proceed with saving
+                            Toast.makeText(getContext(), "Profile updated", Toast.LENGTH_SHORT).show();
+
+                            updatePatientProfile(name, phone, dob, spinnerGender.getSelectedItem().toString(), spinnerBloodGroup.getSelectedItem().toString(), address, emergencyContactStr);
+                        }
+                    }
+                });
+
+                bottomSheetDialog.show();
+            }
+        });
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,6 +259,10 @@ public class ProfileFragment extends Fragment {
 
 
         return view;
+    }
+
+    private void updatePatientProfile(String name, String phone, String dob, String string, String string1, String address, String emergencyContactStr) {
+
     }
 
     private void logout(String token) {
@@ -171,6 +331,22 @@ public class ProfileFragment extends Fragment {
         } catch (ParseException e) {
             e.printStackTrace();
             return "0"; // fallback in case of error
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getActivity() instanceof PatientHomepageActivity) {
+            ((PatientHomepageActivity) getActivity()).disableSwipeRefresh();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (getActivity() instanceof PatientHomepageActivity) {
+            ((PatientHomepageActivity) getActivity()).enableSwipeRefresh();
         }
     }
 

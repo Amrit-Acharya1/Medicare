@@ -166,6 +166,7 @@ public class NearbyPharmacyAdapter extends RecyclerView.Adapter<NearbyPharmacyAd
             // Make visit button full width
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) holder.pharmacy_visit_btn.getLayoutParams();
             params.weight = 2;
+            params.rightMargin = 0;
             holder.pharmacy_visit_btn.setLayoutParams(params);
         }
 
