@@ -32,9 +32,12 @@ import com.acharyaamrit.medicare.model.Doctor;
 import com.acharyaamrit.medicare.model.Notice;
 import com.acharyaamrit.medicare.model.Patient;
 import com.acharyaamrit.medicare.model.Pharmacy;
+import com.acharyaamrit.medicare.model.UserLocationUpdateRequest;
 import com.acharyaamrit.medicare.model.response.NoticeResponse;
 import com.acharyaamrit.medicare.model.response.UserResponse;
 import com.acharyaamrit.medicare.model.UserRequest;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -51,9 +54,11 @@ public class LoginActivity extends AppCompatActivity {
         void onTokenReceived(String token);
     }
     private ProgressDialog progressDialog;
+    private String GlobalToken;
     private String fcm_token;
     private View loginButton;
     DatabaseHelper databaseHelper;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +90,8 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+
+
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Logging...");
         progressDialog.setCancelable(false);
@@ -95,7 +102,59 @@ public class LoginActivity extends AppCompatActivity {
             progressDialog.show();
             validationFunction();
         });
+
+
+
+
     }
+
+    private void checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOCATION_PERMISSION_REQUEST_CODE);
+        } else {
+            getUserLocation();
+        }
+    }
+    @SuppressLint("MissingPermission")
+    private void getUserLocation() {
+        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(location -> {
+                    if (location != null) {
+                       String userLatitude = String.valueOf(location.getLatitude());
+                        String userLongitude = String.valueOf(location.getLongitude());
+
+
+                        updateUserLocation(GlobalToken, userLatitude, userLongitude);
+                    } else {
+                        Toast.makeText(this, "Unable to get location", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void updateUserLocation(String globalToken, String userLatitude, String userLongitude) {
+
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        UserLocationUpdateRequest request = new UserLocationUpdateRequest(userLatitude, userLongitude);
+        Call<UserResponse> call = apiService.updateUserLocation("Bearer " + globalToken, request);
+
+        call.enqueue(new Callback<UserResponse>() {
+            @Override
+            public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+            }
+
+            @Override
+            public void onFailure(Call<UserResponse> call, Throwable t) {
+            }
+        });
+
+
+    }
+
 
     private void validationFunction() {
         String email = ((EditText) findViewById(R.id.email_login)).getText().toString().trim();
@@ -205,6 +264,8 @@ public class LoginActivity extends AppCompatActivity {
                             editor.putString("token", token);
                             editor.putString("user_type", user_type);
                             editor.apply();
+
+                            GlobalToken = token;
                             try {
                                 intentHome = new Intent(LoginActivity.this, PatientHomepageActivity.class);
                                 databaseHelper.insertPatient(patient, token);
@@ -260,6 +321,7 @@ public class LoginActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         }
+                        checkLocationPermission();
                         fetchNotices(token);
                         finish();
                     } else {
@@ -364,10 +426,21 @@ public class LoginActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 101) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Notification permission granted", Toast.LENGTH_SHORT).show();
-            }
+
+        switch (requestCode) {
+            case 101: // Notification permission
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Notification permission granted", Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+            case LOCATION_PERMISSION_REQUEST_CODE: // Location permission
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getUserLocation();
+                } else {
+                    Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
     }
 }

@@ -2,6 +2,7 @@ package com.acharyaamrit.medicare.api;
 
 import com.acharyaamrit.medicare.model.ApiResponseTitleSuccess;
 import com.acharyaamrit.medicare.model.PatientUpdateRequest;
+import com.acharyaamrit.medicare.model.UserLocationUpdateRequest;
 import com.acharyaamrit.medicare.model.response.CurrentPreciptionResponse;
 import com.acharyaamrit.medicare.model.OtpRequest;
 import com.acharyaamrit.medicare.model.OtpValidateRequest;
@@ -74,5 +75,12 @@ public interface ApiService {
             @Header("Authorization") String bearerToken,
             @Body PatientUpdateRequest request
     );
+    @PUT("user/location")
+    Call<UserResponse> updateUserLocation(
+            @Header("Authorization") String bearerToken,
+            @Body UserLocationUpdateRequest request
+    );
+
+
 
 }
