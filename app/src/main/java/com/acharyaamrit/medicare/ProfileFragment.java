@@ -101,6 +101,7 @@ public class ProfileFragment extends Fragment {
                 bloodGroupList.add("O+");
                 bloodGroupList.add("O-");
 
+
                 ArrayAdapter genderAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, genderList);
                 ArrayAdapter bloodGroupAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, bloodGroupList);
 
@@ -109,6 +110,9 @@ public class ProfileFragment extends Fragment {
 
                 spinnerGender.setAdapter(genderAdapter);
                 spinnerBloodGroup.setAdapter(bloodGroupAdapter);
+
+                //Populate Data in Edittext
+                Patient patient = dbHelper.getPatientByToken(token);
 
                 EditText editTextDate = bottomSheetDialog.findViewById(R.id.editTextDOB);
 
@@ -222,6 +226,18 @@ public class ProfileFragment extends Fragment {
                         }
                     }
                 });
+
+
+                if (patient != null){
+                    fullName.setText(patient.getName());
+                    phoneNumber.setText(patient.getContact());
+                    location.setText(patient.getAddress());
+                    emergencyContact.setText(patient.getEmergency_contact());
+
+                    spinnerGender.setSelection(patient.getGender().equals("1") ? 0 : 1);
+                    spinnerBloodGroup.setSelection(bloodGroupList.indexOf(patient.getBlood_group()));
+                    editTextDate.setText(patient.getDob());
+                }
 
                 bottomSheetDialog.show();
             }

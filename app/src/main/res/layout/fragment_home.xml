@@ -357,6 +357,52 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <LinearLayout
+                android:backgroundTint="#F1FEEF"
+                android:background="@drawable/card_background"
+                android:padding="@dimen/_12sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:src="@drawable/ic_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:layout_marginBottom="@dimen/_2sdp"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/_9sdp"
+                        android:text="User Timeline"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_11sdp" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_marginTop="@dimen/_7sdp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/inter"
+                    android:textSize="@dimen/_8sdp"
+                    android:paddingHorizontal="@dimen/_50sdp"
+                    android:text="View all"
+                    android:layout_marginTop="@dimen/_9sdp"
+                    android:layout_gravity="center_horizontal"
+                    android:backgroundTint="@color/green"
+                    android:background="@drawable/call_background"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
