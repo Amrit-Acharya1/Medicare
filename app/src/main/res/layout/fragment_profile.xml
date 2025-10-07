@@ -503,6 +503,7 @@
                         android:textSize="@dimen/_13sdp" />
 
                     <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/notificationOn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:thumbTint="@color/white"

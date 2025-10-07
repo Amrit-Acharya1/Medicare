@@ -1,46 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
-    android:layout_marginTop="@dimen/_7sdp"
     android:layout_marginHorizontal="@dimen/_12sdp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-
+    <!-- Left: Timeline line and dot -->
     <LinearLayout
-        android:paddingHorizontal="12"
+
         android:orientation="vertical"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:paddingHorizontal="@dimen/_12sdp">
+
+        <!-- Vertical connecting line (full height, adjust in adapter for connections) -->
         <View
-            android:background="@color/green"
-            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.7"
+            android:id="@+id/timeline_line"
             android:layout_width="2dp"
-            android:layout_height="@dimen/_50sdp"/>
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/green" />
+
+        <!-- Dot (overlay on line, positioned mid-height) -->
         <ImageView
-            android:layout_gravity="top"
-            android:src="@drawable/dot_background"
+            android:id="@+id/dot"
             android:layout_width="10sp"
-            android:layout_height="10sp"/>
+            android:layout_height="10sp"
+            android:layout_gravity="center"
+            android:src="@drawable/dot_background" />
+        <View
+        android:layout_weight="0.7"
+        android:id="@+id/timeline_line"
+        android:layout_width="2dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/green" />
+
+
     </LinearLayout>
 
+    <!-- Middle: Content text -->
     <LinearLayout
+        android:padding="@dimen/_5sdp"
         android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
         <TextView
+            android:id="@+id/title"
             android:fontFamily="@font/inter_semibold"
             android:textColor="@color/black"
             android:text="Checkup with Dr. Homraj"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <TextView
+            android:id="@+id/time"
             android:layout_marginTop="@dimen/_4sdp"
             android:fontFamily="@font/inter"
             android:textColor="#89000000"
-            android:text="Dec 10 • 10:00 AM"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:text="Dec 10 • 10:00 AM"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
     </LinearLayout>
+
+    <!-- Right: View button at end -->
+    <TextView
+        android:layout_gravity="center_vertical"
+        android:id="@+id/view_btn"
+        android:gravity="center"
+        android:paddingVertical="@dimen/_5sdp"
+        android:paddingHorizontal="@dimen/_23sdp"
+        android:backgroundTint="@color/black"
+        android:background="@drawable/visit_background"
+        android:fontFamily="@font/inter_semibold"
+        android:textColor="@color/white"
+        android:text="View"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
