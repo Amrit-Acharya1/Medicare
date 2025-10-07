@@ -22,6 +22,7 @@ import com.acharyaamrit.medicare.adapter.patienthomepageadapter.AfternoonAdapter
 import com.acharyaamrit.medicare.adapter.patienthomepageadapter.EveningAdapter;
 import com.acharyaamrit.medicare.adapter.patienthomepageadapter.MorningAdapter;
 import com.acharyaamrit.medicare.adapter.patienthomepageadapter.NightAdapter;
+import com.acharyaamrit.medicare.controller.api.FetchUserTimelineApi;
 import com.acharyaamrit.medicare.database.DatabaseHelper;
 import com.acharyaamrit.medicare.model.Patient;
 import com.acharyaamrit.medicare.model.response.RoutineMedicineResponse;
@@ -47,6 +48,7 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         DatabaseHelper dbHelper = new DatabaseHelper(getContext());
 
+
         notification_icon = view.findViewById(R.id.notification_icon);
 
         notification_icon.setOnClickListener(new View.OnClickListener() {
@@ -63,7 +65,12 @@ public class HomeFragment extends Fragment {
         String token = sharedPreferences.getString("token", null);
         Patient patient = dbHelper.getPatientByToken(token);
 
+
         if(patient !=null){
+        FetchUserTimelineApi fetchUserTimelineApi = new FetchUserTimelineApi(token,patient.getPatient_id());
+        fetchUserTimelineApi.storeTimeline(getContext());
+
+
            TextView name = view.findViewById(R.id.name);
            name.setText(patient.getName());
 
