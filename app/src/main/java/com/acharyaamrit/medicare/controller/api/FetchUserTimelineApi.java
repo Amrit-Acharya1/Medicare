@@ -29,11 +29,17 @@ public class FetchUserTimelineApi {
         call.enqueue(new Callback<TimelineResponse>() {
             @Override
             public void onResponse(Call<TimelineResponse> call, Response<TimelineResponse> response) {
+                try {
+
+                if (response.isSuccessful() && response.body() != null){
+
                 Gson gson = new Gson();
                 String timeline = gson.toJson(response);
                 DatabaseHelper dbhelper = new DatabaseHelper(context);
                 dbhelper.deleteTimeline();
                 dbhelper.insertTimeline(dbhelper, timeline);
+                }
+                }catch (Exception e){}
 
             }
 
