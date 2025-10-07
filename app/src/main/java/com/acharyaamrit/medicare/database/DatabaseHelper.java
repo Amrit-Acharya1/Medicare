@@ -8,12 +8,15 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.acharyaamrit.medicare.model.Clicnic;
 import com.acharyaamrit.medicare.model.Notice;
+import com.acharyaamrit.medicare.model.TimelineItem;
 import com.acharyaamrit.medicare.model.response.CurrentPreciptionResponse;
 import com.acharyaamrit.medicare.model.Doctor;
 import com.acharyaamrit.medicare.model.Patient;
 import com.acharyaamrit.medicare.model.Pharmacy;
 import com.acharyaamrit.medicare.model.patientModel.CurrentPreciption;
 import com.acharyaamrit.medicare.model.patientModel.Preciption;
+import com.acharyaamrit.medicare.model.response.TimelineResponse;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -128,7 +131,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "popup INTEGER)";
         db.execSQL(createNoticeTable);
 
+        String createUserTimeline = "CREATE TABLE user_timeline (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "timeline TEXT)";
+        db.execSQL(createUserTimeline);
 //
+
 //        String CREATE_ROUTINE_MEDICINE_TABLE = "CREATE TABLE routine_medicine (" +
 //                "id INTEGER PRIMARY KEY," +
 //                "medicine_id TEXT ," +
@@ -599,6 +607,63 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
 
         return noticeList;
+    }
+
+
+    public void insertTimeline(DatabaseHelper dbHelper, String timeline) {
+        SQLiteDatabase db = null;
+        try {
+            db = dbHelper.getWritableDatabase();
+            db.beginTransaction();
+
+
+                ContentValues values = new ContentValues();
+                values.put("timeline", timeline);
+
+
+
+
+                long data =  db.insertWithOnConflict("user_timeline", null, values,
+                        SQLiteDatabase.CONFLICT_REPLACE);
+
+
+            db.setTransactionSuccessful();
+
+        } catch (Exception e) {
+        } finally {
+            if (db != null && db.inTransaction()) {
+                db.endTransaction();
+            }
+        }
+    }
+
+    public void deleteTimeline(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("user_timeline", null, null);
+    }
+
+    public List<TimelineItem> fetchTimeline() {
+        List<TimelineItem> allTimelineItems = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM user_timeline";
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            Gson gson = new Gson();
+            do {
+                String timelineJson = cursor.getString(cursor.getColumnIndexOrThrow("timeline"));
+                TimelineResponse timelineResponse = gson.fromJson(timelineJson, TimelineResponse.class);
+
+                if (timelineResponse != null && timelineResponse.getTimelineItemsList() != null) {
+                    allTimelineItems.addAll(timelineResponse.getTimelineItemsList());
+                }
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+        return allTimelineItems;
     }
 
 

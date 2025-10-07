@@ -12,6 +12,7 @@ import com.acharyaamrit.medicare.model.response.NoticeResponse;
 import com.acharyaamrit.medicare.model.response.RoutineMedicineResponse;
 import com.acharyaamrit.medicare.model.UserRegisterRequest;
 import com.acharyaamrit.medicare.model.UserRequest;
+import com.acharyaamrit.medicare.model.response.TimelineResponse;
 import com.acharyaamrit.medicare.model.response.UserResponse;
 
 import retrofit2.Call;
@@ -80,7 +81,11 @@ public interface ApiService {
             @Header("Authorization") String bearerToken,
             @Body UserLocationUpdateRequest request
     );
-
+    @GET("fetchPatientTimeline")
+    Call<TimelineResponse> getPatientTimeline(
+            @Header("Authorization") String bearerToken,
+            @Body int patient_id
+    );
 
 
 }
