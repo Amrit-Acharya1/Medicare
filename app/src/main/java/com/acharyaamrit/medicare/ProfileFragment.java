@@ -10,10 +10,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.AppCompatButton;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 
-import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,46 +63,13 @@ public class ProfileFragment extends Fragment {
 
         AppCompatButton edit_profile = view.findViewById(R.id.edit_profile);
 
-
         SwitchMaterial notificationOn = view.findViewById(R.id.notificationOn);
-
-// Check if notifications are enabled for the app
-        boolean areNotificationsEnabled = NotificationManagerCompat.from(getContext()).areNotificationsEnabled();
-        notificationOn.setChecked(areNotificationsEnabled);
-
-// Set click listener to guide user to app notification settings
         notificationOn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean enabled = NotificationManagerCompat.from(getContext()).areNotificationsEnabled();
-
-                if (!enabled) {
-                    // Notifications are OFF -> guide user to settings
-                    new AlertDialog.Builder(getContext())
-                            .setTitle("Enable Notifications")
-                            .setMessage("Notifications are disabled for this app. Do you want to enable them in settings?")
-                            .setPositiveButton("Go to Settings", (dialog, which) -> {
-                                Intent intent = new Intent();
-                                intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
-                                intent.putExtra(Settings.EXTRA_APP_PACKAGE, getContext().getPackageName());
-                                startActivity(intent);
-                            })
-                            .setNegativeButton("Cancel", (dialog, which) -> {
-                                // Keep switch OFF
-                                notificationOn.setChecked(false);
-                            })
-                            .show();
-                } else {
-                    // Notifications are ON, user can turn them OFF via system settings
-                    new AlertDialog.Builder(getContext())
-                            .setTitle("Notifications Enabled")
-                            .setMessage("Notifications are already enabled for this app.")
-                            .setPositiveButton("OK", null)
-                            .show();
-                }
+                Toast.makeText(getContext(), "turn on", Toast.LENGTH_SHORT).show();
             }
         });
-
 
 
         edit_profile.setOnClickListener(new View.OnClickListener() {
