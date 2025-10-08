@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.acharyaamrit.medicare.adapter.patienthomepageadapter.AfternoonAdapter;
 import com.acharyaamrit.medicare.adapter.patienthomepageadapter.EveningAdapter;
@@ -25,6 +26,7 @@ import com.acharyaamrit.medicare.adapter.patienthomepageadapter.NightAdapter;
 import com.acharyaamrit.medicare.controller.api.FetchUserTimelineApi;
 import com.acharyaamrit.medicare.database.DatabaseHelper;
 import com.acharyaamrit.medicare.model.Patient;
+import com.acharyaamrit.medicare.model.TimelineItem;
 import com.acharyaamrit.medicare.model.response.RoutineMedicineResponse;
 import com.acharyaamrit.medicare.model.patientModel.Medicine;
 import com.acharyaamrit.medicare.model.patientModel.RoutineMedicine;
@@ -67,8 +69,26 @@ public class HomeFragment extends Fragment {
 
 
         if(patient !=null){
+            //need to fix this
         FetchUserTimelineApi fetchUserTimelineApi = new FetchUserTimelineApi(token,patient.getPatient_id());
-        fetchUserTimelineApi.storeTimeline(getContext());
+            fetchUserTimelineApi.storeTimeline(getContext(), new FetchUserTimelineApi.TimelineCallback() {
+                @Override
+                public void onSuccess() {
+                    DatabaseHelper dbHelper = new DatabaseHelper(getContext());
+                    List<TimelineItem> timelineItems = dbHelper.fetchTimeline();
+
+
+                    if (!timelineItems.isEmpty()) {
+
+                    }
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    // Handle error
+                    Toast.makeText(getContext(), "Failed to load timeline", Toast.LENGTH_SHORT).show();
+                }
+            });
 
 
            TextView name = view.findViewById(R.id.name);
