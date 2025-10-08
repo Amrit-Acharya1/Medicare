@@ -2,6 +2,7 @@ package com.acharyaamrit.medicare.api;
 
 import com.acharyaamrit.medicare.model.ApiResponseTitleSuccess;
 import com.acharyaamrit.medicare.model.PatientUpdateRequest;
+import com.acharyaamrit.medicare.model.TimelineRequest;
 import com.acharyaamrit.medicare.model.UserLocationUpdateRequest;
 import com.acharyaamrit.medicare.model.response.CurrentPreciptionResponse;
 import com.acharyaamrit.medicare.model.OtpRequest;
@@ -84,8 +85,8 @@ public interface ApiService {
     @POST("fetchPatientTimeline")
     Call<TimelineResponse> getPatientTimeline(
             @Header("Authorization") String bearerToken,
-            @Body int patient_id
-    );
+            @Body TimelineRequest request
+            );
 
 
 }
