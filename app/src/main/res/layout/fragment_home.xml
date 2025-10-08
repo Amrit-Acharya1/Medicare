@@ -394,7 +394,9 @@
                     android:layout_marginTop="@dimen/_7sdp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
+
                 <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/viewAll"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:fontFamily="@font/inter"
