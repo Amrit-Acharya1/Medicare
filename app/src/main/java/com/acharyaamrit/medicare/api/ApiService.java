@@ -81,7 +81,7 @@ public interface ApiService {
             @Header("Authorization") String bearerToken,
             @Body UserLocationUpdateRequest request
     );
-    @GET("fetchPatientTimeline")
+    @POST("fetchPatientTimeline")
     Call<TimelineResponse> getPatientTimeline(
             @Header("Authorization") String bearerToken,
             @Body int patient_id
