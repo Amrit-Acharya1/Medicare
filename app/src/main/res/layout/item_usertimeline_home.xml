@@ -16,7 +16,7 @@
         <!-- Vertical connecting line (full height, adjust in adapter for connections) -->
         <View
             android:layout_weight="0.7"
-            android:id="@+id/timeline_line"
+            android:id="@+id/timeline_line_up"
             android:layout_width="2dp"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
@@ -31,7 +31,7 @@
             android:src="@drawable/dot_background" />
         <View
         android:layout_weight="0.7"
-        android:id="@+id/timeline_line"
+        android:id="@+id/timeline_line_down"
         android:layout_width="2dp"
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
@@ -49,7 +49,7 @@
         android:layout_weight="1">
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/doctor_checkup"
             android:fontFamily="@font/inter_semibold"
             android:textColor="@color/black"
             android:text="Checkup with Dr. Homraj"

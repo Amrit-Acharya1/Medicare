@@ -4,6 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import com.acharyaamrit.medicare.adapter.patienthomepageadapter.AfternoonAdapter
 import com.acharyaamrit.medicare.adapter.patienthomepageadapter.EveningAdapter;
 import com.acharyaamrit.medicare.adapter.patienthomepageadapter.MorningAdapter;
 import com.acharyaamrit.medicare.adapter.patienthomepageadapter.NightAdapter;
+import com.acharyaamrit.medicare.adapter.patienthomepageadapter.UserTimeLineAdapter;
 import com.acharyaamrit.medicare.controller.api.FetchUserTimelineApi;
 import com.acharyaamrit.medicare.database.DatabaseHelper;
 import com.acharyaamrit.medicare.model.Patient;
@@ -32,12 +34,19 @@ import com.acharyaamrit.medicare.model.patientModel.Medicine;
 import com.acharyaamrit.medicare.model.patientModel.RoutineMedicine;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
 
     private MorningAdapter morningAdapter;
     private ConstraintLayout notification_icon;
+
+    private RecyclerView user_time_line;
+
+    private List<TimelineItem> timelineList;
+    private UserTimeLineAdapter userTimeLineAdapter;
+    private List<TimelineItem> pendingTimeline;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -52,6 +61,9 @@ public class HomeFragment extends Fragment {
 
 
         notification_icon = view.findViewById(R.id.notification_icon);
+
+        user_time_line = view.findViewById(R.id.user_time_line);
+        user_time_line.setLayoutManager(new LinearLayoutManager(getContext()));
 
         notification_icon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,26 +81,7 @@ public class HomeFragment extends Fragment {
 
 
         if(patient !=null){
-            //need to fix this
-        FetchUserTimelineApi fetchUserTimelineApi = new FetchUserTimelineApi(token,patient.getPatient_id());
-            fetchUserTimelineApi.storeTimeline(getContext(), new FetchUserTimelineApi.TimelineCallback() {
-                @Override
-                public void onSuccess() {
-                    DatabaseHelper dbHelper = new DatabaseHelper(getContext());
-                    List<TimelineItem> timelineItems = dbHelper.fetchTimeline();
 
-
-                    if (!timelineItems.isEmpty()) {
-
-                    }
-                }
-
-                @Override
-                public void onFailure(String error) {
-                    // Handle error
-                    Toast.makeText(getContext(), "Failed to load timeline", Toast.LENGTH_SHORT).show();
-                }
-            });
 
 
            TextView name = view.findViewById(R.id.name);
@@ -176,6 +169,10 @@ public class HomeFragment extends Fragment {
 
         }
 
+        if (pendingTimeline != null) {
+            updateTimeline(pendingTimeline);
+            pendingTimeline = null;
+        }
 
         return view;
 
@@ -184,5 +181,28 @@ public class HomeFragment extends Fragment {
 
 
 
+    }
+//    public void updateTimeline(List<TimelineItem> newTimeline) {
+//
+//        if (newTimeline == null) return;
+//
+//        userTimeLineAdapter = new UserTimeLineAdapter(newTimeline, getContext());
+//        user_time_line.setAdapter(userTimeLineAdapter);
+//        userTimeLineAdapter.notifyDataSetChanged();
+//    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void updateTimeline(List<TimelineItem> newTimeline) {
+        if (user_time_line == null) {
+            // View not created yet, save it temporarily
+            pendingTimeline = newTimeline;
+            return;
+        }
+
+        if (newTimeline == null) return;
+
+        userTimeLineAdapter = new UserTimeLineAdapter(newTimeline, getContext());
+        user_time_line.setAdapter(userTimeLineAdapter);
+        userTimeLineAdapter.notifyDataSetChanged();
     }
 }

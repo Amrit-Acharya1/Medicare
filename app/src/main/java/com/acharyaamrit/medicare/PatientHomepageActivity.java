@@ -14,7 +14,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -22,7 +21,6 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -31,11 +29,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.acharyaamrit.medicare.api.ApiClient;
 import com.acharyaamrit.medicare.api.ApiService;
+import com.acharyaamrit.medicare.controller.api.FetchUserTimelineApi;
 import com.acharyaamrit.medicare.database.DatabaseHelper;
-import com.acharyaamrit.medicare.model.Notice;
 import com.acharyaamrit.medicare.model.Patient;
+import com.acharyaamrit.medicare.model.TimelineItem;
 import com.acharyaamrit.medicare.model.response.CurrentPreciptionResponse;
-import com.acharyaamrit.medicare.model.response.NoticeResponse;
 import com.acharyaamrit.medicare.model.response.RoutineMedicineResponse;
 import com.acharyaamrit.medicare.model.response.UserResponse;
 import com.acharyaamrit.medicare.model.patientModel.CurrentPreciption;
@@ -65,6 +63,7 @@ public class PatientHomepageActivity extends AppCompatActivity {
     private final AtomicInteger pendingApiCalls = new AtomicInteger(2);
 
     private SwipeRefreshLayout swipeRefreshLayout;
+    private HomeFragment homeFragment; // Keep reference to fragment
     private boolean isInitialized = false;
 
     @Override
@@ -95,19 +94,53 @@ public class PatientHomepageActivity extends AppCompatActivity {
             pendingApiCalls.set(2);
             fetchCurrentPrescription(token);
             fetchRoutineMedicine(token);
-            runOnUiThread(this::loadHomeFragment);
+
+            // Fetch timeline on refresh
+            if (homeFragment != null) {
+                fetchUserTimeLine(token);
+            }
+
             swipeRefreshLayout.setRefreshing(false);
         });
 
         // Start both API calls
         fetchCurrentPrescription(token);
         fetchRoutineMedicine(token);
-
-
-//        fetchNotices(token);
     }
 
+    private void fetchUserTimeLine(String token) {
+        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        Patient patient = dbHelper.getPatientByToken(token);
 
+        if (patient == null) {
+            Toast.makeText(this, "Patient data not found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        FetchUserTimelineApi fetchUserTimelineApi = new FetchUserTimelineApi(token, patient.getPatient_id());
+        fetchUserTimelineApi.storeTimeline(this, new FetchUserTimelineApi.TimelineCallback() {
+            @Override
+            public void onSuccess() {
+                List<TimelineItem> timelineItems = dbHelper.fetchTimeline();
+
+                if (!timelineItems.isEmpty()) {
+                    runOnUiThread(() -> {
+                        // Check if fragment is added and view is created
+                        if (homeFragment != null && homeFragment.isAdded() && homeFragment.getView() != null) {
+                            homeFragment.updateTimeline(timelineItems);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(String error) {
+                runOnUiThread(() ->
+                        Toast.makeText(PatientHomepageActivity.this, "Failed to load timeline", Toast.LENGTH_SHORT).show()
+                );
+            }
+        });
+    }
 
     /**
      * Called when an API call completes (success or failure)
@@ -127,6 +160,9 @@ public class PatientHomepageActivity extends AppCompatActivity {
      */
     private void initializeUI() {
         runOnUiThread(() -> {
+            SharedPreferences sharedPreferences = getSharedPreferences("user_preference", MODE_PRIVATE);
+            String token = sharedPreferences.getString("token", null);
+
             lottieAnimationView.setVisibility(GONE);
 
             // Set initial fragment
@@ -134,6 +170,17 @@ public class PatientHomepageActivity extends AppCompatActivity {
 
             // Setup bottom navigation
             setupBottomNavigation();
+
+            if (token != null) {
+
+                getSupportFragmentManager().executePendingTransactions();
+
+                swipeRefreshLayout.postDelayed(() -> {
+                    if (homeFragment != null && homeFragment.isAdded()) {
+                        fetchUserTimeLine(token);
+                    }
+                }, 300);
+            }
         });
     }
 
@@ -148,9 +195,6 @@ public class PatientHomepageActivity extends AppCompatActivity {
 
         findViewById(R.id.qr_button).setOnClickListener(v -> {
             showQrBottomSheet();
-//            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
-//            bottomSheetDialog.setContentView(R.layout.item_bottom_sheet_qr);
-//            bottomSheetDialog.show();
         });
 
         findViewById(R.id.medicine_button).setOnClickListener(v -> {
@@ -175,20 +219,17 @@ public class PatientHomepageActivity extends AppCompatActivity {
         ImageView qrImage = bottomSheetDialog.findViewById(R.id.qr_image);
         Button downloadQr = bottomSheetDialog.findViewById(R.id.download_qr_button);
 
-        // Generate QR data (example)
         SharedPreferences sharedPreferences = getSharedPreferences("user_preference", MODE_PRIVATE);
         String token = sharedPreferences.getString("token", "unknown");
         DatabaseHelper dbhelper = new DatabaseHelper(this);
         Patient patient = dbhelper.getPatientByToken(token);
         String qrData = "https://medicare.kritishmovie.xyz/api/patient/" + patient.getId();
 
-        // Generate the QR code
         Bitmap bitmap = generateQRCode(qrData);
         if (qrImage != null && bitmap != null) {
             qrImage.setImageBitmap(bitmap);
         }
 
-        // Handle download button click
         if (downloadQr != null && bitmap != null) {
             downloadQr.setOnClickListener(v -> {
                 saveQRCodeToGallery(bitmap);
@@ -255,7 +296,6 @@ public class PatientHomepageActivity extends AppCompatActivity {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
         }
 
-        // Use MediaScannerConnection instead of deprecated broadcast
         MediaScannerConnection.scanFile(this,
                 new String[]{imageFile.getAbsolutePath()},
                 new String[]{"image/png"},
@@ -263,8 +303,6 @@ public class PatientHomepageActivity extends AppCompatActivity {
 
         Toast.makeText(this, "QR Code saved to gallery", Toast.LENGTH_SHORT).show();
     }
-
-
 
     private Bitmap generateQRCode(String text) {
         QRCodeWriter writer = new QRCodeWriter();
@@ -287,14 +325,17 @@ public class PatientHomepageActivity extends AppCompatActivity {
         }
     }
 
-
     /**
      * Load home fragment and set as selected
      */
     private void loadHomeFragment() {
         setSelectedBackground(R.id.home_button_background);
+
+        // Create new instance and keep reference
+        homeFragment = new HomeFragment();
+
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentContainer, new HomeFragment())
+                .replace(R.id.fragmentContainer, homeFragment)
                 .commit();
     }
 
@@ -302,7 +343,6 @@ public class PatientHomepageActivity extends AppCompatActivity {
      * Set selected bottom navigation background
      */
     private void setSelectedBackground(int selectedId) {
-        // Reset all backgrounds
         findViewById(R.id.home_button_background)
                 .setBackground(ContextCompat.getDrawable(this, R.color.blue));
         findViewById(R.id.medicine_button_background)
@@ -310,12 +350,9 @@ public class PatientHomepageActivity extends AppCompatActivity {
         findViewById(R.id.profile_button_background)
                 .setBackground(ContextCompat.getDrawable(this, R.color.blue));
 
-        // Set selected background
         findViewById(selectedId)
                 .setBackground(ContextCompat.getDrawable(this, R.drawable.bottom_selected_back));
     }
-
-
 
     /**
      * Fetch current prescription from API
@@ -360,11 +397,9 @@ public class PatientHomepageActivity extends AppCompatActivity {
                 return;
             }
 
-            // Clear old data
             dbHelper.deleteCurrentPreciption();
             dbHelper.deletePreciptionItem();
 
-            // Insert current prescription
             long prescriptionResult = dbHelper.insertCurrentPreciption(currentPreciption);
 
             if (prescriptionResult == -1) {
@@ -372,22 +407,14 @@ public class PatientHomepageActivity extends AppCompatActivity {
                 return;
             }
 
-            // Insert prescription items with local prescription ID
             int localPrescriptionId = (int) prescriptionResult;
             List<Preciption> preciptionItems = currentPreciption.getPreciptionList();
 
             if (preciptionItems != null && !preciptionItems.isEmpty()) {
-                int successCount = 0;
                 for (Preciption item : preciptionItems) {
                     item.setPrescription_relation_id(localPrescriptionId);
-                    if (dbHelper.insertPreciptionItem(item) != -1) {
-                        successCount++;
-                    }
+                    dbHelper.insertPreciptionItem(item);
                 }
-
-//                if (successCount > 0) {
-//                    showToast(successCount + " prescription items saved successfully");
-//                }
             }
         } catch (Exception e) {
             showToast("Error processing data: " + e.getMessage());
@@ -406,8 +433,7 @@ public class PatientHomepageActivity extends AppCompatActivity {
             String title = errorResponse.getTitle();
             String message = errorResponse.getMessage();
 
-
-            if (message.equalsIgnoreCase("No preciption Found")){
+            if (message.equalsIgnoreCase("No preciption Found")) {
                 DatabaseHelper dbHelper = new DatabaseHelper(this);
                 dbHelper.deleteCurrentPreciption();
                 dbHelper.deletePreciptionItem();
@@ -442,7 +468,6 @@ public class PatientHomepageActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<RoutineMedicineResponse> call, Throwable t) {
-                    // Silently fail - routine medicine is not critical
                     onApiCallComplete();
                 }
             });
