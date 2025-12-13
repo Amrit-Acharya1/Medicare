@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/previewImage"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:scaleType="centerCrop"
+        android:background="#F5F5F5"/>
+
+    <TextView
+        android:id="@+id/tvDocumentType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Type: Prescription"
+        android:textSize="14sp"
+        android:paddingTop="12dp"/>
+
+    <TextView
+        android:id="@+id/tvFileSize"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Size: 0 KB"
+        android:textSize="14sp"
+        android:paddingTop="4dp"/>
+
+</LinearLayout>

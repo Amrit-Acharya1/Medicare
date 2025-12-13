@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="@dimen/_190sdp"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="12dp"
+    android:layout_margin="@dimen/_15sdp"
+    android:backgroundTint="#F8FAFF"
+    app:cardElevation="4dp">
+
+    <!-- Existing LinearLayout (content) -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="@dimen/_12sdp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/pharmacy_image"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/failed_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/pharmacy_name"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:textSize="@dimen/_14sdp"
+            android:fontFamily="@font/inter_semibold"
+            android:textColor="@color/black"
+            android:text="Surya Pharmacy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/pharmacy_description"
+            android:maxWidth="@dimen/_140sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:textSize="@dimen/_12sdp"
+            android:fontFamily="@font/inter"
+            android:textColor="@color/black"
+            android:text="This is the pharmacy of surya."
+            android:maxLines="2"
+            android:drawablePadding="@dimen/_8sdp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:weightSum="2"
+            android:layout_marginTop="@dimen/_11sdp"
+            android:layout_marginHorizontal="@dimen/_4sdp"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/pharmacy_visit_btn"
+                android:background="@drawable/visit_background"
+                android:text="Visit"
+                android:textAllCaps="false"
+                android:backgroundTint="@color/black"
+                android:textColor="@color/white"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:layout_weight="1"
+                android:fontFamily="@font/inter_semibold"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/pharmacy_call_btn"
+                android:background="@drawable/call_background"
+                android:text="Call"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:layout_marginEnd="@dimen/_2sdp"
+                android:layout_weight="1"
+                android:fontFamily="@font/inter_semibold"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- New: Orange/Yellow Star Overlay in Top-Right -->
+    <ImageView
+        android:id="@+id/pharmacy_star_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:layout_marginEnd="@dimen/_8sdp"
+        android:src="@android:drawable/btn_star_big_off"
+        android:tint="#FF9800"
+        android:scaleType="fitXY"
+        android:alpha="0.9" />  <!-- Optional: Slight transparency for subtlety -->
+
+</androidx.cardview.widget.CardView>

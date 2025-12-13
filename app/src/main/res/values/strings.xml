@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Medicare</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="short_dsc">Surya This is the short description of pharmacy</string>
+    <string name="notification_desc">New update 1.0.0.1 has been release please download it from playstore.</string>
+</resources>

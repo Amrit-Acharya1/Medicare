@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="@dimen/_10sdp"
+    android:paddingTop="@dimen/_4sdp"
+   >
+
+    <!-- Date Section Header -->
+    <TextView
+        android:id="@+id/notification_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Today"
+        android:textColor="#4A5568"
+        android:textSize="@dimen/_10sdp"
+        android:fontFamily="@font/inter_semibold"
+        android:letterSpacing="0.02"
+        android:paddingStart="@dimen/_4sdp"
+        android:paddingBottom="@dimen/_8sdp"
+        android:paddingTop="@dimen/_8sdp"/>
+
+    <!-- Notification Card with Shadow -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="@dimen/_12sdp"
+        app:cardElevation="@dimen/_2sdp"
+        app:cardUseCompatPadding="true"
+        app:cardPreventCornerOverlap="true"
+        app:cardBackgroundColor="@color/white"
+        android:foreground="?attr/selectableItemBackground">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/_14sdp">
+
+            <!-- Bell Icon -->
+            <ImageView
+                android:layout_gravity="center_vertical"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                app:tint="#5E89FF"
+                android:src="@drawable/bell_icon"
+                android:layout_marginEnd="@dimen/_12sdp"/>
+
+            <!-- Content Container -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <!-- Title -->
+                <TextView
+                    android:maxLines="1"
+                    android:id="@+id/notification_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="New Update Available !"
+                    android:textColor="#1A202C"
+                    android:textSize="@dimen/_14sdp"
+                    android:fontFamily="@font/inter_semibold"
+                    android:lineSpacingExtra="@dimen/_2sdp"/>
+
+                <!-- Description -->
+                <TextView
+                    android:id="@+id/notification_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/notification_desc"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:textColor="#4A5568"
+                    android:maxLines="2"
+                    android:textSize="@dimen/_11sdp"
+                    android:fontFamily="@font/inter"
+                    android:lineSpacingExtra="@dimen/_2sdp"
+                    android:lineSpacingMultiplier="1.3"/>
+
+                <!-- Optional: Time stamp at bottom -->
+                <TextView
+                    android:id="@+id/notification_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2 hours ago"
+                    android:textColor="#A0AEC0"
+                    android:textSize="@dimen/_9sdp"
+                    android:fontFamily="@font/inter"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

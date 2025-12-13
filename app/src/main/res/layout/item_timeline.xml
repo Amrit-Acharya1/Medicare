@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- Timeline Line (Top Part) -->
+    <View
+        android:id="@+id/timelineLineTop"
+        android:layout_width="2dp"
+        android:layout_height="@dimen/_16sdp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:background="#4CAF50" />
+
+    <!-- Timeline Icon (Stethoscope/Circle) -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/timelineIcon"
+        android:layout_width="@dimen/_32sdp"
+        android:layout_height="@dimen/_32sdp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/timelineLineTop"
+        app:cardBackgroundColor="#4CAF50"
+        app:cardCornerRadius="@dimen/_16sdp"
+        app:cardElevation="4dp">
+
+        <ImageView
+            android:layout_width="@dimen/_16sdp"
+            android:layout_height="@dimen/_16sdp"
+            android:layout_gravity="center"
+            android:src="@drawable/logo"
+            app:tint="@color/white" />
+    </androidx.cardview.widget.CardView>
+
+    <!-- Timeline Line (Bottom Part) -->
+    <View
+        android:id="@+id/timelineLineBottom"
+        android:layout_width="2dp"
+        android:layout_height="@dimen/_70sdp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/timelineIcon"
+        android:background="#4CAF50" />
+
+    <!-- Left Event Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/eventCardLeft"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/timelineIcon"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@id/timelineIcon"
+        android:layout_marginStart="@dimen/_24sdp"
+        android:layout_marginEnd="@dimen/_16sdp"
+        android:visibility="gone"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="@dimen/_8sdp"
+        app:cardElevation="2dp">
+
+        <LinearLayout
+            android:id="@+id/btnViewLeft"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/_12sdp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
+
+            <TextView
+                android:id="@+id/dateTimeTextLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter"
+                android:text="Dec 10 • 10:00 AM"
+                android:textColor="#666666"
+                android:textSize="@dimen/_10sdp" />
+
+            <TextView
+                android:id="@+id/eventTextLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:fontFamily="@font/inter_semibold"
+                android:text="Checkup with Dr. Homraj"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_11sdp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Right Event Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/eventCardRight"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/timelineIcon"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@id/timelineIcon"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginEnd="@dimen/_24sdp"
+        android:visibility="gone"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="@dimen/_8sdp"
+        app:cardElevation="2dp">
+
+        <LinearLayout
+            android:id="@+id/btnViewRight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/_12sdp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
+
+            <TextView
+                android:id="@+id/dateTimeTextRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter"
+                android:text="Dec 10 • 10:00 AM"
+                android:textColor="#666666"
+                android:textSize="@dimen/_10sdp" />
+
+            <TextView
+                android:id="@+id/eventTextRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:fontFamily="@font/inter_semibold"
+                android:text="Checkup with Dr. Homraj"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_11sdp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>
