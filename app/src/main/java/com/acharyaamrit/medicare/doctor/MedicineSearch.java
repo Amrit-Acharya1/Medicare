@@ -31,10 +31,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.acharyaamrit.medicare.R;
 import com.acharyaamrit.medicare.common.api.ApiClient;
 import com.acharyaamrit.medicare.common.api.ApiService;
+import com.acharyaamrit.medicare.common.model.response.UserResponse;
 import com.acharyaamrit.medicare.doctor.adapter.MedicineSearchAdapter;
+import com.acharyaamrit.medicare.doctor.adapter.PrescriptionRelationForPatientAdapter;
+import com.acharyaamrit.medicare.doctor.adapter.SearchPatientAdapter;
 import com.acharyaamrit.medicare.doctor.model.Medicine;
 import com.acharyaamrit.medicare.doctor.model.request.MedicineRequest;
+import com.acharyaamrit.medicare.doctor.model.request.PRelationRequest;
 import com.acharyaamrit.medicare.doctor.model.response.MedicineResponse;
+import com.acharyaamrit.medicare.doctor.model.response.PRelation;
+import com.acharyaamrit.medicare.doctor.model.response.PRelationResponse;
+import com.acharyaamrit.medicare.doctor.model.response.SearchPatientResponse;
+import com.acharyaamrit.medicare.patient.model.patientModel.Patient;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +62,7 @@ public class MedicineSearch extends AppCompatActivity {
     private static final int CACHE_MAX_SIZE = 50; // Maximum cached searches
 
     private CardView btnBack;
-    private TextView tv_name, tv_pid, tvMedicineCount;
+    private TextView tv_name, tv_pid, tvMedicineCount,newPrescription, prescriptionTile;
     private RecyclerView rvMedicines;
     private EditText searchMedicine;
 
@@ -74,6 +84,7 @@ public class MedicineSearch extends AppCompatActivity {
     // API Service - create once, reuse
     private ApiService apiService;
     private FrameLayout loadingOverlay, noMedicine;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,12 +101,14 @@ public class MedicineSearch extends AppCompatActivity {
         initializeViews();
         String name = getIntent().getStringExtra("patient_name");
         String pid = getIntent().getStringExtra("patient_id");
+        fetchPrecriptionsForPatient();
         setupRecyclerView(pid);
         setupListeners();
 
         tv_name.setText(name);
         tv_pid.setText("PID: " + pid);
         noMedicine.setVisibility(VISIBLE);
+
     }
 
     private void initializeData() {
@@ -116,8 +129,82 @@ public class MedicineSearch extends AppCompatActivity {
         loadingOverlay = findViewById(R.id.loadingOverlay);
         tvMedicineCount = findViewById(R.id.tvMedicineCount);
         noMedicine = findViewById(R.id.noMedicine);
+        prescriptionTile = findViewById(R.id.prescriptionTile);
+        fab =findViewById(R.id.fab);
+
+    }
+    private void showBottomSheet(List<PRelation> prelationList){
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+        View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_prescription_relation_for_patient, null);
+        bottomSheetDialog.setContentView(bottomSheetView);
+        newPrescription = bottomSheetView.findViewById(R.id.newPrescription);
+
+        RecyclerView recyclerView = bottomSheetView.findViewById(R.id.prelationRecycler);
+
+        PrescriptionRelationForPatientAdapter prescriptionRelationForPatientAdapter = new PrescriptionRelationForPatientAdapter(prelationList, this, bottomSheetDialog);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(prescriptionRelationForPatientAdapter);
+
+        newPrescription.setOnClickListener(v->{
+            SharedPreferences sharedPreferences = getSharedPreferences("user_preference", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.remove("prescriptionRelation_id");
+            editor.apply();
+            bottomSheetDialog.dismiss();
+        });
+        bottomSheetDialog.setOnDismissListener(dialog -> {
+            SharedPreferences sharedPreferences = getSharedPreferences("user_preference", MODE_PRIVATE);
+            String pres_id = sharedPreferences.getString("prescriptionRelation_id", null);
+            if(pres_id == null){
+                prescriptionTile.setText("New Prescription");
+            }else{
+                prescriptionTile.setText("Prescription No: "+ pres_id);
+            }
+                 });
+
+        bottomSheetDialog.show();
+
+
     }
 
+    private void fetchPrecriptionsForPatient(){
+        SharedPreferences sharedPreferences = getSharedPreferences("user_preference", MODE_PRIVATE);
+        String token = sharedPreferences.getString("token", null);
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        int id = Integer.parseInt(getIntent().getStringExtra("patient_id"));
+        PRelationRequest pRelationRequest = new PRelationRequest(id);
+        Call<PRelationResponse> call = apiService.fetchPrecriptionForPatient("Bearer " + token, pRelationRequest );
+        call.enqueue(new Callback<PRelationResponse>() {
+            @Override
+            public void onResponse(Call<PRelationResponse> call, Response<PRelationResponse> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    try {
+
+                        showBottomSheet(response.body().getpRelationList());
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        Toast.makeText(MedicineSearch.this, "Failed to execute", Toast.LENGTH_SHORT).show();
+
+                    }
+                }else{
+                    Toast.makeText(MedicineSearch.this, "error response", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PRelationResponse> call, Throwable t) {
+                t.printStackTrace();
+                Toast.makeText(MedicineSearch.this,
+                        "Network error: " + t.getMessage(),
+                        Toast.LENGTH_LONG).show();
+            }
+
+
+        });
+
+    }
     private void setupRecyclerView(String pid) {
         adapter = new MedicineSearchAdapter(new ArrayList<>(), this, Integer.parseInt(pid));
         LinearLayoutManager layoutManager = new LinearLayoutManager(this) {
@@ -150,6 +237,9 @@ public class MedicineSearch extends AppCompatActivity {
     }
 
     private void setupListeners() {
+        fab.setOnClickListener(v->{
+            fetchPrecriptionsForPatient();
+        });
         btnBack.setOnClickListener(v -> finish());
 
 //        searchMedicine.addTextChangedListener(new TextWatcher() {
@@ -188,6 +278,7 @@ public class MedicineSearch extends AppCompatActivity {
 
         searchMedicine.setOnKeyListener((v, keyCode, event) -> {
             if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                hideKeyboard();
                 if (searchRunnable != null) {
                     handler.removeCallbacks(searchRunnable);
                 }
@@ -202,6 +293,13 @@ public class MedicineSearch extends AppCompatActivity {
             }
             return false;
         });
+    }
+    private void hideKeyboard() {
+        if (getCurrentFocus() != null) {
+            ((android.view.inputmethod.InputMethodManager)
+                    getSystemService(INPUT_METHOD_SERVICE))
+                    .hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
     }
 
     private void fetchMedicine(String medicine) {

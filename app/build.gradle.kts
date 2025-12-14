@@ -63,4 +63,5 @@ dependencies {
     implementation("org.osmdroid:osmdroid-mapsforge:6.1.14")
 
     implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("com.google.android.gms:play-services-mlkit-document-scanner:16.0.0")
 }

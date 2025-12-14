@@ -3,10 +3,12 @@ package com.acharyaamrit.medicare.common.api;
 import com.acharyaamrit.medicare.common.model.ApiResponseTitleSuccess;
 import com.acharyaamrit.medicare.doctor.model.request.DoctorUpdateRequest;
 import com.acharyaamrit.medicare.doctor.model.request.MedicineRequest;
+import com.acharyaamrit.medicare.doctor.model.request.PRelationRequest;
 import com.acharyaamrit.medicare.doctor.model.request.PrescriptionRelationRequest;
 import com.acharyaamrit.medicare.doctor.model.request.PrescriptionRequest;
 import com.acharyaamrit.medicare.doctor.model.request.SearchPatientRequest;
 import com.acharyaamrit.medicare.doctor.model.response.MedicineResponse;
+import com.acharyaamrit.medicare.doctor.model.response.PRelationResponse;
 import com.acharyaamrit.medicare.doctor.model.response.PrescriptionRelationResponse;
 import com.acharyaamrit.medicare.doctor.model.response.RecentPatientsResponse;
 import com.acharyaamrit.medicare.doctor.model.response.SearchPatientResponse;
@@ -156,6 +158,12 @@ public interface ApiService {
     Call<PrescriptionRelationResponse> addPrescriptionRelation(
             @Header("Authorization") String bearerToken,
             @Body PrescriptionRelationRequest request
+    );
+
+    @POST("fetchPreciptionRelationForDoctor")
+    Call<PRelationResponse> fetchPrecriptionForPatient(
+            @Header("Authorization") String bearerToken,
+            @Body PRelationRequest request
     );
 
 }

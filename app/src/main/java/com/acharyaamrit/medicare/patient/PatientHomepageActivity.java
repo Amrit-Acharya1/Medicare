@@ -155,6 +155,7 @@ public class PatientHomepageActivity extends AppCompatActivity {
             setSelectedBackground(R.id.medicine_button_background);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragmentContainer, new MedicineFragment())
+                    .addToBackStack("Patient")
                     .commit();
         });
 
@@ -162,6 +163,7 @@ public class PatientHomepageActivity extends AppCompatActivity {
             setSelectedBackground(R.id.profile_button_background);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragmentContainer, new ProfileFragment())
+                    .addToBackStack("Patient")
                     .commit();
         });
     }
@@ -293,6 +295,7 @@ public class PatientHomepageActivity extends AppCompatActivity {
         setSelectedBackground(R.id.home_button_background);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragmentContainer, new HomeFragment())
+                .addToBackStack("Patient")
                 .commit();
     }
 

@@ -11,12 +11,18 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.IntentSenderRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -58,12 +64,19 @@ import com.acharyaamrit.medicare.patient.model.patientModel.Preciption;
 import com.acharyaamrit.medicare.patient.model.response.NearbyPharmacyResponse;
 import com.acharyaamrit.medicare.common.utils.ImageCompressor;
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.mlkit.vision.documentscanner.GmsDocumentScanner;
+import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions;
+import com.google.mlkit.vision.documentscanner.GmsDocumentScanning;
+import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -80,7 +93,7 @@ public class MedicineFragment extends Fragment {
     private TextView doctor_name, totalPrice, name, pid, viewAll;
     private LottieAnimationView lottieAnimationView;
     private ConstraintLayout notificationButton;
-    private LinearLayout cameraView;
+    private LinearLayout cameraView, document;
     private RecyclerView userDocumentRecycler;
     private ProgressDialog uploadProgressDialog;
 
@@ -92,6 +105,10 @@ public class MedicineFragment extends Fragment {
     private String selectedDocType = "prescription";
     private String selectedDoctorId = null;
 
+    // ML Kit Document Scanner (v16.1.0)
+    private GmsDocumentScanner documentScanner;
+    private ActivityResultLauncher<IntentSenderRequest> scannerLauncher;
+
     // Constants
     private static final int REQUEST_CAMERA = 1001;
     private static final int REQUEST_STORAGE = 1002;
@@ -99,6 +116,136 @@ public class MedicineFragment extends Fragment {
 
     public MedicineFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initializeDocumentScanner();
+        setupScannerLauncher();
+    }
+
+    /**
+     * Initialize ML Kit Document Scanner with optimized settings (v16.1.0)
+     * Key difference: v16.1.0 uses slightly different option builder methods
+     */
+    private void initializeDocumentScanner() {
+        GmsDocumentScannerOptions options = new GmsDocumentScannerOptions.Builder()
+                .setGalleryImportAllowed(true)  // Allow importing from gallery
+                .setPageLimit(5)                 // Limit pages for performance
+                .setResultFormats(
+                        GmsDocumentScannerOptions.RESULT_FORMAT_JPEG,
+                        GmsDocumentScannerOptions.RESULT_FORMAT_PDF
+                )
+                .setScannerMode(GmsDocumentScannerOptions.SCANNER_MODE_FULL) // Full mode with UI
+                .build();
+
+        documentScanner = GmsDocumentScanning.getClient(options);
+    }
+
+    /**
+     * Setup ActivityResultLauncher for document scanner
+     * Same implementation for both v16.1.0 and v17.0.0-beta1
+     */
+    private void setupScannerLauncher() {
+        scannerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartIntentSenderForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null) {
+                            handleScannerResult(data);
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "Scan cancelled", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+    }
+
+    /**
+     * Handle scanned document result
+     * Compatible with v16.1.0
+     */
+    private void handleScannerResult(Intent data) {
+        GmsDocumentScanningResult result =
+                GmsDocumentScanningResult.fromActivityResultIntent(data);
+
+        if (result == null) {
+            Toast.makeText(getContext(), "Failed to process document", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Get the first page (v16.1.0 compatible)
+        GmsDocumentScanningResult.Page firstPage = result.getPages().get(0);
+        Uri imageUri = firstPage.getImageUri();
+
+        // Process the scanned image in background
+        processScannedDocument(imageUri);
+    }
+
+    /**
+     * Process scanned document asynchronously
+     * Same for both versions
+     */
+    private void processScannedDocument(Uri imageUri) {
+        new Thread(() -> {
+            try {
+                // Convert URI to File
+                File scannedFile = convertUriToFile(imageUri);
+
+                if (scannedFile != null && scannedFile.exists()) {
+                    // Show preview on main thread
+                    requireActivity().runOnUiThread(() ->
+                            showPreviewAndUpload(scannedFile));
+                } else {
+                    requireActivity().runOnUiThread(() ->
+                            Toast.makeText(getContext(),
+                                    "Failed to process scanned document",
+                                    Toast.LENGTH_SHORT).show());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                requireActivity().runOnUiThread(() ->
+                        Toast.makeText(getContext(),
+                                "Error: " + e.getMessage(),
+                                Toast.LENGTH_SHORT).show());
+            }
+        }).start();
+    }
+
+    /**
+     * Convert URI to File efficiently
+     * Same implementation for both versions
+     */
+    private File convertUriToFile(Uri uri) {
+        try {
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
+                    .format(new Date());
+            String fileName = "SCANNED_" + timeStamp + ".jpg";
+
+            File outputDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            File outputFile = new File(outputDir, fileName);
+
+            InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
+            if (inputStream == null) return null;
+
+            FileOutputStream outputStream = new FileOutputStream(outputFile);
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+
+            inputStream.close();
+            outputStream.close();
+
+            return outputFile;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -118,7 +265,6 @@ public class MedicineFragment extends Fragment {
 
     private void initializeViews(View view) {
         doctor_name = view.findViewById(R.id.doctor_name);
-//        totalPrice = view.findViewById(R.id.totalPrice);
         name = view.findViewById(R.id.name);
         pid = view.findViewById(R.id.pid);
         notificationButton = view.findViewById(R.id.notificationButton);
@@ -126,6 +272,7 @@ public class MedicineFragment extends Fragment {
         lottieAnimationView = view.findViewById(R.id.loading_map);
         userDocumentRecycler = view.findViewById(R.id.documentRecycler);
         viewAll = view.findViewById(R.id.tvViewAll);
+        document = view.findViewById(R.id.document);
 
         // Initialize progress dialog
         uploadProgressDialog = new ProgressDialog(getContext());
@@ -134,7 +281,7 @@ public class MedicineFragment extends Fragment {
         uploadProgressDialog.setCancelable(false);
     }
 
-    private void initializeData(View view) {  // ✅ Accept view parameter
+    private void initializeData(View view) {
         SharedPreferences sharedPreferences = requireContext()
                 .getSharedPreferences("user_preference", MODE_PRIVATE);
         token = sharedPreferences.getString("token", null);
@@ -152,7 +299,6 @@ public class MedicineFragment extends Fragment {
             name.setText(currentPatient.getName());
             pid.setText("PID: " + currentPatient.getPatient_id());
 
-            // ✅ Use the view parameter instead of getView()
             TextView icontext = view.findViewById(R.id.iconText);
             if (icontext != null) {
                 icontext.setText(String.valueOf(currentPatient.getName().charAt(0)));
@@ -186,15 +332,13 @@ public class MedicineFragment extends Fragment {
             startActivity(intent);
         });
 
-        viewAll.setOnClickListener(v ->{
+        viewAll.setOnClickListener(v -> {
             DetailDocumentFragment docFragment = new DetailDocumentFragment();
 
-
             Bundle args = new Bundle();
-            args.putString("patientId", String.valueOf(currentPatient.getPatient_id()));   // ← replace with your key
+            args.putString("patientId", String.valueOf(currentPatient.getPatient_id()));
             args.putString("token", token);
             docFragment.setArguments(args);
-
 
             requireActivity()
                     .getSupportFragmentManager()
@@ -204,29 +348,36 @@ public class MedicineFragment extends Fragment {
                     .addToBackStack(null)
                     .commit();
         });
-
-
     }
 
     /**
-     * Show bottom sheet with document upload options
+     * Show bottom sheet with document upload options (Updated with Scanner option)
      */
     private void showDocumentUploadOptions() {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
         View bottomSheetView = getLayoutInflater().inflate(
-                R.layout.bottom_sheet_upload_document, null);
+                R.layout.bottom_sheet_upload_document_v2, null);
 
+        LinearLayout scanDocumentLayout = bottomSheetView.findViewById(R.id.scanDocumentLayout);
         LinearLayout takePhotoLayout = bottomSheetView.findViewById(R.id.takePhotoLayout);
         LinearLayout chooseGalleryLayout = bottomSheetView.findViewById(R.id.chooseGalleryLayout);
 
-        takePhotoLayout.setOnClickListener(v -> {
+        // ML Kit Document Scanner (Recommended)
+        scanDocumentLayout.setOnClickListener(v -> {
             bottomSheetDialog.dismiss();
-            showDocumentTypeDialog(true);
+            showDocumentTypeDialog(true, true); // isScanner = true
         });
 
+        // Traditional Camera
+        takePhotoLayout.setOnClickListener(v -> {
+            bottomSheetDialog.dismiss();
+            showDocumentTypeDialog(true, false); // isCamera = true, isScanner = false
+        });
+
+        // Gallery
         chooseGalleryLayout.setOnClickListener(v -> {
             bottomSheetDialog.dismiss();
-            showDocumentTypeDialog(false);
+            showDocumentTypeDialog(false, false); // neither camera nor scanner
         });
 
         bottomSheetDialog.setContentView(bottomSheetView);
@@ -234,13 +385,12 @@ public class MedicineFragment extends Fragment {
     }
 
     /**
-     * Show dialog to select document type
+     * Show dialog to select document type (Updated)
      */
-    private void showDocumentTypeDialog(boolean isCamera) {
+    private void showDocumentTypeDialog(boolean isCamera, boolean isScanner) {
         String[] documentTypes = {
                 "Prescription",
                 "Lab Report",
-                "Medical Certificate",
                 "X-Ray/Scan",
                 "Other"
         };
@@ -248,7 +398,6 @@ public class MedicineFragment extends Fragment {
         String[] documentTypeValues = {
                 "prescription",
                 "lab_report",
-                "medical_certificate",
                 "scan",
                 "other"
         };
@@ -257,7 +406,10 @@ public class MedicineFragment extends Fragment {
         builder.setTitle("Select Document Type")
                 .setItems(documentTypes, (dialog, which) -> {
                     selectedDocType = documentTypeValues[which];
-                    if (isCamera) {
+
+                    if (isScanner) {
+                        startDocumentScanner();
+                    } else if (isCamera) {
                         checkCameraPermissionAndOpen();
                     } else {
                         openGallery();
@@ -265,6 +417,31 @@ public class MedicineFragment extends Fragment {
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
+    }
+
+    /**
+     * Start ML Kit Document Scanner (v16.1.0)
+     * Same implementation as v17.0.0-beta1
+     */
+    private void startDocumentScanner() {
+        Task<IntentSender> scannerTask = documentScanner.getStartScanIntent(requireActivity());
+
+        scannerTask.addOnSuccessListener(intentSender -> {
+            try {
+                IntentSenderRequest request = new IntentSenderRequest.Builder(intentSender).build();
+                scannerLauncher.launch(request);
+            } catch (Exception e) {
+                Toast.makeText(getContext(),
+                        "Failed to start scanner: " + e.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(e -> {
+            Toast.makeText(getContext(),
+                    "Scanner not available: " + e.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+            // Fallback to camera
+            showDocumentTypeDialog(true, false);
+        });
     }
 
     /**
@@ -296,16 +473,16 @@ public class MedicineFragment extends Fragment {
      * Open gallery to pick image
      */
     private void openGallery() {
-        Intent pickPhotoIntent = new Intent(Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        pickPhotoIntent.setType("image/*");
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
 
-        if (pickPhotoIntent.resolveActivity(requireContext().getPackageManager()) != null) {
-            startActivityForResult(pickPhotoIntent, REQUEST_PICK_IMAGE);
-        } else {
-            Toast.makeText(getContext(), "No gallery app found", Toast.LENGTH_SHORT).show();
-        }
+        startActivityForResult(
+                Intent.createChooser(intent, "Select Image"),
+                REQUEST_PICK_IMAGE
+        );
     }
+
 
     /**
      * Launch camera intent
@@ -331,7 +508,6 @@ public class MedicineFragment extends Fragment {
                     photoFile
             );
 
-
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
             takePictureIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             takePictureIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
@@ -354,18 +530,16 @@ public class MedicineFragment extends Fragment {
                     .format(new Date());
             String imageFileName = "MEDICARE_" + timeStamp + "_";
 
-            // Use external files directory (app-specific, no permission needed on Android 10+)
             File storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
-            // Create directory if it doesn't exist
             if (storageDir != null && !storageDir.exists()) {
                 storageDir.mkdirs();
             }
 
             File imageFile = File.createTempFile(
-                    imageFileName,  /* prefix */
-                    ".jpg",         /* suffix */
-                    storageDir      /* directory */
+                    imageFileName,
+                    ".jpg",
+                    storageDir
             );
 
             return imageFile;
@@ -376,6 +550,7 @@ public class MedicineFragment extends Fragment {
             return null;
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -424,7 +599,7 @@ public class MedicineFragment extends Fragment {
         TextView tvDocType = dialogView.findViewById(R.id.tvDocumentType);
         TextView tvFileSize = dialogView.findViewById(R.id.tvFileSize);
 
-        // Show original file size
+        // Show file size
         double fileSizeKB = imageFile.length() / 1024.0;
         tvFileSize.setText(String.format(Locale.getDefault(), "Size: %.2f KB", fileSizeKB));
         tvDocType.setText("Type: " + selectedDocType);
@@ -443,11 +618,10 @@ public class MedicineFragment extends Fragment {
                     if (compressedFile != null) {
                         uploadDocument(compressedFile);
                     } else {
-                        uploadDocument(imageFile); // Fallback to original
+                        uploadDocument(imageFile);
                     }
                 })
                 .setNegativeButton("Cancel", (dialog, which) -> {
-                    // Delete temporary file
                     if (imageFile.exists()) {
                         imageFile.delete();
                     }
@@ -467,7 +641,6 @@ public class MedicineFragment extends Fragment {
 
         uploadProgressDialog.show();
 
-        // Get doctor ID if available (you can implement doctor selection)
         String doctorId = selectedDoctorId != null ? selectedDoctorId : null;
 
         PatientDocumentRequest request = new PatientDocumentRequest(
@@ -488,10 +661,8 @@ public class MedicineFragment extends Fragment {
                                 Toast.makeText(requireContext(),
                                         "Document uploaded successfully", Toast.LENGTH_LONG).show();
 
-                                // Refresh document list
                                 loadDocuments();
 
-                                // Clean up temporary file
                                 if (imageFile.exists()) {
                                     imageFile.delete();
                                 }
@@ -531,13 +702,21 @@ public class MedicineFragment extends Fragment {
                         String json = sharedPreferences.getString("document", null);
                         if (json == null) return;
 
-                        Type listType = new TypeToken<List<PatientDocument>>(){}.getType();
+                        Type listType = new TypeToken<List<PatientDocument>>() {
+                        }.getType();
                         List<PatientDocument> docs = new Gson().fromJson(json, listType);
 
                         if (docs != null && !docs.isEmpty()) {
+                            document.setVisibility(VISIBLE);
+                            if (docs.size() > 5) {
+                                viewAll.setVisibility(VISIBLE);
+                            } else {
+                                viewAll.setVisibility(GONE);
+                            }
+
                             userDocumentRecycler.setLayoutManager(
                                     new LinearLayoutManager(getContext()));
-                            UserDocumentAdapter adapter = new UserDocumentAdapter(docs, getContext(),false);
+                            UserDocumentAdapter adapter = new UserDocumentAdapter(docs, getContext(), false);
 
                             adapter.setOnDocumentClickListener((document, position) -> {
                                 String url = document.getDocument_url();
@@ -548,6 +727,8 @@ public class MedicineFragment extends Fragment {
 
                             userDocumentRecycler.setAdapter(adapter);
                             adapter.notifyDataSetChanged();
+                        } else {
+                            viewAll.setVisibility(GONE);
                         }
                     }
 
@@ -575,12 +756,6 @@ public class MedicineFragment extends Fragment {
 
             doctor_name.setText(String.format("Prescribed by Dr. %s",
                     currentPreciption.getDoctor_name()));
-
-//            double totalPriceValue = 0;
-//            for (Preciption preciption : preciptionList) {
-//                totalPriceValue += Double.parseDouble(preciption.getPrice());
-//            }
-//            totalPrice.setText(String.format("Rs. %.2f", totalPriceValue));
         } else {
             view.findViewById(R.id.current_prescription).setVisibility(GONE);
         }
@@ -607,6 +782,8 @@ public class MedicineFragment extends Fragment {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                } else {
+                    lottieAnimationView.setVisibility(GONE);
                 }
             }
 
@@ -616,6 +793,7 @@ public class MedicineFragment extends Fragment {
                     Toast.makeText(getContext(),
                             "No Internet Connection", Toast.LENGTH_SHORT).show();
                 }
+                lottieAnimationView.setVisibility(GONE);
             }
         });
     }
@@ -636,7 +814,6 @@ public class MedicineFragment extends Fragment {
         }
     }
 
-    // Document opening methods (keep your existing implementation)
     private void openDocument(String url) {
         if (url == null || url.isEmpty()) {
             Toast.makeText(getContext(), "Invalid document URL", Toast.LENGTH_SHORT).show();

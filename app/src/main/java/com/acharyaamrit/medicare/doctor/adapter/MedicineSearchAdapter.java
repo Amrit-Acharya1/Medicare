@@ -321,11 +321,33 @@ public class MedicineSearchAdapter extends RecyclerView.Adapter<MedicineSearchAd
                 SharedPreferences sharedPreferences = itemView.getContext()
                         .getSharedPreferences("user_preference", MODE_PRIVATE);
                 String token = sharedPreferences.getString("token", null);
+                String prescriptionRelationID = sharedPreferences.getString("prescriptionRelation_id", null);
 
                 // Get session prescription relation ID from adapter (NOT from SharedPreferences)
                 int existingPrescriptionRelationId = adapter.getSessionPrescriptionRelationId();
 
-                if (existingPrescriptionRelationId == -1) {
+//                if (existingPrescriptionRelationId == -1) {
+//                    // First medicine in this session - create NEW prescription relation
+//
+//                    createPrescriptionRelationAndSave(token, adapter.getPatientId(), medicine,
+//                            period, timePeriodUnit, quantity[0], freq, note,
+//                            listener, bottomSheetDialog, btnAdd, adapter);
+//                } else {
+//                    // Use existing session prescription relation ID
+//                    PrescriptionRequest prescriptionRequest = new PrescriptionRequest(
+//                            medicine.getId(),
+//                            existingPrescriptionRelationId,
+//                            period,
+//                            timePeriodUnit,
+//                            quantity[0],
+//                            freq,
+//                            note
+//                    );
+//
+//                    savePrescription(prescriptionRequest, medicine, listener,
+//                            bottomSheetDialog, btnAdd, adapter);
+//                }
+                if (prescriptionRelationID == null) {
                     // First medicine in this session - create NEW prescription relation
 
                     createPrescriptionRelationAndSave(token, adapter.getPatientId(), medicine,
@@ -335,7 +357,7 @@ public class MedicineSearchAdapter extends RecyclerView.Adapter<MedicineSearchAd
                     // Use existing session prescription relation ID
                     PrescriptionRequest prescriptionRequest = new PrescriptionRequest(
                             medicine.getId(),
-                            existingPrescriptionRelationId,
+                            Integer.parseInt(prescriptionRelationID),
                             period,
                             timePeriodUnit,
                             quantity[0],
@@ -438,6 +460,13 @@ public class MedicineSearchAdapter extends RecyclerView.Adapter<MedicineSearchAd
                                 listener.onAddToPrescription(medicine, position);
                             }
                         }
+
+
+
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                        editor.apply();
+
 
                         Toast.makeText(itemView.getContext(),
                                 medicine.getName() + " added to prescription",

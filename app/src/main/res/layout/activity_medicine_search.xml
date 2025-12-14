@@ -85,6 +85,7 @@
 
                 <!-- Prescription Title -->
                 <TextView
+                    android:id="@+id/prescriptionTile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/_12sdp"
@@ -279,5 +280,15 @@
                 android:layout_gravity="center"
                 android:indeterminateTint="@color/blue" />
         </FrameLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_edit"
+            app:tint="@android:color/white"
+            app:backgroundTint="@color/green"/>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </RelativeLayout>

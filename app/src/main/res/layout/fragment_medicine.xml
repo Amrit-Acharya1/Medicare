@@ -161,6 +161,7 @@
                             android:textSize="@dimen/_11sdp" />
                     </LinearLayout>
                     <LinearLayout
+                        android:id="@+id/qrprescription"
                         android:padding="@dimen/_7sdp"
                         android:background="@drawable/edit_text_background"
                         android:layout_width="wrap_content"
