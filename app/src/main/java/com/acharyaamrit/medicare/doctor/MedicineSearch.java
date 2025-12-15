@@ -8,14 +8,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,18 +28,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.acharyaamrit.medicare.R;
 import com.acharyaamrit.medicare.common.api.ApiClient;
 import com.acharyaamrit.medicare.common.api.ApiService;
-import com.acharyaamrit.medicare.common.model.response.UserResponse;
 import com.acharyaamrit.medicare.doctor.adapter.MedicineSearchAdapter;
 import com.acharyaamrit.medicare.doctor.adapter.PrescriptionRelationForPatientAdapter;
-import com.acharyaamrit.medicare.doctor.adapter.SearchPatientAdapter;
 import com.acharyaamrit.medicare.doctor.model.Medicine;
 import com.acharyaamrit.medicare.doctor.model.request.MedicineRequest;
 import com.acharyaamrit.medicare.doctor.model.request.PRelationRequest;
 import com.acharyaamrit.medicare.doctor.model.response.MedicineResponse;
 import com.acharyaamrit.medicare.doctor.model.response.PRelation;
 import com.acharyaamrit.medicare.doctor.model.response.PRelationResponse;
-import com.acharyaamrit.medicare.doctor.model.response.SearchPatientResponse;
-import com.acharyaamrit.medicare.patient.model.patientModel.Patient;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -296,9 +289,11 @@ public class MedicineSearch extends AppCompatActivity {
     }
     private void hideKeyboard() {
         if (getCurrentFocus() != null) {
-            ((android.view.inputmethod.InputMethodManager)
-                    getSystemService(INPUT_METHOD_SERVICE))
-                    .hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            if (getCurrentFocus() != null) {
+                ((android.view.inputmethod.InputMethodManager)
+                        getSystemService(INPUT_METHOD_SERVICE))
+                        .hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            }
         }
     }
 

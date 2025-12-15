@@ -1,13 +1,18 @@
 package com.acharyaamrit.medicare.doctor;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -54,6 +60,7 @@ ConstraintLayout notification_icon;
     private Handler handler = new Handler(Looper.getMainLooper());
     private Runnable searchRunnable;
 ImageView noUserImage;
+CardView search_card;
 
     public DoctorPatientFragment() {
         // Required empty public constructor
@@ -95,11 +102,19 @@ ImageView noUserImage;
         name = view.findViewById(R.id.name);
         did = view.findViewById(R.id.did);
         specialist = view.findViewById(R.id.specialist);
+        search_card = view.findViewById(R.id.search_card);
     }
 
     private void setUpListener(View view) {
         notification_icon = view.findViewById(R.id.notification_icon);
 
+        search_card.setOnClickListener(v->{
+            searchInput.requestFocus();
+            InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.showSoftInput(searchInput, InputMethodManager.SHOW_IMPLICIT);
+            }
+        });
 
         notification_icon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,7 +142,6 @@ ImageView noUserImage;
         });
         searchInput.setOnKeyListener((v, keyCode, event) -> {
             if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
-
                 if (searchRunnable != null) {
                     handler.removeCallbacks(searchRunnable);
                 }
@@ -140,6 +154,7 @@ ImageView noUserImage;
         });
 
     }
+
 
 
 
