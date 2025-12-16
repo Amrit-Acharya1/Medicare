@@ -173,19 +173,19 @@ public class LoginActivity extends AppCompatActivity {
 
         if (email.isEmpty()) {
             ((EditText) findViewById(R.id.email_login)).setError("Email cannot be empty");
-            ((EditText) findViewById(R.id.email_login)).requestFocus();
+            findViewById(R.id.email_login).requestFocus();
             loginButton.setEnabled(true); // Re-enable button on validation failure
             progressDialog.dismiss();
             return;
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             ((EditText) findViewById(R.id.email_login)).setError("Please enter a valid email address");
-            ((EditText) findViewById(R.id.email_login)).requestFocus();
+            findViewById(R.id.email_login).requestFocus();
             loginButton.setEnabled(true); // Re-enable button on validation failure
             progressDialog.dismiss();
             return;
         } else if (password.isEmpty()) {
             ((EditText) findViewById(R.id.password_login)).setError("Password cannot be empty");
-            ((EditText) findViewById(R.id.password_login)).requestFocus();
+            findViewById(R.id.password_login).requestFocus();
             loginButton.setEnabled(true); // Re-enable button on validation failure
             progressDialog.dismiss();
             return;

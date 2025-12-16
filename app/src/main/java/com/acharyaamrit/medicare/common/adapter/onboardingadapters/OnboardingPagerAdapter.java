@@ -12,8 +12,8 @@ import java.util.List;
 
 public class OnboardingPagerAdapter extends RecyclerView.Adapter<OnboardingPagerAdapter.OnboardingViewHolder> {
 
-    private Context context;
-    private List<Integer> layouts;
+    private final Context context;
+    private final List<Integer> layouts;
 
     public OnboardingPagerAdapter(Context context, List<Integer> layouts) {
         this.context = context;

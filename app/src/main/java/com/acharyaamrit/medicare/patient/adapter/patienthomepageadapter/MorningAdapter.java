@@ -19,7 +19,7 @@ import java.util.List;
 public class MorningAdapter extends RecyclerView.Adapter<MorningAdapter.ViewHolder> {
 
     private List<Medicine> medicineList;
-    private Context context;
+    private final Context context;
 
     public MorningAdapter(List<Medicine> medicineList, Context context) {
         this.medicineList = medicineList != null ? medicineList : new ArrayList<>();

@@ -18,8 +18,8 @@ import java.util.List;
 
 public class NightAdapter extends RecyclerView.Adapter<NightAdapter.ViewHolder>{
 
-    private List<Medicine> medicineList;
-    private Context context;
+    private final List<Medicine> medicineList;
+    private final Context context;
 
     public NightAdapter(List<Medicine> medicineList, Context context) {
         this.medicineList = medicineList != null ? medicineList : new ArrayList<>();

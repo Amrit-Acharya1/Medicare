@@ -18,7 +18,7 @@ import java.util.List;
 
 public class EveningAdapter extends RecyclerView.Adapter<EveningAdapter.ViewHolder>{
     private List<Medicine> medicineList;
-    private Context context;
+    private final Context context;
 
     public EveningAdapter(List<Medicine> medicineList, Context context) {
         this.medicineList = medicineList;

@@ -45,7 +45,7 @@ public class DoctorPatientDetailActivity extends AppCompatActivity {
     Toolbar toolbar;
     TextView tv_name, tv_patient_id, tv_blood_group, tv_age, tv_gender, tv_phone,tv_location;
     ConstraintLayout timelineMain;
-    Button btn_prescribe;
+    TextView btn_prescribe;
 
 
     @Override
@@ -74,7 +74,7 @@ public class DoctorPatientDetailActivity extends AppCompatActivity {
         tv_phone = findViewById(R.id.tv_phone);
         tv_location = findViewById(R.id.tv_location);
         timelineMain = findViewById(R.id.timelineMain);
-        btn_prescribe =findViewById(R.id.btn_prescribe);
+        btn_prescribe = findViewById(R.id.btn_prescribe);
     }
     private void setUpListeners(){
         toolbar.setOnClickListener(v->{

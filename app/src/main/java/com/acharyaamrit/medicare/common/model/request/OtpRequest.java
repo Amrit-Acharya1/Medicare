@@ -1,7 +1,7 @@
 package com.acharyaamrit.medicare.common.model.request;
 
 public class OtpRequest {
-    private String email;
+    private final String email;
 
     public OtpRequest(String email) {
         this.email = email;

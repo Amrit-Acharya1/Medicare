@@ -1,8 +1,8 @@
 package com.acharyaamrit.medicare.common.model.request;
 
 public class OtpValidateRequest {
-    private String email;
-    private String otp;
+    private final String email;
+    private final String otp;
 
     public OtpValidateRequest(String email, String otp) {
         this.email = email;

@@ -16,8 +16,8 @@ import retrofit2.Response;
 
 public class FetchDocumentOfPatient {
 
-    private String token;
-    private String patient_id;
+    private final String token;
+    private final String patient_id;
 
     public FetchDocumentOfPatient(String token, String patient_id) {
         this.token = token;

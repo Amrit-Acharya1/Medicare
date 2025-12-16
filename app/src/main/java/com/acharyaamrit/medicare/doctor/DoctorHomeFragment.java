@@ -96,7 +96,7 @@ public class DoctorHomeFragment extends Fragment {
         Doctor doctor = databaseHelper.getDoctorByToken(token);
         if (doctor != null) {
             name.setText(doctor.getName());
-            did.setText(String.valueOf("DID: "+doctor.getDoctor_id()));
+            did.setText("DID: " + doctor.getDoctor_id());
             specialist.setText((doctor.getSpeciality().isEmpty()) ? "" : doctor.getSpeciality());
         }
     }

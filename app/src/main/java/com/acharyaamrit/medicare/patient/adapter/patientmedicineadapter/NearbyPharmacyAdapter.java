@@ -32,7 +32,7 @@ import java.util.List;
 public class NearbyPharmacyAdapter extends RecyclerView.Adapter<NearbyPharmacyAdapter.ViewHolder>{
 
     List<PharmacyMap> pharmacyMapList;
-    private Context context;
+    private final Context context;
 
     public NearbyPharmacyAdapter(List<PharmacyMap> pharmacyMapList, Context context) {
         this.pharmacyMapList = pharmacyMapList;

@@ -75,7 +75,7 @@ public class DetailDocumentFragment extends Fragment{
     private String token;
     private File photoFile;
     private String selectedDocType = "prescription";
-    private String selectedDoctorId = null;
+    private final String selectedDoctorId = null;
     private ProgressDialog uploadProgressDialog;
     private RecyclerView documentRecycler;
 
@@ -410,7 +410,7 @@ public class DetailDocumentFragment extends Fragment{
         uploadProgressDialog.show();
 
         // Get doctor ID if available (you can implement doctor selection)
-        String doctorId = selectedDoctorId != null ? selectedDoctorId : null;
+        String doctorId = selectedDoctorId;
 
         PatientDocumentRequest request = new PatientDocumentRequest(
                 selectedDocType,

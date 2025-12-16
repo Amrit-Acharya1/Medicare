@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:id="@+id/main"
+    tools:context=".doctor.DoctorPatientDetailActivity"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="#F3F4F6">
@@ -448,22 +449,20 @@
 
 
             <!-- Action Button -->
-            <Button
-                android:id="@+id/btn_prescribe"
+            <TextView
+                android:id="@+id/btn_prescribe1"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:layout_marginTop="24dp"
-                android:text="Prescribe Medicine"
+                android:text="Upload Documents"
+                android:gravity="center"
+                android:textAlignment="center"
                 android:textSize="15sp"
                 android:textAllCaps="false"
                 android:background="@drawable/bottom_nav_doctor_background_card"
                 android:textColor="@android:color/white"
-                app:cornerRadius="14dp"
                 android:layout_marginBottom="@dimen/_20sdp"
-                app:icon="@drawable/ic_prescription"
-                app:iconGravity="textStart"
-                app:iconSize="20dp"
-                app:iconTint="@android:color/white" />
+                />
 
         </LinearLayout>
 

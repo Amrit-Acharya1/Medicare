@@ -25,8 +25,8 @@ import java.util.Locale;
 
 public class SearchPatientAdapter extends RecyclerView.Adapter<SearchPatientAdapter.ViewHolder>{
 
-    private List<Patient> patientList;
-    private Context context;
+    private final List<Patient> patientList;
+    private final Context context;
 
     public SearchPatientAdapter(List<Patient> patientList, Context context) {
         this.patientList = patientList;

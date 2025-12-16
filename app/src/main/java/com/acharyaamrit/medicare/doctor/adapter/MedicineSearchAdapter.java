@@ -43,9 +43,9 @@ import retrofit2.Response;
 
 public class MedicineSearchAdapter extends RecyclerView.Adapter<MedicineSearchAdapter.ViewHolder> {
 
-    private List<Medicine> medicineList;
+    private final List<Medicine> medicineList;
     private final Context context;
-    private int pid;
+    private final int pid;
     private OnMedicineClickListener listener;
 
     // Session-based prescription relation ID (NOT persisted in SharedPreferences)

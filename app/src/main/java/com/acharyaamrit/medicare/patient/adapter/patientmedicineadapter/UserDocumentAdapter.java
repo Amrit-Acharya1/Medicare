@@ -21,8 +21,8 @@ import java.util.Locale;
 public class UserDocumentAdapter extends RecyclerView.Adapter<UserDocumentAdapter.ViewHolder>{
 
     private List<PatientDocument> patientDocumentList;
-    private Context context;
-    private Boolean viewAll;
+    private final Context context;
+    private final Boolean viewAll;
     private OnDocumentClickListener clickListener;
 
     // Click listener interface

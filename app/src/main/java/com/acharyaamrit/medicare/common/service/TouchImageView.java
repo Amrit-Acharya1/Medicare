@@ -9,16 +9,16 @@ import android.view.ScaleGestureDetector;
 
 public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView {
 
-    private Matrix matrix = new Matrix();
+    private final Matrix matrix = new Matrix();
     private static final int NONE = 0;
     private static final int DRAG = 1;
     private static final int ZOOM = 2;
     private int mode = NONE;
 
-    private PointF last = new PointF();
-    private PointF start = new PointF();
-    private float minScale = 1f;
-    private float maxScale = 4f;
+    private final PointF last = new PointF();
+    private final PointF start = new PointF();
+    private final float minScale = 1f;
+    private final float maxScale = 4f;
     private float[] m;
 
     private float redundantXSpace, redundantYSpace;

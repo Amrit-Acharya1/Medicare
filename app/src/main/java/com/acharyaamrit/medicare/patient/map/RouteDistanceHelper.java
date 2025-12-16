@@ -16,8 +16,8 @@ import java.util.concurrent.Executors;
 
 public class RouteDistanceHelper {
     private static final String TAG = "RouteDistanceHelper";
-    private ExecutorService executorService;
-    private Handler mainHandler;
+    private final ExecutorService executorService;
+    private final Handler mainHandler;
 
     public RouteDistanceHelper() {
         executorService = Executors.newFixedThreadPool(3); // Allow multiple concurrent requests

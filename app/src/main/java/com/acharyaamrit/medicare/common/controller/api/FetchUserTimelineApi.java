@@ -15,8 +15,8 @@ import retrofit2.Response;
 
 public class FetchUserTimelineApi {
 
-    private String token;
-    private int patient_id;
+    private final String token;
+    private final int patient_id;
 
     public interface TimelineCallback {
         void onSuccess();

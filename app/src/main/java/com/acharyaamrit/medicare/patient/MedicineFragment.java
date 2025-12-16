@@ -103,7 +103,7 @@ public class MedicineFragment extends Fragment {
     private String token;
     private File photoFile;
     private String selectedDocType = "prescription";
-    private String selectedDoctorId = null;
+    private final String selectedDoctorId = null;
 
     // ML Kit Document Scanner (v16.1.0)
     private GmsDocumentScanner documentScanner;
@@ -641,7 +641,7 @@ public class MedicineFragment extends Fragment {
 
         uploadProgressDialog.show();
 
-        String doctorId = selectedDoctorId != null ? selectedDoctorId : null;
+        String doctorId = selectedDoctorId;
 
         PatientDocumentRequest request = new PatientDocumentRequest(
                 selectedDocType,

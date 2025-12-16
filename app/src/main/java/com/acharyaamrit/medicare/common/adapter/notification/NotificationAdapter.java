@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.ViewHolder> {
 
     List<Notice> noticeList;
-    private Context context;
+    private final Context context;
     private String lastDisplayedDate = "";
 
     public NotificationAdapter(List<Notice> noticeList, Context context) {

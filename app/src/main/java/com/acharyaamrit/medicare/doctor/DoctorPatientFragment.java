@@ -57,7 +57,7 @@ EditText searchInput;
 TextView tv_patient_count, name, did, specialist;
 ConstraintLayout notification_icon;
 
-    private Handler handler = new Handler(Looper.getMainLooper());
+    private final Handler handler = new Handler(Looper.getMainLooper());
     private Runnable searchRunnable;
 ImageView noUserImage;
 CardView search_card;
@@ -89,7 +89,7 @@ CardView search_card;
         Doctor doctor = databaseHelper.getDoctorByToken(token);
         if (doctor != null) {
             name.setText(doctor.getName());
-            did.setText(String.valueOf("DID: "+doctor.getDoctor_id()));
+            did.setText("DID: " + doctor.getDoctor_id());
             specialist.setText((doctor.getSpeciality().isEmpty()) ? "" : doctor.getSpeciality());
         }
     }

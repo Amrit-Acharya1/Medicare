@@ -17,8 +17,8 @@ import retrofit2.Response;
 
 public class UploadDocumentOfPatient {
     private static final String TAG = "UploadDocument";
-    private String token;
-    private PatientDocumentRequest patientDocumentRequest;
+    private final String token;
+    private final PatientDocumentRequest patientDocumentRequest;
 
     public UploadDocumentOfPatient(String token, PatientDocumentRequest patientDocumentRequest) {
         this.token = token;

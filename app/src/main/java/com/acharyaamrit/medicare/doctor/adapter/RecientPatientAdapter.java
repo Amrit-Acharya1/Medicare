@@ -17,8 +17,8 @@ import java.util.List;
 
 public class RecientPatientAdapter extends RecyclerView.Adapter<RecientPatientAdapter.ViewHolder> {
 
-    private List<RecentPatient> patientList;
-    private Context context;
+    private final List<RecentPatient> patientList;
+    private final Context context;
 
     public RecientPatientAdapter(List<RecentPatient> patientList, Context context) {
         this.patientList = patientList;
