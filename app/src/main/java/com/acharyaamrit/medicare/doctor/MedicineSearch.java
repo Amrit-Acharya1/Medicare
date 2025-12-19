@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -78,6 +79,7 @@ public class MedicineSearch extends AppCompatActivity {
     private ApiService apiService;
     private FrameLayout loadingOverlay, noMedicine;
     private FloatingActionButton fab;
+    private LinearLayout upload_doc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +126,7 @@ public class MedicineSearch extends AppCompatActivity {
         noMedicine = findViewById(R.id.noMedicine);
         prescriptionTile = findViewById(R.id.prescriptionTile);
         fab =findViewById(R.id.fab);
+        upload_doc = findViewById(R.id.upload_doc);
 
     }
     private void showBottomSheet(List<PRelation> prelationList){
@@ -218,9 +221,9 @@ public class MedicineSearch extends AppCompatActivity {
 
         rvMedicines.setItemViewCacheSize(20);
 
-        ViewGroup.LayoutParams params = rvMedicines.getLayoutParams();
-        params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-        rvMedicines.setLayoutParams(params);
+//        ViewGroup.LayoutParams params = rvMedicines.getLayoutParams();
+//        params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+//        rvMedicines.setLayoutParams(params);
 
         rvMedicines.setAdapter(adapter);
 

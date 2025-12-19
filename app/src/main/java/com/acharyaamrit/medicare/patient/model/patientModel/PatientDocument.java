@@ -2,22 +2,24 @@ package com.acharyaamrit.medicare.patient.model.patientModel;
 
 public class PatientDocument {
     private int id;
+    private String preciption_relation_id;
     private String patient_id;
     private String doctor_name;
     private String document_type;
     private String document_url;
     private String created_at;
 
-    public PatientDocument(int id, String patient_id, String doctor_name, String document_type, String document_url, String created_at) {
+    public PatientDocument() {
+    }
+
+    public PatientDocument(int id, String preciption_relation_id, String patient_id, String doctor_name, String document_type, String document_url, String created_at) {
         this.id = id;
+        this.preciption_relation_id = preciption_relation_id;
         this.patient_id = patient_id;
         this.doctor_name = doctor_name;
         this.document_type = document_type;
         this.document_url = document_url;
         this.created_at = created_at;
-    }
-
-    public PatientDocument() {
     }
 
     public int getId() {
@@ -26,6 +28,14 @@ public class PatientDocument {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getPreciption_relation_id() {
+        return preciption_relation_id;
+    }
+
+    public void setPreciption_relation_id(String preciption_relation_id) {
+        this.preciption_relation_id = preciption_relation_id;
     }
 
     public String getPatient_id() {

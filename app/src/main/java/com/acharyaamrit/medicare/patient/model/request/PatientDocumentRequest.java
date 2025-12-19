@@ -5,6 +5,9 @@ import androidx.annotation.Nullable;
 import java.io.File;
 
 public class PatientDocumentRequest {
+
+    @Nullable()
+    private Integer preciption_relation_id;
     private String document_type;
     private String patient_id;
     @Nullable
@@ -14,11 +17,20 @@ public class PatientDocumentRequest {
     public PatientDocumentRequest() {
     }
 
-    public PatientDocumentRequest(String document_type, String patient_id, @Nullable String doctor_id, File document) {
+    public PatientDocumentRequest(Integer preciption_relation_id, String document_type, String patient_id, @Nullable String doctor_id, File document) {
+        this.preciption_relation_id = preciption_relation_id;
         this.document_type = document_type;
         this.patient_id = patient_id;
         this.doctor_id = doctor_id;
         this.document = document;
+    }
+
+    public Integer getPreciption_relation_id() {
+        return preciption_relation_id;
+    }
+
+    public void setPreciption_relation_id(Integer preciption_relation_id) {
+        this.preciption_relation_id = preciption_relation_id;
     }
 
     public String getDocument_type() {
@@ -37,7 +49,8 @@ public class PatientDocumentRequest {
         this.patient_id = patient_id;
     }
 
-    public @Nullable String getDoctor_id() {
+    @Nullable
+    public String getDoctor_id() {
         return doctor_id;
     }
 
@@ -52,5 +65,4 @@ public class PatientDocumentRequest {
     public void setDocument(File document) {
         this.document = document;
     }
-
 }

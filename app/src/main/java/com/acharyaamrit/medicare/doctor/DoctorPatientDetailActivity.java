@@ -45,7 +45,7 @@ public class DoctorPatientDetailActivity extends AppCompatActivity {
     Toolbar toolbar;
     TextView tv_name, tv_patient_id, tv_blood_group, tv_age, tv_gender, tv_phone,tv_location;
     ConstraintLayout timelineMain;
-    TextView btn_prescribe;
+    Button btn_prescribe;
 
 
     @Override

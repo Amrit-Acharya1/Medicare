@@ -413,6 +413,7 @@ public class DetailDocumentFragment extends Fragment{
         String doctorId = selectedDoctorId;
 
         PatientDocumentRequest request = new PatientDocumentRequest(
+                null,
                 selectedDocType,
                 String.valueOf(currentPatient.getPatient_id()),
                 doctorId,

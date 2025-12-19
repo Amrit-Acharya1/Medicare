@@ -407,8 +407,7 @@
                 android:background="@drawable/card_background"
                 android:padding="@dimen/_12sdp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-               >
+                android:layout_height="wrap_content">
 
                 <LinearLayout
                     android:id="@+id/headerLayout"
@@ -449,12 +448,12 @@
 
 
             <!-- Action Button -->
-            <TextView
-                android:id="@+id/btn_prescribe1"
+            <Button
+                android:id="@+id/btn_prescribe"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:layout_marginTop="24dp"
-                android:text="Upload Documents"
+                android:text="Prescription"
                 android:gravity="center"
                 android:textAlignment="center"
                 android:textSize="15sp"

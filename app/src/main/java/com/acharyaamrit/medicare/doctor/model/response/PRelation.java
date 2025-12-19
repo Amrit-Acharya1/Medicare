@@ -1,5 +1,6 @@
 package com.acharyaamrit.medicare.doctor.model.response;
 
+
 public class PRelation {
     private int id;
     private String doctor_name;
