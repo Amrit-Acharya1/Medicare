@@ -55,9 +55,26 @@ public class PrescriptionRelationForPatientAdapter extends RecyclerView.Adapter<
                 bottomSheetDialog.dismiss();
             }
         });
+        holder.titleView.setOnClickListener(v->{
+            showBottomSheet(prelation);
+        });
 
 
     }
+
+private void showBottomSheet(PRelation pRelation){
+    BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
+    View bottomSheetView = LayoutInflater.from(context).inflate(
+            R.layout.item_bottom_sheet_detail_preciption, null);
+    bottomSheetDialog.setContentView(bottomSheetView);
+
+    TextView doctorName = bottomSheetDialog.findViewById(R.id.doctor_name);
+    doctorName.setText("Checkup With "+pRelation.getDoctor_name());
+    bottomSheetDialog.show();
+
+    bottomSheetDialog.show();
+
+}
 
 
 

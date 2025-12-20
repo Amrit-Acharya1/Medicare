@@ -120,7 +120,8 @@ public interface ApiService {
     @POST("document/upload")
     Call<UserResponse> uploadDocument(
             @Header("Authorization") String bearerToken,
-            @Part MultipartBody.Part document,          // file part
+            @Part MultipartBody.Part document,
+            @Part("preciption_relation_id") RequestBody preciption_relation_id,// file part
             @Part("document_type") RequestBody docType,
             @Part("patient_id")    RequestBody patientId,
             @Part("doctor_id") RequestBody doctorId);

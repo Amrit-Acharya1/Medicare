@@ -61,11 +61,25 @@ public class UploadDocumentOfPatient {
         }
 
         try {
-            // ✅ Create RequestBody with correct MediaType
+
+            Integer prescriptionRelationId = null;
+            if (patientDocumentRequest != null) {
+                prescriptionRelationId = patientDocumentRequest.getPreciption_relation_id();
+            }
+
+            String prescriptionRelationIdStr = (prescriptionRelationId != null) ? prescriptionRelationId.toString() : "";
+
+            RequestBody prescriptionRelationIdRB = RequestBody.create(
+                    MediaType.parse("text/plain"),
+                    prescriptionRelationIdStr
+            );
+
             RequestBody docTypeRB = RequestBody.create(
                     MediaType.parse("text/plain"),
                     patientDocumentRequest.getDocument_type()
             );
+
+
 
             RequestBody patientIdRB = RequestBody.create(
                     MediaType.parse("text/plain"),
@@ -104,6 +118,7 @@ public class UploadDocumentOfPatient {
             Call<UserResponse> call = apiService.uploadDocument(
                     "Bearer " + token,
                     filePart,
+                    prescriptionRelationIdRB,
                     docTypeRB,
                     patientIdRB,
                     doctorIdRB

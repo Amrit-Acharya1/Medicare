@@ -247,7 +247,8 @@ public class DoctorHomeFragment extends Fragment {
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), "unsuccessful", Toast.LENGTH_SHORT).show();
+                    todayPatientsCount.setText("0");
+                    updateLastWeekChart(null);
                 }
             }
 
@@ -296,7 +297,7 @@ public class DoctorHomeFragment extends Fragment {
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), "unsuccessful", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "No Patients Found", Toast.LENGTH_SHORT).show();
                 }
             }
 

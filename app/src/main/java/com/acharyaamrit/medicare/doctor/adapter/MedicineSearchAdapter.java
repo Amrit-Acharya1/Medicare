@@ -48,11 +48,7 @@ public class MedicineSearchAdapter extends RecyclerView.Adapter<MedicineSearchAd
     private final int pid;
     private OnMedicineClickListener listener;
 
-    // Session-based prescription relation ID (NOT persisted in SharedPreferences)
-    // This resets to -1 every time a new adapter is created (new visit)
     private int sessionPrescriptionRelationId = -1;
-
-    // Track medicines added in this session to prevent duplicates
     private Set<Integer> addedMedicineIds = new HashSet<>();
 
     public interface OnMedicineClickListener {
@@ -63,7 +59,6 @@ public class MedicineSearchAdapter extends RecyclerView.Adapter<MedicineSearchAd
         this.medicineList = new ArrayList<>(medicineList);
         this.context = context;
         this.pid = pid;
-        // Reset session - each new adapter instance = new visit
         this.sessionPrescriptionRelationId = -1;
         this.addedMedicineIds = new HashSet<>();
         setHasStableIds(true);
@@ -73,51 +68,77 @@ public class MedicineSearchAdapter extends RecyclerView.Adapter<MedicineSearchAd
         this.listener = listener;
     }
 
-    /**
-     * Call this to explicitly start a new prescription session.
-     * Useful if you want to start a new visit without recreating the adapter.
-     */
     public void startNewSession() {
         this.sessionPrescriptionRelationId = -1;
         this.addedMedicineIds.clear();
     }
 
-    /**
-     * Get current session's prescription relation ID.
-     * Returns -1 if no prescription relation created yet in this session.
-     */
     public int getSessionPrescriptionRelationId() {
         return sessionPrescriptionRelationId;
     }
 
-    /**
-     * Check if a medicine is already added in this session.
-     */
     public boolean isMedicineAddedInSession(int medicineId) {
         return addedMedicineIds.contains(medicineId);
     }
 
-    /**
-     * Get count of medicines added in this session.
-     */
     public int getAddedMedicineCount() {
         return addedMedicineIds.size();
     }
 
     /**
-     * Update data using DiffUtil for efficient updates
+     * Update data using DiffUtil for efficient updates (replaces all data)
      */
     public void updateData(List<Medicine> newMedicines) {
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new MedicineDiffCallback(this.medicineList, newMedicines));
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(
+                new MedicineDiffCallback(this.medicineList, newMedicines));
         this.medicineList.clear();
         this.medicineList.addAll(newMedicines);
         diffResult.dispatchUpdatesTo(this);
     }
 
+    /**
+     * Append new data to existing list (for infinite scroll)
+     */
+    public void appendData(List<Medicine> newMedicines) {
+        if (newMedicines == null || newMedicines.isEmpty()) {
+            return;
+        }
+
+        int startPosition = medicineList.size();
+
+        // Filter out duplicates based on ID
+        List<Medicine> uniqueMedicines = new ArrayList<>();
+        Set<Integer> existingIds = new HashSet<>();
+        for (Medicine m : medicineList) {
+            existingIds.add(m.getId());
+        }
+
+        for (Medicine medicine : newMedicines) {
+            if (!existingIds.contains(medicine.getId())) {
+                uniqueMedicines.add(medicine);
+                existingIds.add(medicine.getId());
+            }
+        }
+
+        if (!uniqueMedicines.isEmpty()) {
+            medicineList.addAll(uniqueMedicines);
+            notifyItemRangeInserted(startPosition, uniqueMedicines.size());
+        }
+    }
+
+    /**
+     * Clear all data
+     */
+    public void clearData() {
+        int size = medicineList.size();
+        medicineList.clear();
+        notifyItemRangeRemoved(0, size);
+    }
+
     @Override
     public long getItemId(int position) {
         Medicine medicine = medicineList.get(position);
-        return medicine.getCode() != null ? medicine.getCode().hashCode() : position;
+        return medicine.getId();
     }
 
     @NonNull
@@ -154,7 +175,6 @@ public class MedicineSearchAdapter extends RecyclerView.Adapter<MedicineSearchAd
         holder.clear();
     }
 
-    // Methods to update session state (called from ViewHolder)
     void setSessionPrescriptionRelationId(int id) {
         this.sessionPrescriptionRelationId = id;
     }
@@ -193,15 +213,20 @@ public class MedicineSearchAdapter extends RecyclerView.Adapter<MedicineSearchAd
             tvCompanyName.setText(nullSafe(medicine.getCompany_name()));
             tvCode.setText(nullSafe(medicine.getCode()));
 
+            // Visual indicator if already added
+            if (adapter.isMedicineAddedInSession(medicine.getId())) {
+                btnAddToPrescription.setAlpha(0.5f);
+            } else {
+                btnAddToPrescription.setAlpha(1.0f);
+            }
+
             btnAddToPrescription.setOnClickListener(v -> {
-                // Check if medicine already added in this session
                 if (adapter.isMedicineAddedInSession(medicine.getId())) {
                     Toast.makeText(itemView.getContext(),
                             medicine.getName() + " is already added in this prescription",
                             Toast.LENGTH_SHORT).show();
                     return;
                 }
-
                 showMedicineBottomSheet(medicine, listener, adapter);
             });
         }
@@ -213,27 +238,22 @@ public class MedicineSearchAdapter extends RecyclerView.Adapter<MedicineSearchAd
                     .inflate(R.layout.item_bottomsheet_medicine_add, null);
             bottomSheetDialog.setContentView(bottomSheetView);
 
-            // Initialize bottom sheet views
             TextView tvMedicineName = bottomSheetView.findViewById(R.id.tvMedicineName);
             TextView tvManufacturer = bottomSheetView.findViewById(R.id.tvManufacturer);
             TextView tvDosage = bottomSheetView.findViewById(R.id.tvDosage);
             ImageView ivMedicine = bottomSheetView.findViewById(R.id.ivMedicine);
 
-            // Quantity controls
             Button btnMinus = bottomSheetView.findViewById(R.id.btnMinus);
             TextView tvQuantity = bottomSheetView.findViewById(R.id.tvQuantity);
             Button btnPlus = bottomSheetView.findViewById(R.id.btnPlus);
 
-            // Input fields
             EditText etFrequency = bottomSheetView.findViewById(R.id.etFrequency);
             EditText etTimePeriod = bottomSheetView.findViewById(R.id.etTimePeriod);
             Spinner spinnerTimePeriod = bottomSheetView.findViewById(R.id.spinnerTimePeriod);
             EditText etNote = bottomSheetView.findViewById(R.id.etNote);
 
-            // Add button
             Button btnAdd = bottomSheetView.findViewById(R.id.btnAdd);
 
-            // Populate medicine information
             tvMedicineName.setText(nullSafe(medicine.getName()));
             tvManufacturer.setText(nullSafe(medicine.getCompany_name()));
 
@@ -243,14 +263,12 @@ public class MedicineSearchAdapter extends RecyclerView.Adapter<MedicineSearchAd
             }
             tvDosage.setText(dosageText);
 
-            // Setup spinner for time period
             ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(itemView.getContext(),
                     android.R.layout.simple_spinner_item,
                     new String[]{"Days", "Weeks", "Months"});
             spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinnerTimePeriod.setAdapter(spinnerAdapter);
 
-            // Quantity counter logic
             final int[] quantity = {1};
 
             btnMinus.setOnClickListener(v -> {
@@ -267,9 +285,7 @@ public class MedicineSearchAdapter extends RecyclerView.Adapter<MedicineSearchAd
                 }
             });
 
-            // Add button click listener
             btnAdd.setOnClickListener(v -> {
-                // Validate inputs
                 String frequency = etFrequency.getText().toString().trim();
                 String timePeriod = etTimePeriod.getText().toString().trim();
                 String timePeriodUnit = spinnerTimePeriod.getSelectedItem().toString();
@@ -314,7 +330,6 @@ public class MedicineSearchAdapter extends RecyclerView.Adapter<MedicineSearchAd
                     return;
                 }
 
-                // Disable button to prevent double clicks
                 btnAdd.setEnabled(false);
                 btnAdd.setText("Adding...");
 
@@ -323,38 +338,11 @@ public class MedicineSearchAdapter extends RecyclerView.Adapter<MedicineSearchAd
                 String token = sharedPreferences.getString("token", null);
                 String prescriptionRelationID = sharedPreferences.getString("prescriptionRelation_id", null);
 
-                // Get session prescription relation ID from adapter (NOT from SharedPreferences)
-                int existingPrescriptionRelationId = adapter.getSessionPrescriptionRelationId();
-
-//                if (existingPrescriptionRelationId == -1) {
-//                    // First medicine in this session - create NEW prescription relation
-//
-//                    createPrescriptionRelationAndSave(token, adapter.getPatientId(), medicine,
-//                            period, timePeriodUnit, quantity[0], freq, note,
-//                            listener, bottomSheetDialog, btnAdd, adapter);
-//                } else {
-//                    // Use existing session prescription relation ID
-//                    PrescriptionRequest prescriptionRequest = new PrescriptionRequest(
-//                            medicine.getId(),
-//                            existingPrescriptionRelationId,
-//                            period,
-//                            timePeriodUnit,
-//                            quantity[0],
-//                            freq,
-//                            note
-//                    );
-//
-//                    savePrescription(prescriptionRequest, medicine, listener,
-//                            bottomSheetDialog, btnAdd, adapter);
-//                }
                 if (prescriptionRelationID == null) {
-                    // First medicine in this session - create NEW prescription relation
-
                     createPrescriptionRelationAndSave(token, adapter.getPatientId(), medicine,
                             period, timePeriodUnit, quantity[0], freq, note,
                             listener, bottomSheetDialog, btnAdd, adapter);
                 } else {
-                    // Use existing session prescription relation ID
                     PrescriptionRequest prescriptionRequest = new PrescriptionRequest(
                             medicine.getId(),
                             Integer.parseInt(prescriptionRelationID),
@@ -394,10 +382,8 @@ public class MedicineSearchAdapter extends RecyclerView.Adapter<MedicineSearchAd
                         try {
                             int prescriptionRelationId = response.body().getPreciptionRelation().getId();
 
-                            // Store in adapter's session variable (NOT in SharedPreferences!)
                             adapter.setSessionPrescriptionRelationId(prescriptionRelationId);
 
-                            // Now create the prescription
                             PrescriptionRequest prescriptionRequest = new PrescriptionRequest(
                                     medicine.getId(),
                                     prescriptionRelationId,
@@ -450,23 +436,14 @@ public class MedicineSearchAdapter extends RecyclerView.Adapter<MedicineSearchAd
                 @Override
                 public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
-                        // Track medicine as added in this session
                         adapter.addMedicineToSession(medicine.getId());
 
-                        // Notify listener
                         if (listener != null) {
                             int position = getAdapterPosition();
                             if (position != RecyclerView.NO_POSITION) {
                                 listener.onAddToPrescription(medicine, position);
                             }
                         }
-
-
-
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-                        editor.apply();
-
 
                         Toast.makeText(itemView.getContext(),
                                 medicine.getName() + " added to prescription",
@@ -542,9 +519,7 @@ public class MedicineSearchAdapter extends RecyclerView.Adapter<MedicineSearchAd
 
         @Override
         public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-            Medicine oldMedicine = oldList.get(oldItemPosition);
-            Medicine newMedicine = newList.get(newItemPosition);
-            return Objects.equals(oldMedicine.getCode(), newMedicine.getCode());
+            return oldList.get(oldItemPosition).getId() == newList.get(newItemPosition).getId();
         }
 
         @Override
