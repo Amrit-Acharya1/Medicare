@@ -3,11 +3,13 @@ package com.acharyaamrit.medicare.common.api;
 import com.acharyaamrit.medicare.common.model.ApiResponseTitleSuccess;
 import com.acharyaamrit.medicare.doctor.model.request.DoctorUpdateRequest;
 import com.acharyaamrit.medicare.doctor.model.request.MedicineRequest;
+import com.acharyaamrit.medicare.doctor.model.request.OldPrecriptionRequest;
 import com.acharyaamrit.medicare.doctor.model.request.PRelationRequest;
 import com.acharyaamrit.medicare.doctor.model.request.PrescriptionRelationRequest;
 import com.acharyaamrit.medicare.doctor.model.request.PrescriptionRequest;
 import com.acharyaamrit.medicare.doctor.model.request.SearchPatientRequest;
 import com.acharyaamrit.medicare.doctor.model.response.MedicineResponse;
+import com.acharyaamrit.medicare.doctor.model.response.OldPrescriptionResponse;
 import com.acharyaamrit.medicare.doctor.model.response.PRelationResponse;
 import com.acharyaamrit.medicare.doctor.model.response.PrescriptionRelationResponse;
 import com.acharyaamrit.medicare.doctor.model.response.RecentPatientsResponse;
@@ -41,15 +43,6 @@ import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 public interface ApiService {
-
-//    @GET("users")
-//    Call<List<User>> getUsers();   // Example: GET users
-//
-//    @GET("users/{id}")
-//    Call<User> getUserById(@Path("id") int userId);
-//
-//    @POST("users")
-//    Call<User> createUser(@Body User user);
 
     @POST("otp")
     Call<ApiResponseTitleSuccess> sendOtp(@Body OtpRequest otpRequest);
@@ -165,6 +158,12 @@ public interface ApiService {
     Call<PRelationResponse> fetchPrecriptionForPatient(
             @Header("Authorization") String bearerToken,
             @Body PRelationRequest request
+    );
+
+    @POST("fetchPrecription")
+    Call<OldPrescriptionResponse> fetchOldPrescriptionItem(
+            @Header("Authorization") String bearerToken,
+            @Body OldPrecriptionRequest request
     );
 
 }

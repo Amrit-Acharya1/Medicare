@@ -318,7 +318,7 @@ public class MedicineSearch extends AppCompatActivity {
             // Show warning dialog
             new AlertDialog.Builder(this)
                     .setTitle("Select Prescription")
-                    .setMessage("Please select a prescription first or create a new one.")
+                    .setMessage("Please select a prescription first.")
                     .setPositiveButton("Select", (dialog, which) -> fetchPrecriptionsForPatient())
                     .setNegativeButton("Cancel", null)
                     .show();
@@ -609,7 +609,7 @@ public class MedicineSearch extends AppCompatActivity {
         });
     }
 
-    // ==================== Permission Handling ====================
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
@@ -648,7 +648,7 @@ public class MedicineSearch extends AppCompatActivity {
         }
     }
 
-    // ==================== Existing Methods ====================
+
 
     private void setupRecyclerView(String pid) {
         adapter = new MedicineSearchAdapter(new ArrayList<>(), this, Integer.parseInt(pid));

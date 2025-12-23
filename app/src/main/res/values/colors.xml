@@ -13,6 +13,8 @@
     <color name="red">#FF0000</color>
     <color name="stroke">#3F8A8A8A</color>
     <color name="primary_green">#0E9D4D</color>
+    <color name="ripple_color">#1A2E7CF6</color>
+    <color name="background_chip">#F4F4F4</color>
 
     <style name="BottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/BottomSheetStyle</item>

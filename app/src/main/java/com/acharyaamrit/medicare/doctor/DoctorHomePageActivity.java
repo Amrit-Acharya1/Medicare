@@ -112,7 +112,7 @@ public class DoctorHomePageActivity extends AppCompatActivity {
             loadHomeFragment();
         });
 
-        findViewById(R.id.camera_button).setOnClickListener(v -> {
+        findViewById(R.id.chat).setOnClickListener(v -> {
 
 //            showQrBottomSheet();
 //            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);

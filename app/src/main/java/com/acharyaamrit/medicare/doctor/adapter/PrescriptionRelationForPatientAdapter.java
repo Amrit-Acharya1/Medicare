@@ -8,19 +8,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.acharyaamrit.medicare.R;
+import com.acharyaamrit.medicare.common.api.ApiClient;
+import com.acharyaamrit.medicare.common.api.ApiService;
 import com.acharyaamrit.medicare.common.model.TimelineItem;
+import com.acharyaamrit.medicare.doctor.model.request.OldPrecriptionRequest;
+import com.acharyaamrit.medicare.doctor.model.response.OldPrescriptionResponse;
 import com.acharyaamrit.medicare.doctor.model.response.PRelation;
+import com.acharyaamrit.medicare.doctor.model.response.PRelationResponse;
 import com.acharyaamrit.medicare.patient.adapter.patientmedicineadapter.DetailUserTimelineAdapter;
 import com.acharyaamrit.medicare.patient.adapter.patientmedicineadapter.UserTimelineAdapter;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class PrescriptionRelationForPatientAdapter extends RecyclerView.Adapter<PrescriptionRelationForPatientAdapter.ViewHolder> {
@@ -70,12 +80,51 @@ private void showBottomSheet(PRelation pRelation){
 
     TextView doctorName = bottomSheetDialog.findViewById(R.id.doctor_name);
     doctorName.setText("Checkup With "+pRelation.getDoctor_name());
+    fetchOldPrescription(String.valueOf(pRelation.getId()), bottomSheetDialog);
     bottomSheetDialog.show();
 
-    bottomSheetDialog.show();
+
 
 }
 
+
+private void fetchOldPrescription(String prelation_id, BottomSheetDialog bottomSheetDialog){
+    SharedPreferences sharedPreferences = context.getSharedPreferences("user_preference", MODE_PRIVATE);
+    String token = sharedPreferences.getString("token", null);
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+    OldPrecriptionRequest oldPrecriptionRequest = new OldPrecriptionRequest(prelation_id);
+    Call<OldPrescriptionResponse> call = apiService.fetchOldPrescriptionItem("Bearer " + token, oldPrecriptionRequest);
+    call.enqueue(new Callback<OldPrescriptionResponse>() {
+        @Override
+        public void onResponse(Call<OldPrescriptionResponse> call, Response<OldPrescriptionResponse> response) {
+            if (response.isSuccessful() && response.body() != null) {
+                try{
+
+                    RecyclerView recyclerView = bottomSheetDialog.findViewById(R.id.detailPrescription_medicine);
+
+                    if (recyclerView != null) {
+
+                        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                        DetailUserTimelineAdapter detailUserTimelineAdapter =
+                                new DetailUserTimelineAdapter(response.body().getOldPrescription(), context);
+                        recyclerView.setAdapter(detailUserTimelineAdapter);
+                    }
+
+
+                } catch (Exception e) {
+                    Toast.makeText(context, "There was some Problem", Toast.LENGTH_SHORT).show();
+                }
+            }else{
+
+            }
+        }
+
+        @Override
+        public void onFailure(Call<OldPrescriptionResponse> call, Throwable t) {
+        }
+    });
+
+}
 
 
     public int getItemCount() {

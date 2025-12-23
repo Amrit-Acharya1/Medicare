@@ -180,7 +180,7 @@ public class PatientHomepageActivity extends AppCompatActivity {
         String token = sharedPreferences.getString("token", "unknown");
         DatabaseHelper dbhelper = new DatabaseHelper(this);
         Patient patient = dbhelper.getPatientByToken(token);
-        String qrData = "https://medicare.kritishmovie.xyz/api/patient/" + patient.getId();
+        String qrData = patient.getName();
 
         // Generate the QR code
         Bitmap bitmap = generateQRCode(qrData);

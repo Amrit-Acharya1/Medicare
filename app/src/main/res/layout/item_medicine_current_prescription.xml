@@ -1,135 +1,244 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardPrescriptionItem"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/_1sdp"
+    android:layout_marginVertical="@dimen/_6sdp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="@dimen/_16sdp"
+    app:cardElevation="@dimen/_2sdp"
+    app:strokeWidth="0dp"
+    app:rippleColor="@color/ripple_color">
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:padding="@dimen/_12sdp"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_16sdp">
 
-        <!-- Medicine Details Section -->
-        <LinearLayout
+        <!-- Medicine Icon Container -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/iconContainer"
+            android:layout_width="@dimen/_48sdp"
+            android:layout_height="@dimen/_48sdp"
+            app:cardBackgroundColor="#F0F7FF"
+            app:cardCornerRadius="@dimen/_12sdp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/imgMedicineIcon"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:layout_gravity="center"
+                android:src="@drawable/medicine_ic"
+                app:tint="#2E7CF6"
+                 />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Medicine Name -->
+        <TextView
+            android:id="@+id/textMedicineName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginEnd="@dimen/_8sdp">
+            android:layout_marginStart="@dimen/_14sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_semibold"
+            android:maxLines="1"
+            android:textColor="#1A1D1F"
+            android:textSize="@dimen/_14sdp"
+            app:layout_constraintEnd_toStartOf="@id/medicineQty"
+            app:layout_constraintStart_toEndOf="@id/iconContainer"
+            app:layout_constraintTop_toTopOf="@id/iconContainer"
+            tools:text="Paracetamol 500mg" />
 
-            <!-- First Line: Medicine Name, Qty, and Price -->
+        <!-- Dosage Info Row -->
+        <LinearLayout
+            android:id="@+id/dosageInfoLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_14sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iconContainer"
+            app:layout_constraintTop_toBottomOf="@id/textMedicineName">
+
+            <!-- Dosage Chip -->
             <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:id="@+id/textMedicineName"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/inter_semibold"
-                    android:textStyle="italic"
-                    android:textSize="@dimen/_12sdp"
-                    android:textColor="@color/black"
-                    android:text="Paracetamol"
-                    android:singleLine="true"
-                    android:ellipsize="end"
-                    android:layout_marginEnd="@dimen/_8sdp"/>
-
-                <!-- Quantity -->
-                <TextView
-                    android:id="@+id/medicineQty"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/inter_semibold"
-                    android:textSize="@dimen/_12sdp"
-                    android:textColor="@color/black"
-                    android:text="x2"
-                    android:minWidth="@dimen/_28sdp"
-                    android:gravity="center"
-                    android:layout_marginEnd="@dimen/_12sdp"/>
-
-
-
-            </LinearLayout>
-
-            <!-- Second Line: Dosage and Frequency -->
-            <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_4sdp">
+                android:paddingHorizontal="@dimen/_8sdp"
+                android:paddingVertical="@dimen/_3sdp"
+                android:background="@drawable/bg_dosage_chip"
+                >
 
-                <TextView
-                    android:id="@+id/textMedicineDoseQty"
-                    android:fontFamily="@font/inter"
-                    android:textStyle="normal"
-                    android:textSize="@dimen/_9sdp"
-                    android:textColor="#66000000"
-                    android:text="10"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-                <TextView
-                    android:id="@+id/textMedicineDoseUnit"
-                    android:fontFamily="@font/inter"
-                    android:textStyle="normal"
-                    android:textSize="@dimen/_9sdp"
-                    android:textColor="#66000000"
-                    android:text="mg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-                <TextView
-                    android:id="@+id/textSeparatorDot"
-                    android:fontFamily="@font/inter"
-                    android:textStyle="normal"
-                    android:textSize="@dimen/_9sdp"
-                    android:textColor="#66000000"
-                    android:text=" • "
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-                <TextView
-                    android:id="@+id/textDosageFrequency"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/inter"
-                    android:text="2"
-                    android:textColor="#66000000"
-                    android:textSize="@dimen/_9sdp"
-                    android:textStyle="normal" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/inter"
-                    android:text=" times a day"
-                    android:textColor="#66000000"
-                    android:textSize="@dimen/_9sdp"
-                    android:textStyle="normal" />
-
-            </LinearLayout>
-
-            <!-- Third Line: Manufacturer -->
             <TextView
-                android:id="@+id/textManufacturer"
-                android:fontFamily="@font/inter"
-                android:textStyle="normal"
-                android:textSize="@dimen/_9sdp"
-                android:textColor="#66000000"
-                android:text="Quest Pharmaceutical PVT .Ltd"
+                android:id="@+id/textDosage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_2sdp"
-                android:singleLine="true"
-                android:ellipsize="end"/>
+
+                android:fontFamily="@font/inter_medium"
+
+                android:textColor="#6F767E"
+                android:textSize="@dimen/_10sdp"
+                tools:text="10" />
+            <TextView
+                android:id="@+id/textDoasageUnit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:fontFamily="@font/inter_medium"
+
+                android:textColor="#6F767E"
+                android:textSize="@dimen/_10sdp"
+                tools:text="mg" />
+            </LinearLayout>
+
+
+            <View
+                android:layout_width="@dimen/_4sdp"
+                android:layout_height="@dimen/_4sdp"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:background="@drawable/bg_dot_separator" />
+
+            <!-- Frequency -->
+            <TextView
+                android:id="@+id/textFrequency"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter"
+                android:textColor="#6F767E"
+                android:textSize="@dimen/_11sdp"
+                tools:text="2 times a day" />
+
         </LinearLayout>
 
-    </LinearLayout>
+        <!-- Manufacturer -->
+        <TextView
+            android:id="@+id/textManufacturer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_14sdp"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:drawablePadding="@dimen/_4sdp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter"
+            android:maxLines="1"
+            android:textColor="#9A9FA5"
+            android:textSize="@dimen/_10sdp"
+            app:drawableTint="#9A9FA5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iconContainer"
+            app:layout_constraintTop_toBottomOf="@id/dosageInfoLayout"
+            tools:text="Quest Pharmaceutical Pvt. Ltd" />
 
-</LinearLayout>
+        <!-- Quantity Badge -->
+        <TextView
+            android:id="@+id/medicineQty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/badge_dosage_background"
+            android:fontFamily="@font/inter_semibold"
+            android:minWidth="@dimen/_32sdp"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingVertical="@dimen/_6sdp"
+            android:textColor="#2E7CF6"
+            android:textSize="@dimen/_12sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="×2" />
+
+        <!-- Divider -->
+        <View
+            android:id="@+id/divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:background="#F4F4F4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textManufacturer" />
+
+        <!-- Schedule Tags Row -->
+        <LinearLayout
+            android:id="@+id/scheduleLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider">
+
+            <!-- Morning Tag -->
+            <TextView
+                android:id="@+id/tagMorning"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_schedule_tag_active"
+                android:drawablePadding="@dimen/_4sdp"
+                android:fontFamily="@font/inter_medium"
+                android:paddingHorizontal="@dimen/_10sdp"
+                android:paddingVertical="@dimen/_5sdp"
+                android:text="Morning"
+                android:textColor="#2E7CF6"
+                android:textSize="@dimen/_9sdp"
+                app:drawableStartCompat="@drawable/ic_sun" />
+
+            <TextView
+                android:id="@+id/tagAfternoon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_6sdp"
+                android:background="@drawable/bg_schedule_tag_inactive"
+                android:fontFamily="@font/inter_medium"
+                android:paddingHorizontal="@dimen/_10sdp"
+                android:paddingVertical="@dimen/_5sdp"
+                android:text="Afternoon"
+                android:textColor="#9A9FA5"
+                android:textSize="@dimen/_9sdp" />
+
+            <TextView
+                android:id="@+id/tagNight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_6sdp"
+                android:background="@drawable/bg_schedule_tag_active"
+                android:drawablePadding="@dimen/_4sdp"
+                android:fontFamily="@font/inter_medium"
+                android:paddingHorizontal="@dimen/_10sdp"
+                android:paddingVertical="@dimen/_5sdp"
+                android:text="Night"
+                android:textColor="#2E7CF6"
+                android:textSize="@dimen/_9sdp"
+                app:drawableStartCompat="@drawable/ic_moon" />
+
+        </LinearLayout>
+
+        <!-- Duration Info -->
+        <TextView
+            android:id="@+id/textDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:fontFamily="@font/inter_medium"
+            android:textColor="#6F767E"
+            android:textSize="@dimen/_10sdp"
+            android:drawablePadding="@dimen/_4sdp"
+            app:drawableTint="#6F767E"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            tools:text="7 days" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

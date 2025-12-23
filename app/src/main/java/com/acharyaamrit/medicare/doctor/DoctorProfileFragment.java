@@ -68,6 +68,7 @@ public class DoctorProfileFragment extends Fragment {
         AppCompatButton edit_profile = view.findViewById(R.id.edit_profile);
 
         SwitchMaterial notificationOn = view.findViewById(R.id.notificationOn);
+
         notificationOn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

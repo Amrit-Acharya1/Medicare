@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.acharyaamrit.medicare.R;
@@ -69,6 +70,19 @@ public class SearchPatientAdapter extends RecyclerView.Adapter<SearchPatientAdap
             context.startActivity(intent);
 
         });
+        holder.patient_card.setOnClickListener(v->{
+            Intent intent = new Intent(context, DoctorPatientDetailActivity.class);
+            intent.putExtra("patient_id", pId);
+            intent.putExtra("patient_name", pName);
+            intent.putExtra("patient_address", pAddress);
+            intent.putExtra("patient_blood_group", pBloodGroup);
+            intent.putExtra("patient_age", calculateAge(pAge));
+            intent.putExtra("patient_gender", pGender);
+            intent.putExtra("patient_phone", pPhone);
+            context.startActivity(intent);
+        });
+
+
         holder.btn_prescribe.setOnClickListener(v->{
             Intent intent = new Intent(context, MedicineSearch.class);
             intent.putExtra("patient_id", pId);
@@ -79,6 +93,9 @@ public class SearchPatientAdapter extends RecyclerView.Adapter<SearchPatientAdap
 
 
     }
+
+
+
     @NonNull
     @Override
     public SearchPatientAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -94,6 +111,7 @@ public class SearchPatientAdapter extends RecyclerView.Adapter<SearchPatientAdap
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView name, patientId, address, bloodGroup, age, gender,phone;
+        CardView patient_card;
         Button btn_prescribe, btn_view_details;
 
         public ViewHolder(@NonNull View itemView) {
@@ -108,7 +126,7 @@ public class SearchPatientAdapter extends RecyclerView.Adapter<SearchPatientAdap
             btn_prescribe = itemView.findViewById(R.id.btn_prescribe);
             btn_view_details = itemView.findViewById(R.id.btn_view_details);
             phone = itemView.findViewById(R.id.tv_phone);
-
+            patient_card=itemView.findViewById(R.id.patient_card);
 
         }
 
