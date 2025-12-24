@@ -36,10 +36,11 @@ List<Preciption> preciptions;
         holder.medicineQty.setText("x "+preciption.getQty());
         holder.textMedicineDoseQty.setText(preciption.getDoasage_qty());
         holder.textMedicineDoseUnit.setText(preciption.getDoasage_unit());
-        holder.textDosageFrequency.setText(preciption.getFrequency());
+        String freqTxt = preciption.getFrequency();
+        holder.textDosageFrequency.setText(freqTxt+ " Times a day");
         holder.textManufacturer.setText(preciption.getCompany_name());
 //        holder.medicinePrice.setText(preciption.getPrice());
-        int freq = Integer.parseInt(holder.textDosageFrequency.getText().toString());
+        int freq = Integer.parseInt(freqTxt);
         if(freq>=3){
             holder.tagMorning.setBackground(context.getResources().getDrawable(R.drawable.bg_schedule_tag_active).mutate());
             holder.tagAfternoon.setBackground(context.getResources().getDrawable(R.drawable.bg_schedule_tag_active).mutate());

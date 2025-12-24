@@ -43,11 +43,12 @@ public class CurrentPrescriptionAdapter extends RecyclerView.Adapter<CurrentPres
         holder.textMedicineName.setText(currentPrescription.getMedicine_name());
         holder.textMedicineDoseQty.setText(currentPrescription.getDoasage_qty());
         holder.textMedicineDoseUnit.setText(currentPrescription.getDoasage_unit());
-        holder.textDosageFrequency.setText(currentPrescription.getFrequency());
+        String freqTxt = currentPrescription.getFrequency();
+        holder.textDosageFrequency.setText(freqTxt+ " Times a day");
         holder.textManufacturer.setText(currentPrescription.getCompany_name());
         holder.medicineQty.setText("X " + currentPrescription.getQty());
 
-        int freq = Integer.parseInt(holder.textDosageFrequency.getText().toString());
+        int freq = Integer.parseInt(freqTxt);
         if(freq>=3){
             holder.tagMorning.setBackground(context.getResources().getDrawable(R.drawable.bg_schedule_tag_active).mutate());
             holder.tagAfternoon.setBackground(context.getResources().getDrawable(R.drawable.bg_schedule_tag_active).mutate());

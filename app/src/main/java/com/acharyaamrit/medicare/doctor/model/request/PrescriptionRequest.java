@@ -1,5 +1,7 @@
 package com.acharyaamrit.medicare.doctor.model.request;
 
+import com.google.gson.annotations.SerializedName;
+
 public class PrescriptionRequest {
     int medicine_id;
     int preciption_relation_id;
@@ -9,10 +11,13 @@ public class PrescriptionRequest {
     int frequency;
     String note;
 
+    @SerializedName("interval_days")
+    String interval_days;
+
     public PrescriptionRequest() {
     }
 
-    public PrescriptionRequest(int medicine_id, int preciption_relation_id, int duration, String duration_type, int qty, int frequency, String note) {
+    public PrescriptionRequest(int medicine_id, int preciption_relation_id, int duration, String duration_type, int qty, int frequency, String note, String interval_days) {
         this.medicine_id = medicine_id;
         this.preciption_relation_id = preciption_relation_id;
         this.duration = duration;
@@ -20,6 +25,7 @@ public class PrescriptionRequest {
         this.qty = qty;
         this.frequency = frequency;
         this.note = note;
+        this.interval_days =interval_days;
     }
 
     public int getMedicine_id() {
@@ -76,5 +82,13 @@ public class PrescriptionRequest {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String getInterval_days() {
+        return interval_days;
+    }
+
+    public void setInterval_days(String interval_days) {
+        this.interval_days = interval_days;
     }
 }

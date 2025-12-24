@@ -251,6 +251,7 @@ public class MedicineSearchAdapter extends RecyclerView.Adapter<MedicineSearchAd
             EditText etTimePeriod = bottomSheetView.findViewById(R.id.etTimePeriod);
             Spinner spinnerTimePeriod = bottomSheetView.findViewById(R.id.spinnerTimePeriod);
             EditText etNote = bottomSheetView.findViewById(R.id.etNote);
+            EditText etInterval = bottomSheetDialog.findViewById(R.id.etInterval);
 
             Button btnAdd = bottomSheetView.findViewById(R.id.btnAdd);
 
@@ -289,6 +290,7 @@ public class MedicineSearchAdapter extends RecyclerView.Adapter<MedicineSearchAd
                 String frequency = etFrequency.getText().toString().trim();
                 String timePeriod = etTimePeriod.getText().toString().trim();
                 String timePeriodUnit = spinnerTimePeriod.getSelectedItem().toString();
+                String interval = etInterval.getText().toString();
                 String note = etNote.getText().toString().trim();
 
                 if (frequency.isEmpty()) {
@@ -340,7 +342,7 @@ public class MedicineSearchAdapter extends RecyclerView.Adapter<MedicineSearchAd
 
                 if (prescriptionRelationID == null) {
                     createPrescriptionRelationAndSave(token, adapter.getPatientId(), medicine,
-                            period, timePeriodUnit, quantity[0], freq, note,
+                            period, timePeriodUnit, quantity[0], freq, note,interval,
                             listener, bottomSheetDialog, btnAdd, adapter);
                 } else {
                     PrescriptionRequest prescriptionRequest = new PrescriptionRequest(
@@ -350,7 +352,9 @@ public class MedicineSearchAdapter extends RecyclerView.Adapter<MedicineSearchAd
                             timePeriodUnit,
                             quantity[0],
                             freq,
-                            note
+                            note,
+                            interval
+
                     );
 
                     savePrescription(prescriptionRequest, medicine, listener,
@@ -363,7 +367,7 @@ public class MedicineSearchAdapter extends RecyclerView.Adapter<MedicineSearchAd
 
         private void createPrescriptionRelationAndSave(String token, int pid, Medicine medicine,
                                                        int timePeriod, String timePeriodUnit, int quantity, int frequency, String note,
-                                                       OnMedicineClickListener listener, BottomSheetDialog bottomSheetDialog,
+                                                       String interval, OnMedicineClickListener listener, BottomSheetDialog bottomSheetDialog,
                                                        Button btnAdd, MedicineSearchAdapter adapter) {
 
             ApiService apiService = ApiClient.getClient().create(ApiService.class);
@@ -391,7 +395,8 @@ public class MedicineSearchAdapter extends RecyclerView.Adapter<MedicineSearchAd
                                     timePeriodUnit,
                                     quantity,
                                     frequency,
-                                    note
+                                    note,
+                                    interval
                             );
 
                             savePrescription(prescriptionRequest, medicine, listener,

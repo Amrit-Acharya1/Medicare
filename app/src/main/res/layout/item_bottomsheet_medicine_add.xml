@@ -1,199 +1,269 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/prescriptionScroll"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:background="@drawable/bottom_sheet_background">
+    android:fillViewport="true"
+    android:overScrollMode="ifContentScrolls"
+    android:background="@drawable/bottom_sheet_background"
+    android:clipToPadding="false"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:paddingTop="24dp"
+    android:paddingBottom="24dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Medicine Prescription"
-        android:textSize="24sp"
-        android:textColor="@android:color/black"
-        android:textStyle="bold"
-        android:layout_marginBottom="24dp"/>
-
-    <!-- Medicine Info Card -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:background="@drawable/medicine_card_background"
-        android:layout_marginBottom="24dp">
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/ivMedicine"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/ic_medicine"
-            android:scaleType="centerCrop"/>
-
-        <LinearLayout
-            android:layout_width="0dp"
+        <!-- Title -->
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginStart="16dp">
+            android:text="Medicine Prescription"
+            android:textSize="24sp"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:layout_marginBottom="20dp" />
 
-            <TextView
-                android:id="@+id/tvMedicineName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Benadryl Cough Syrup"
-                android:textSize="18sp"
-                android:textColor="@android:color/black"
-                android:textStyle="bold"/>
+        <!-- Medicine Info Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:background="@drawable/medicine_card_background"
+            android:layout_marginBottom="20dp">
 
-            <TextView
-                android:id="@+id/tvManufacturer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Shiva pharmectual LTD"
-                android:textSize="14sp"
-                android:textColor="#757575"
-                android:layout_marginTop="4dp"/>
+            <ImageView
+                android:id="@+id/ivMedicine"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_medicine"
+                android:scaleType="centerCrop"
+                android:contentDescription="Medicine image" />
 
-            <TextView
-                android:id="@+id/tvDosage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Liquid • 500 mg"
-                android:textSize="14sp"
-                android:textColor="#757575"
-                android:layout_marginTop="4dp"/>
-
-            <!-- Quantity Selector -->
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginTop="8dp">
-
-                <Button
-                    android:id="@+id/btnMinus"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:text="-"
-                    android:textSize="20sp"
-                    android:background="@drawable/quantity_button_background"
-                    android:textColor="@android:color/black"/>
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="16dp">
 
                 <TextView
-                    android:id="@+id/tvQuantity"
-                    android:layout_width="60dp"
+                    android:id="@+id/tvMedicineName"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="1"
+                    android:text="Benadryl Cough Syrup"
                     android:textSize="18sp"
                     android:textColor="@android:color/black"
-                    android:gravity="center"
-                    android:layout_marginHorizontal="8dp"/>
+                    android:textStyle="bold"
+                    android:maxLines="2"
+                    android:ellipsize="end" />
 
-                <Button
-                    android:id="@+id/btnPlus"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:text="+"
-                    android:textSize="20sp"
-                    android:background="@drawable/quantity_button_background"
-                    android:textColor="@android:color/black"/>
+                <TextView
+                    android:id="@+id/tvManufacturer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Shiva pharmectual LTD"
+                    android:textSize="14sp"
+                    android:textColor="#757575"
+                    android:layout_marginTop="4dp"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/tvDosage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Liquid • 500 mg"
+                    android:textSize="14sp"
+                    android:textColor="#757575"
+                    android:layout_marginTop="4dp"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+                <!-- Quantity Selector -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="12dp">
+
+                    <Button
+                        android:id="@+id/btnMinus"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:text="-"
+                        android:textSize="20sp"
+                        android:background="@drawable/quantity_button_background"
+                        android:textColor="@android:color/black"
+                        android:padding="0dp"
+                        android:minHeight="40dp"
+                        android:minWidth="40dp" />
+
+                    <TextView
+                        android:id="@+id/tvQuantity"
+                        android:layout_width="60dp"
+                        android:layout_height="40dp"
+                        android:text="1"
+                        android:textSize="18sp"
+                        android:textColor="@android:color/black"
+                        android:gravity="center"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp" />
+
+                    <Button
+                        android:id="@+id/btnPlus"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:text="+"
+                        android:textSize="20sp"
+                        android:background="@drawable/quantity_button_background"
+                        android:textColor="@android:color/black"
+                        android:padding="0dp"
+                        android:minHeight="40dp"
+                        android:minWidth="40dp" />
+                </LinearLayout>
+
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
 
-    <!-- Frequency -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Frequency"
-        android:textSize="16sp"
-        android:textColor="@android:color/black"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
-
-    <EditText
-        android:id="@+id/etFrequency"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:hint="Enter the dosage frequency in a day."
-        android:textSize="14sp"
-        android:padding="16dp"
-        android:background="@drawable/edit_text_background"
-        android:inputType="number"
-        android:layout_marginBottom="24dp"/>
-
-    <!-- Time Period -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Time Period"
-        android:textSize="16sp"
-        android:textColor="@android:color/black"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="24dp">
+        <!-- Frequency -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Frequency"
+            android:textSize="16sp"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"
+            android:labelFor="@id/etFrequency" />
 
         <EditText
-            android:id="@+id/etTimePeriod"
-            android:layout_width="0dp"
+            android:id="@+id/etFrequency"
+            android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:layout_weight="1"
-            android:hint="Enter the time period"
-            android:layout_marginBottom="@dimen/_10sdp"
+            android:hint="How many times per day?"
             android:textSize="14sp"
-            android:padding="16dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:gravity="center_vertical"
             android:background="@drawable/edit_text_background"
             android:inputType="number"
-            android:layout_marginEnd="12dp"/>
+            android:imeOptions="actionNext"
+            android:importantForAutofill="yes"
+            android:layout_marginBottom="20dp" />
 
-        <Spinner
-            android:id="@+id/spinnerTimePeriod"
-            android:layout_width="120dp"
+        <!-- Time Period -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Time Period"
+            android:textSize="16sp"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"
+            android:labelFor="@id/etTimePeriod" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp">
+
+            <EditText
+                android:id="@+id/etTimePeriod"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:hint="Duration"
+                android:textSize="14sp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:gravity="center_vertical"
+                android:background="@drawable/edit_text_background"
+                android:inputType="number"
+                android:imeOptions="actionNext"
+                android:layout_marginBottom="@dimen/_12sdp"
+                android:importantForAutofill="yes"
+                android:layout_marginEnd="12dp" />
+
+            <Spinner
+                android:id="@+id/spinnerTimePeriod"
+                android:layout_width="120dp"
+                android:layout_height="56dp"
+                android:background="@drawable/edit_text_background"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:spinnerMode="dropdown" />
+        </LinearLayout>
+
+        <!-- Interval (Optional) -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Interval (Optional)"
+            android:textSize="16sp"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"
+            android:labelFor="@id/etInterval" />
+
+        <EditText
+            android:id="@+id/etInterval"
+            android:layout_width="match_parent"
             android:layout_height="56dp"
+            android:hint="Interval for days (e.g., 0 for Everyday)"
+            android:textSize="14sp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:gravity="center_vertical"
             android:background="@drawable/edit_text_background"
-            android:padding="16dp"/>
+            android:inputType="number"
+            android:imeOptions="actionNext"
+            android:importantForAutofill="no"
+            android:layout_marginBottom="20dp" />
+
+        <!-- Note (Optional) -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Note (Optional)"
+            android:textSize="16sp"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"
+            android:labelFor="@id/etNote" />
+
+        <EditText
+            android:id="@+id/etNote"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:hint="Write instructions (e.g., after meals, avoid driving...)"
+            android:textSize="14sp"
+            android:padding="16dp"
+            android:gravity="top|start"
+            android:background="@drawable/edit_text_background"
+            android:inputType="textMultiLine|textCapSentences"
+            android:imeOptions="actionDone"
+            android:importantForAutofill="no"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Add Button -->
+        <Button
+            android:id="@+id/btnAdd"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="+ Add"
+            android:textSize="16sp"
+            android:textColor="@android:color/white"
+            android:background="@drawable/add_button_background"
+            android:textAllCaps="false"
+            android:layout_marginBottom="@dimen/_30sdp"
+            android:minHeight="56dp" />
+
     </LinearLayout>
-
-    <!-- Note -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Note (Optional)"
-        android:textSize="16sp"
-        android:textColor="@android:color/black"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
-
-    <EditText
-        android:id="@+id/etNote"
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:hint="Write the note for the prescription..."
-        android:textSize="14sp"
-        android:padding="16dp"
-        android:gravity="top|start"
-        android:background="@drawable/edit_text_background"
-        android:inputType="textMultiLine"
-        android:layout_marginBottom="24dp"/>
-
-    <!-- Add Button -->
-    <Button
-        android:id="@+id/btnAdd"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:text="+ Add"
-        android:textSize="16sp"
-        android:layout_marginBottom="@dimen/_30sdp"
-        android:textColor="@android:color/white"
-        android:background="@drawable/add_button_background"
-        android:textAllCaps="false"/>
-
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>

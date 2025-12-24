@@ -29,6 +29,7 @@ import com.acharyaamrit.medicare.common.model.request.UserRegisterRequest;
 import com.acharyaamrit.medicare.common.model.request.UserRequest;
 import com.acharyaamrit.medicare.common.model.response.TimelineResponse;
 import com.acharyaamrit.medicare.common.model.response.UserResponse;
+import com.acharyaamrit.medicare.pharmacy.model.request.PharmacyUpdateRequest;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -91,6 +92,11 @@ public interface ApiService {
     Call<UserResponse> updateDoctor(
             @Header("Authorization") String bearerToken,
             @Body DoctorUpdateRequest request
+    );
+    @PUT("update/pharmacy")
+    Call<UserResponse> updatePharmacy(
+            @Header("Authorization") String bearerToken,
+            @Body PharmacyUpdateRequest request
     );
     @PUT("user/location")
     Call<UserResponse> updateUserLocation(
