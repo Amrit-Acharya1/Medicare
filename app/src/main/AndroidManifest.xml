@@ -30,12 +30,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Medicare">
         <activity
+            android:name=".pharmacy.PrescriptionDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".pharmacy.DispatchMedicineActivity"
+            android:exported="false" />
+        <activity
             android:name=".doctor.MedicineSearch"
             android:exported="false" />
         <activity
             android:name=".doctor.DoctorPatientDetailActivity"
             android:exported="false" />
-
         <activity
             android:name=".doctor.CaptureActivityPortrait"
             android:screenOrientation="portrait"

@@ -48,7 +48,7 @@ import retrofit2.Response;
 public class DoctorHomeFragment extends Fragment {
 
     // Header views
-    TextView name, did, specialist, todayPatientsCount, todayCases, totalPatients;
+    TextView name, did, specialist, todayPatientsCount, todayCases, totalPatients, iconText;
     ConstraintLayout notification_icon;
 
     // Bar chart views
@@ -95,6 +95,7 @@ public class DoctorHomeFragment extends Fragment {
         DatabaseHelper databaseHelper = new DatabaseHelper(requireContext());
         Doctor doctor = databaseHelper.getDoctorByToken(token);
         if (doctor != null) {
+            iconText.setText(String.valueOf(doctor.getName().charAt(0)));
             name.setText(doctor.getName());
             did.setText("DID: " + doctor.getDoctor_id());
             specialist.setText((doctor.getSpeciality().isEmpty()) ? "" : doctor.getSpeciality());
@@ -113,6 +114,7 @@ public class DoctorHomeFragment extends Fragment {
         addPatientCard = view.findViewById(R.id.addPatientCard);
         contactAdminCard = view.findViewById(R.id.contactAdminCard);
         viewAll = view.findViewById(R.id.viewAll);
+        iconText =view.findViewById(R.id.iconText);
 
 
         // Bar chart count TextViews

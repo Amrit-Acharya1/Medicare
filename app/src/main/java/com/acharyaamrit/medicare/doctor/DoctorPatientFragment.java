@@ -60,7 +60,7 @@ import retrofit2.Callback;
 public class DoctorPatientFragment extends Fragment {
 
     EditText searchInput;
-    TextView tv_patient_count, name, did, specialist;
+    TextView tv_patient_count, name, did, specialist,iconText;
     ConstraintLayout notification_icon;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -127,6 +127,7 @@ public class DoctorPatientFragment extends Fragment {
         DatabaseHelper databaseHelper = new DatabaseHelper(requireContext());
         Doctor doctor = databaseHelper.getDoctorByToken(token);
         if (doctor != null) {
+            iconText.setText(String.valueOf(doctor.getName().charAt(0)));
             name.setText(doctor.getName());
             did.setText("DID: " + doctor.getDoctor_id());
             specialist.setText((doctor.getSpeciality().isEmpty()) ? "" : doctor.getSpeciality());
@@ -144,6 +145,7 @@ public class DoctorPatientFragment extends Fragment {
         specialist = view.findViewById(R.id.specialist);
         search_card = view.findViewById(R.id.search_card);
         scan_icon = view.findViewById(R.id.scan_icon);
+        iconText = view.findViewById(R.id.iconText);
     }
 
     private void setUpListener(View view) {

@@ -23,6 +23,12 @@ public class Preciption {
     @SerializedName("price")
     String price;
 
+    @SerializedName("duration")
+    String duration;
+
+    @SerializedName("duration_type")
+    String duration_type;
+
     @SerializedName("interval_days")
     String interval_days;
 
@@ -32,7 +38,7 @@ public class Preciption {
     public Preciption() {
     }
 
-    public Preciption(int id, int prescription_relation_id, String medicine_name, String frequency, String doasage_unit, String doasage_qty, String qty, String company_name, String price,String interval_days ,String created_at) {
+    public Preciption(int id, int prescription_relation_id, String medicine_name, String frequency, String doasage_unit, String doasage_qty, String qty, String company_name, String price,String duration,String duration_type,String interval_days ,String created_at) {
         this.id = id;
         this.prescription_relation_id = prescription_relation_id;
         this.medicine_name = medicine_name;
@@ -42,8 +48,26 @@ public class Preciption {
         this.qty = qty;
         this.company_name = company_name;
         this.price = price;
+        this.duration = duration;
+        this.duration_type = duration_type;
         this.interval_days = interval_days;
         this.created_at = created_at;
+    }
+
+    public String getDuration() {
+        return duration;
+    }
+
+    public void setDuration(String duration) {
+        this.duration = duration;
+    }
+
+    public String getDuration_type() {
+        return duration_type;
+    }
+
+    public void setDuration_type(String duration_type) {
+        this.duration_type = duration_type;
     }
 
     public int getId() {

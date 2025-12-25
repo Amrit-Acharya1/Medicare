@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -42,8 +43,8 @@ import retrofit2.Response;
 
 public class DoctorPatientDetailActivity extends AppCompatActivity {
 
-    Toolbar toolbar;
-    TextView tv_name, tv_patient_id, tv_blood_group, tv_age, tv_gender, tv_phone,tv_location;
+    CardView toolbar;
+    TextView tv_name, tv_patient_id, tv_blood_group, tv_age, tv_gender, tv_phone,tv_location, tv_name_patient_detail, tv_pid_patient_detail;
     ConstraintLayout timelineMain;
     Button btn_prescribe;
 
@@ -75,6 +76,9 @@ public class DoctorPatientDetailActivity extends AppCompatActivity {
         tv_location = findViewById(R.id.tv_location);
         timelineMain = findViewById(R.id.timelineMain);
         btn_prescribe = findViewById(R.id.btn_prescribe);
+        tv_name_patient_detail = findViewById(R.id.tv_name_patient_detail);
+        tv_pid_patient_detail = findViewById(R.id.tv_pid_patient_detail);
+
     }
     private void setUpListeners(){
         toolbar.setOnClickListener(v->{
@@ -97,6 +101,16 @@ public class DoctorPatientDetailActivity extends AppCompatActivity {
         String gender = intent.getStringExtra("patient_gender");
         String phone = intent.getStringExtra("patient_phone");
         String address = intent.getStringExtra("patient_address");
+        Boolean is_pharmacy = intent.getBooleanExtra("pharmacy", false);
+        tv_name_patient_detail.setText(name);
+        tv_pid_patient_detail.setText("PID: "+patientId);
+
+        if(is_pharmacy){
+            btn_prescribe.setVisibility(GONE);
+        }else{
+            btn_prescribe.setVisibility(VISIBLE);
+
+        }
 
         tv_name.setText(name);
         tv_patient_id.setText("PID: " + patientId);
@@ -106,6 +120,8 @@ public class DoctorPatientDetailActivity extends AppCompatActivity {
         tv_phone.setText(phone);
         tv_location.setText(address);
         fetchTimeLine(patientId);
+
+
 
     }
     private void fetchTimeLine(String patient_id){
