@@ -1,13 +1,18 @@
 package com.acharyaamrit.medicare.patient.adapter.patientmedicineadapter;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.acharyaamrit.medicare.R;
@@ -57,6 +62,20 @@ List<Preciption> preciptions;
             holder.tagNight.setBackground(context.getResources().getDrawable(R.drawable.bg_schedule_tag_inactive).mutate());
         }
 
+        String pres = preciption.getPharmacy_name();
+        if (pres == null) {
+            holder.textPharmacyName.setVisibility(GONE);
+            holder.claim_badge.setCardBackgroundColor(Color.parseColor("#FEE2E2"));
+            holder.tv_claim.setText("Unclaim");
+            holder.tv_claim.setTextColor(Color.parseColor("#EF4444"));
+        } else {
+            holder.textPharmacyName.setVisibility(VISIBLE);
+            holder.textPharmacyName.setText("Pharmacy : "+preciption.getPharmacy_name());
+            holder.claim_badge.setCardBackgroundColor(Color.parseColor("#D1FAE5"));
+            holder.tv_claim.setText("Claimed");
+            holder.tv_claim.setTextColor(Color.parseColor("#2E7CF6"));
+        }
+
 
     }
 
@@ -65,7 +84,9 @@ List<Preciption> preciptions;
     }
     public static class ViewHolder extends RecyclerView.ViewHolder{
 
-        TextView textMedicineName, medicineQty ,textMedicineDoseQty,textMedicineDoseUnit,textDosageFrequency,textManufacturer,tagMorning, tagAfternoon, tagNight;
+        TextView tv_claim, textPharmacyName, textMedicineName, medicineQty ,textMedicineDoseQty,textMedicineDoseUnit,textDosageFrequency,textManufacturer,tagMorning, tagAfternoon, tagNight;
+        CardView claim_badge;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -78,7 +99,9 @@ List<Preciption> preciptions;
             tagMorning= itemView.findViewById(R.id.tagMorning);
             tagAfternoon = itemView.findViewById(R.id.tagAfternoon);
             tagNight = itemView.findViewById(R.id.tagNight);
-
+            tv_claim = itemView.findViewById(R.id.tv_claim);
+            claim_badge = itemView.findViewById(R.id.claim_badge);
+            textPharmacyName = itemView.findViewById(R.id.textPharmacyName);
 //            medicinePrice = itemView.findViewById(R.id.medicinePrice);
 
         }

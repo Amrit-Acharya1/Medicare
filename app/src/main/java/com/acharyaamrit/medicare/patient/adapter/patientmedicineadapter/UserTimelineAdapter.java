@@ -20,8 +20,10 @@ public class UserTimelineAdapter extends RecyclerView.Adapter<UserTimelineAdapte
 
     List<TimelineItem> timelineItemsList;
     Context context;
-    public UserTimelineAdapter(List<TimelineItem> timelineItems, Context context) {
+    Boolean isPatient;
+    public UserTimelineAdapter(List<TimelineItem> timelineItems, Context context, Boolean isPatient) {
         this.timelineItemsList = timelineItems;
+        this.isPatient = isPatient;
     }
 
     public UserTimelineAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -68,7 +70,14 @@ public class UserTimelineAdapter extends RecyclerView.Adapter<UserTimelineAdapte
     }
 
     public int getItemCount() {
+
+        if(isPatient){
         return Math.min(timelineItemsList.size(), 5);
+
+        }else{
+
+        return timelineItemsList.size();
+        }
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{

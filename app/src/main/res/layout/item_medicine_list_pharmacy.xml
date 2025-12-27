@@ -120,7 +120,7 @@
 
         <!-- Add Button -->
         <androidx.cardview.widget.CardView
-            android:id="@+id/notAvailableBtn"
+            android:id="@+id/addBtn"
             android:layout_width="@dimen/_36sdp"
             android:layout_height="@dimen/_36sdp"
             android:layout_marginStart="@dimen/_8sdp"

@@ -7,19 +7,18 @@
     android:layout_height="match_parent"
     tools:context=".pharmacy.DispatchMedicineActivity">
 
-
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@id/main"
         android:background="@drawable/pharmacy_header_bar"
         android:elevation="4dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingHorizontal="@dimen/_12sdp"
         android:paddingTop="@dimen/_38sdp"
-        android:paddingBottom="@dimen/_12sdp">
+        android:paddingBottom="@dimen/_12sdp"
+        app:layout_constraintTop_toTopOf="@id/main">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/btnBack"
@@ -66,30 +65,42 @@
         </LinearLayout>
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_patients_prescription"
+    <!-- SwipeRefreshLayout wrapping the RecyclerView -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:paddingHorizontal="20dp"
-        android:paddingTop="@dimen/_10sdp"
-        android:paddingBottom="@dimen/_20sdp"
-        android:scrollbars="none"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header"
-        app:layout_constraintVertical_bias="0.0"
-        tools:listitem="@layout/item_patient_prescription_card_pharmacy" />
+        app:layout_constraintTop_toBottomOf="@id/header">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_patients_prescription"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_20sdp"
+            android:scrollbars="none"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_patient_prescription_card_pharmacy" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <!-- Empty State Layout -->
     <LinearLayout
         android:id="@+id/noMedicine_pharmacy"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -100,10 +111,20 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No Prescriptions Found"
-            android:textSize="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_8sdp"
             android:fontFamily="@font/inter_bold"
-            />
+            android:text="No Prescriptions Found"
+            android:textSize="@dimen/_12sdp" />
+
+        <TextView
+            android:id="@+id/tv_pull_to_refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:text="Pull down to refresh"
+            android:textColor="#9CA3AF"
+            android:textSize="@dimen/_10sdp" />
 
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

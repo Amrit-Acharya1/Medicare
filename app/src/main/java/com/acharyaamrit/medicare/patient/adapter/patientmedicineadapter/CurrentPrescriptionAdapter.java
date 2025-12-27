@@ -2,12 +2,14 @@ package com.acharyaamrit.medicare.patient.adapter.patientmedicineadapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.acharyaamrit.medicare.R;
@@ -65,6 +67,16 @@ public class CurrentPrescriptionAdapter extends RecyclerView.Adapter<CurrentPres
             holder.tagNight.setBackground(context.getResources().getDrawable(R.drawable.bg_schedule_tag_inactive).mutate());
         }
 
+        String pres = currentPrescription.getPharmacy_name();
+        if (pres == null) {
+            holder.claim_badge.setCardBackgroundColor(Color.parseColor("#FEE2E2"));
+            holder.tv_claim.setText("Unclaim");
+            holder.tv_claim.setTextColor(Color.parseColor("#EF4444"));
+        } else {
+            holder.claim_badge.setCardBackgroundColor(Color.parseColor("#D1FAE5"));
+            holder.tv_claim.setText("Claimed");
+            holder.tv_claim.setTextColor(Color.parseColor("#2E7CF6"));
+        }
 
 //        holder.medicinePrice.setText(currentPrescription.getPrice());
 
@@ -77,7 +89,9 @@ public class CurrentPrescriptionAdapter extends RecyclerView.Adapter<CurrentPres
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textMedicineName, textMedicineDoseQty, textMedicineDoseUnit, textDosageFrequency, textManufacturer, medicineQty, tagMorning, tagAfternoon, tagNight;
+        TextView tv_claim,textMedicineName, textMedicineDoseQty, textMedicineDoseUnit, textDosageFrequency, textManufacturer, medicineQty, tagMorning, tagAfternoon, tagNight;
+        CardView claim_badge;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -90,7 +104,8 @@ public class CurrentPrescriptionAdapter extends RecyclerView.Adapter<CurrentPres
             tagMorning= itemView.findViewById(R.id.tagMorning);
             tagAfternoon = itemView.findViewById(R.id.tagAfternoon);
             tagNight = itemView.findViewById(R.id.tagNight);
-
+            tv_claim = itemView.findViewById(R.id.tv_claim);
+            claim_badge = itemView.findViewById(R.id.claim_badge);
 
 //            medicinePrice = itemView.findViewById(R.id.medicinePrice);
 

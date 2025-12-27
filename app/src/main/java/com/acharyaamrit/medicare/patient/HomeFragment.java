@@ -92,7 +92,7 @@ public class HomeFragment extends Fragment {
 
                     if (!timelineItems.isEmpty()) {
                         view.findViewById(R.id.timelineMain).setVisibility(VISIBLE);
-                        UserTimelineAdapter userTimelineAdapter = new UserTimelineAdapter(timelineItems, requireActivity());
+                        UserTimelineAdapter userTimelineAdapter = new UserTimelineAdapter(timelineItems, requireActivity(),true);
                         RecyclerView recyclerView = view.findViewById(R.id.timelineRecycler);
                         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                         recyclerView.setAdapter(userTimelineAdapter);
@@ -111,7 +111,7 @@ public class HomeFragment extends Fragment {
 
                     if (!timelineItems.isEmpty()) {
                         view.findViewById(R.id.timelineMain).setVisibility(VISIBLE);
-                        UserTimelineAdapter userTimelineAdapter = new UserTimelineAdapter(timelineItems, getContext());
+                        UserTimelineAdapter userTimelineAdapter = new UserTimelineAdapter(timelineItems, getContext(),true);
                         RecyclerView recyclerView = view.findViewById(R.id.timelineRecycler);
                         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                         recyclerView.setAdapter(userTimelineAdapter);

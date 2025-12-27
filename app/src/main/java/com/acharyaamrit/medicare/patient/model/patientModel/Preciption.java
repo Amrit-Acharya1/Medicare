@@ -23,6 +23,9 @@ public class Preciption {
     @SerializedName("price")
     String price;
 
+    @SerializedName("pharmacy_name")
+    String pharmacy_name;
+
     @SerializedName("duration")
     String duration;
 
@@ -38,7 +41,7 @@ public class Preciption {
     public Preciption() {
     }
 
-    public Preciption(int id, int prescription_relation_id, String medicine_name, String frequency, String doasage_unit, String doasage_qty, String qty, String company_name, String price,String duration,String duration_type,String interval_days ,String created_at) {
+    public Preciption(int id, int prescription_relation_id, String medicine_name, String frequency, String doasage_unit, String doasage_qty, String qty, String company_name, String price,String pharmacy_name,String duration,String duration_type,String interval_days ,String created_at) {
         this.id = id;
         this.prescription_relation_id = prescription_relation_id;
         this.medicine_name = medicine_name;
@@ -48,10 +51,19 @@ public class Preciption {
         this.qty = qty;
         this.company_name = company_name;
         this.price = price;
+        this.pharmacy_name = pharmacy_name;
         this.duration = duration;
         this.duration_type = duration_type;
         this.interval_days = interval_days;
         this.created_at = created_at;
+    }
+
+    public String getPharmacy_name() {
+        return pharmacy_name;
+    }
+
+    public void setPharmacy_name(String pharmacy_name) {
+        this.pharmacy_name = pharmacy_name;
     }
 
     public String getDuration() {

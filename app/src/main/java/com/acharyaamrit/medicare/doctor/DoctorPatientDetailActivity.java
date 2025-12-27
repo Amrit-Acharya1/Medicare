@@ -141,7 +141,7 @@ public class DoctorPatientDetailActivity extends AppCompatActivity {
                         List<TimelineItem> timelineItems = response.body().getTimelineItemsList();
                         if (!timelineItems.isEmpty()) {
                             timelineMain.setVisibility(VISIBLE);
-                            UserTimelineAdapter userTimelineAdapter = new UserTimelineAdapter(timelineItems, DoctorPatientDetailActivity.this);
+                            UserTimelineAdapter userTimelineAdapter = new UserTimelineAdapter(timelineItems, DoctorPatientDetailActivity.this, false);
                             RecyclerView recyclerView = findViewById(R.id.timelineRecycler);
                             recyclerView.setLayoutManager(new LinearLayoutManager(DoctorPatientDetailActivity.this));
                             recyclerView.setAdapter(userTimelineAdapter);

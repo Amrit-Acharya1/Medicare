@@ -8,7 +8,6 @@ import java.util.List;
 public class TimelineItem {
     int id;
     String doctor_name;
-    String pharmacy_name;
     String created_at;
     String updated_at;
 
@@ -18,10 +17,9 @@ public class TimelineItem {
     public TimelineItem() {
     }
 
-    public TimelineItem(int id, String doctor_name, String pharmacy_name, String created_at, String updated_at, List<Preciption> preciption) {
+    public TimelineItem(int id, String doctor_name, String created_at, String updated_at, List<Preciption> preciption) {
         this.id = id;
         this.doctor_name = doctor_name;
-        this.pharmacy_name = pharmacy_name;
         this.created_at = created_at;
         this.updated_at = updated_at;
         this.preciption = preciption;
@@ -43,13 +41,6 @@ public class TimelineItem {
         this.doctor_name = doctor_name;
     }
 
-    public String getPharmacy_name() {
-        return pharmacy_name;
-    }
-
-    public void setPharmacy_name(String pharmacy_name) {
-        this.pharmacy_name = pharmacy_name;
-    }
 
     public String getCreated_at() {
         return created_at;

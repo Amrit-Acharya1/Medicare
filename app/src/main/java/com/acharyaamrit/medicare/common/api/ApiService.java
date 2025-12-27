@@ -30,6 +30,8 @@ import com.acharyaamrit.medicare.common.model.request.UserRequest;
 import com.acharyaamrit.medicare.common.model.response.TimelineResponse;
 import com.acharyaamrit.medicare.common.model.response.UserResponse;
 import com.acharyaamrit.medicare.pharmacy.model.request.PharmacyUpdateRequest;
+import com.acharyaamrit.medicare.pharmacy.model.request.PrescriptionRelationForBillEmailRequest;
+import com.acharyaamrit.medicare.pharmacy.model.request.UpdatePriceRequest;
 import com.acharyaamrit.medicare.pharmacy.model.response.PrescriptionPharmacyResponse;
 
 import okhttp3.MultipartBody;
@@ -176,6 +178,18 @@ public interface ApiService {
     Call<OldPrescriptionResponse> fetchOldPrescriptionItem(
             @Header("Authorization") String bearerToken,
             @Body OldPrecriptionRequest request
+    );
+
+    @POST("updatePriceAndPharmacyId")
+    Call<UserResponse> updatePriceAndPharmacy(
+            @Header("Authorization") String bearerToken,
+            @Body UpdatePriceRequest request
+    );
+
+    @POST("sendBillEmail")
+    Call<UserResponse> sendBillEmail(
+            @Header("Authorization") String bearerToken,
+            @Body PrescriptionRelationForBillEmailRequest request
     );
 
 }
