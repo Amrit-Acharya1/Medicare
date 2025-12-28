@@ -14,6 +14,7 @@ import com.acharyaamrit.medicare.doctor.model.response.PRelationResponse;
 import com.acharyaamrit.medicare.doctor.model.response.PrescriptionRelationResponse;
 import com.acharyaamrit.medicare.doctor.model.response.RecentPatientsResponse;
 import com.acharyaamrit.medicare.doctor.model.response.SearchPatientResponse;
+import com.acharyaamrit.medicare.patient.model.patientModel.CurrentPreciption;
 import com.acharyaamrit.medicare.patient.model.request.PatientUpdateRequest;
 import com.acharyaamrit.medicare.common.model.request.TimelineRequest;
 import com.acharyaamrit.medicare.patient.model.request.UserLocationUpdateRequest;
@@ -192,4 +193,14 @@ public interface ApiService {
             @Body PrescriptionRelationForBillEmailRequest request
     );
 
+    @GET("getSameClicnicPatientForPharmacy")
+    Call<SearchPatientResponse> getSameClicnicPatient(
+            @Header("Authorization") String bearerToken
+    );
+
+    @POST("getPrescriptionByQr")
+    Call<PrescriptionPharmacyResponse> fetchPrescriptionByQr(
+            @Header("Authorization") String bearerToken,
+            @Body OldPrecriptionRequest request
+    );
 }

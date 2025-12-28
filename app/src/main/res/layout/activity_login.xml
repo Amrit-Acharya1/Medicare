@@ -149,6 +149,7 @@
                     android:paddingVertical="@dimen/_13sdp"
                     android:background="@drawable/register_button"
                     android:orientation="vertical"
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <TextView

@@ -13,6 +13,7 @@ import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
@@ -35,10 +36,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.acharyaamrit.medicare.R;
+import com.acharyaamrit.medicare.common.LoginActivity;
 import com.acharyaamrit.medicare.common.NotificationActivity;
 import com.acharyaamrit.medicare.common.api.ApiClient;
 import com.acharyaamrit.medicare.common.api.ApiService;
 import com.acharyaamrit.medicare.common.database.DatabaseHelper;
+import com.acharyaamrit.medicare.common.model.response.UserResponse;
 import com.acharyaamrit.medicare.doctor.CaptureActivityPortrait;
 import com.acharyaamrit.medicare.doctor.DoctorHomePageActivity;
 import com.acharyaamrit.medicare.doctor.adapter.SearchPatientAdapter;
@@ -48,13 +51,16 @@ import com.acharyaamrit.medicare.doctor.model.response.SearchPatientResponse;
 import com.acharyaamrit.medicare.patient.model.patientModel.Patient;
 import com.acharyaamrit.medicare.pharmacy.adapter.PharmacySearchPatientAdapter;
 import com.acharyaamrit.medicare.pharmacy.model.Pharmacy;
+import com.google.gson.Gson;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
+import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class PharmacyHomeFragment extends Fragment {
@@ -115,11 +121,17 @@ public class PharmacyHomeFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_pharmacy_home, container, false);
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
         String token = sharedPreferences.getString("token", null);
+
+
+        if (token == null) {
+            navigateToLogin();
+        }
         ((PharmacyHomeActivity) requireActivity())
                 .setSelectedBackground(R.id.home_button_background);
         initializedView(view);
         setNavData(token);
         setUpListener(view);
+        getSameClicnicPatientPharmacy(view);
         return view;
     }
 
@@ -132,6 +144,14 @@ public class PharmacyHomeFragment extends Fragment {
             did.setText("Pan No: " + pharmacy.getPan_no());
 
         }
+    }
+    private void navigateToLogin() {
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
+        sharedPreferences.edit().clear().apply();
+
+        Intent intent = new Intent(requireContext(), LoginActivity.class);
+        startActivity(intent);
+        requireActivity().finish();
     }
     private void initializedView(View view) {
         searchInput = view.findViewById(R.id.search_input);
@@ -260,6 +280,7 @@ public class PharmacyHomeFragment extends Fragment {
                         tv_patient_count_pharmacy.setText("0 Patients Found");
                     }
                 } else {
+
                     tv_patient_count_pharmacy.setText("0 Patients Found");
                 }
             }
@@ -271,20 +292,111 @@ public class PharmacyHomeFragment extends Fragment {
         });
     }
 
+    private void getSameClicnicPatientPharmacy(View view) {
+        RecyclerView recyclerView = view.findViewById(R.id.rv_patients_pharmacy);
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+
+        String token = getAuthToken();
+        if (token == null) {
+            navigateToLogin();
+            return;
+        }
+
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        Call<SearchPatientResponse> call = apiService.getSameClicnicPatient("Bearer " + token);
+
+        call.enqueue(new Callback<SearchPatientResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<SearchPatientResponse> call,
+                                   @NonNull Response<SearchPatientResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    handleSuccessResponse(response.body(), recyclerView);
+                } else {
+                    handleErrorResponse(response);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<SearchPatientResponse> call, @NonNull Throwable t) {
+                handleFailure(t);
+            }
+        });
+    }
+
+
+
+    private String getAuthToken() {
+        SharedPreferences sharedPreferences = requireContext()
+                .getSharedPreferences("user_preference", MODE_PRIVATE);
+        return sharedPreferences.getString("token", null);
+    }
+
+    private void handleSuccessResponse(SearchPatientResponse response, RecyclerView recyclerView) {
+        List<Patient> patients = response.getPatients();
+
+        if (patients != null && !patients.isEmpty()) {
+            PharmacySearchPatientAdapter adapter = new PharmacySearchPatientAdapter(
+                    patients,
+                    (PharmacyHomeActivity) requireActivity()
+            );
+            recyclerView.setAdapter(adapter);
+            updatePatientCount(patients.size());
+        } else {
+            updatePatientCount(0);
+        }
+    }
+
+    private void handleErrorResponse(Response<SearchPatientResponse> response) {
+        try {
+            if (response.errorBody() != null) {
+                String errorJson = response.errorBody().string();
+                UserResponse errorResponse = new Gson().fromJson(errorJson, UserResponse.class);
+
+                if (errorResponse != null && "Unauthenticated".equalsIgnoreCase(errorResponse.getTitle())) {
+                    navigateToLogin();
+                    return;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        updatePatientCount(0);
+        showToast("Failed to load patients");
+    }
+
+    private void handleFailure(Throwable t) {
+        t.printStackTrace();
+        updatePatientCount(0);
+        showToast("Network error: " + t.getMessage());
+    }
+
+    private void updatePatientCount(int count) {
+        String text = count + (count == 1 ? " Patient Found" : " Patients Found");
+        tv_patient_count_pharmacy.setText(text);
+    }
+
+    private void showToast(String message) {
+        if (getContext() != null) {
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
     @Override
     public void onResume() {
         super.onResume();
-        if (getActivity() instanceof PharmacyHomeActivity) {
-            ((PharmacyHomeActivity) getActivity()).disableSwipeRefresh();
-        }
+//        if (getActivity() instanceof PharmacyHomeActivity) {
+//            ((PharmacyHomeActivity) getActivity()).disableSwipeRefresh();
+//        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (getActivity() instanceof PharmacyHomeActivity) {
-            ((PharmacyHomeActivity) getActivity()).enableSwipeRefresh();
-        }
+//        if (getActivity() instanceof PharmacyHomeActivity) {
+//            ((PharmacyHomeActivity) getActivity()).enableSwipeRefresh();
+//        }
     }
 
 }

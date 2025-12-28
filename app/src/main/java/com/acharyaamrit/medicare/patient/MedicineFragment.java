@@ -10,12 +10,15 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +28,7 @@ import androidx.activity.result.IntentSenderRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -39,6 +43,7 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -72,11 +77,16 @@ import com.google.mlkit.vision.documentscanner.GmsDocumentScanner;
 import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions;
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanning;
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -93,7 +103,7 @@ public class MedicineFragment extends Fragment {
     private TextView doctor_name, totalPrice, name, pid, viewAll;
     private LottieAnimationView lottieAnimationView;
     private ConstraintLayout notificationButton;
-    private LinearLayout cameraView, document;
+    private LinearLayout cameraView, document, qrprescription;
     private RecyclerView userDocumentRecycler;
     private ProgressDialog uploadProgressDialog;
 
@@ -273,6 +283,7 @@ public class MedicineFragment extends Fragment {
         userDocumentRecycler = view.findViewById(R.id.documentRecycler);
         viewAll = view.findViewById(R.id.tvViewAll);
         document = view.findViewById(R.id.document);
+        qrprescription = view.findViewById(R.id.qrprescription);
 
         // Initialize progress dialog
         uploadProgressDialog = new ProgressDialog(getContext());
@@ -326,6 +337,10 @@ public class MedicineFragment extends Fragment {
     private void setupClickListeners() {
         cameraView.setOnClickListener(v -> showDocumentUploadOptions());
 
+        qrprescription.setOnClickListener(v->{
+            showQrBottomSheet();
+        });
+
         notificationButton.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), NotificationActivity.class);
             intent.putExtra("token", token);
@@ -350,6 +365,120 @@ public class MedicineFragment extends Fragment {
         });
     }
 
+    private void showQrBottomSheet() {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
+        bottomSheetDialog.setContentView(R.layout.item_bottom_sheet_qr);
+
+        ImageView qrImage = bottomSheetDialog.findViewById(R.id.qr_image);
+        Button downloadQr = bottomSheetDialog.findViewById(R.id.download_qr_button);
+
+        // Generate QR data (example)
+        DatabaseHelper dbHelper = new DatabaseHelper(getContext());
+        CurrentPreciption currentPreciption = dbHelper.getCurrentPreciptionWithItems().getCurrentPreciption();
+        String qrData = String.valueOf(currentPreciption.getId());
+
+        // Generate the QR code
+        Bitmap bitmap = generateQRCode(qrData);
+        if (qrImage != null && bitmap != null) {
+            qrImage.setImageBitmap(bitmap);
+        }
+
+        // Handle download button click
+        if (downloadQr != null && bitmap != null) {
+            downloadQr.setOnClickListener(v -> {
+                saveQRCodeToGallery(bitmap);
+            });
+        }
+
+        bottomSheetDialog.show();
+    }
+
+    private void saveQRCodeToGallery(Bitmap bitmap) {
+        if (bitmap == null) {
+            Toast.makeText(requireContext(), "Invalid QR code image", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String filename = "QRCode_" + System.currentTimeMillis() + ".png";
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                saveQRCodeModern(bitmap, filename);
+            } else {
+                saveQRCodeLegacy(bitmap, filename);
+            }
+        } catch (IOException e) {
+            Toast.makeText(requireContext(), "Failed to save QR: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    private void saveQRCodeModern(Bitmap bitmap, String filename) throws IOException {
+        ContentResolver resolver = requireContext().getContentResolver();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, filename);
+        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png");
+        contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH,
+                Environment.DIRECTORY_PICTURES + "/MedicareQR");
+
+        Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+        if (imageUri == null) {
+            throw new IOException("Failed to create media store entry");
+        }
+
+        try (OutputStream fos = resolver.openOutputStream(imageUri)) {
+            if (fos == null) {
+                throw new IOException("Failed to open output stream");
+            }
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        }
+
+        Toast.makeText(requireContext(), "QR Code saved to gallery", Toast.LENGTH_SHORT).show();
+    }
+
+    @SuppressWarnings("deprecation")
+    private void saveQRCodeLegacy(Bitmap bitmap, String filename) throws IOException {
+        String imagesDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES).toString() + "/MedicareQR";
+        File dir = new File(imagesDir);
+        if (!dir.exists() && !dir.mkdirs()) {
+            throw new IOException("Failed to create directory");
+        }
+
+        File imageFile = new File(dir, filename);
+        try (OutputStream fos = new FileOutputStream(imageFile)) {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        }
+
+        // Use MediaScannerConnection instead of deprecated broadcast
+        MediaScannerConnection.scanFile(requireContext(),
+                new String[]{imageFile.getAbsolutePath()},
+                new String[]{"image/png"},
+                null);
+
+        Toast.makeText(requireContext(), "QR Code saved to gallery", Toast.LENGTH_SHORT).show();
+    }
+
+    private Bitmap generateQRCode(String text) {
+        QRCodeWriter writer = new QRCodeWriter();
+        try {
+            BitMatrix bitMatrix = writer.encode(text, BarcodeFormat.QR_CODE, 512, 512);
+            int width = bitMatrix.getWidth();
+            int height = bitMatrix.getHeight();
+            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    bitmap.setPixel(x, y, bitMatrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
+                }
+            }
+
+            return bitmap;
+        } catch (WriterException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     /**
      * Show bottom sheet with document upload options (Updated with Scanner option)
      */

@@ -179,6 +179,6 @@ public class DispatchMedicineActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         // Uncomment below if you want to auto-refresh when coming back
-        // loadPrescriptions(currentPatientId);
+         loadPrescriptions(currentPatientId);
     }
 }

@@ -7,8 +7,12 @@ import java.util.List;
 public class CurrentPreciption {
 
     int id;
+    @SerializedName("doctor_name")
     String doctor_name;
+    @SerializedName("patient_id")
     String patient_id;
+
+    @SerializedName("created_at")
     String created_at;
     @SerializedName("preciption")
     private List<Preciption> preciptionList;
