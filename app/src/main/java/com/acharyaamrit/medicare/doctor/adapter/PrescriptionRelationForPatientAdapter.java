@@ -52,7 +52,7 @@ public class PrescriptionRelationForPatientAdapter extends RecyclerView.Adapter<
 
     public void onBindViewHolder(@NonNull PrescriptionRelationForPatientAdapter.ViewHolder holder, int position) {
         PRelation prelation = pRelationList.get(position);
-        holder.titleView.setText("Checkup With "+prelation.getDoctor_name());
+        holder.titleView.setText("RX-"+prelation.getId());
         holder.timeView.setText(prelation.getCreated_at());
         holder.viewbtn.setOnClickListener(new View.OnClickListener() {
             @Override

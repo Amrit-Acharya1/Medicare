@@ -45,12 +45,14 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.acharyaamrit.medicare.R;
 import com.acharyaamrit.medicare.common.api.ApiClient;
 import com.acharyaamrit.medicare.common.api.ApiService;
 import com.acharyaamrit.medicare.common.controller.api.UploadDocumentOfPatient;
 import com.acharyaamrit.medicare.common.database.DatabaseHelper;
+import com.acharyaamrit.medicare.common.model.response.UserResponse;
 import com.acharyaamrit.medicare.common.utils.ImageCompressor;
 import com.acharyaamrit.medicare.doctor.adapter.MedicineSearchAdapter;
 import com.acharyaamrit.medicare.doctor.adapter.PrescriptionRelationForPatientAdapter;
@@ -58,9 +60,11 @@ import com.acharyaamrit.medicare.doctor.model.Doctor;
 import com.acharyaamrit.medicare.doctor.model.Medicine;
 import com.acharyaamrit.medicare.doctor.model.request.MedicineRequest;
 import com.acharyaamrit.medicare.doctor.model.request.PRelationRequest;
+import com.acharyaamrit.medicare.doctor.model.request.PrescriptionRelationRequest;
 import com.acharyaamrit.medicare.doctor.model.response.MedicineResponse;
 import com.acharyaamrit.medicare.doctor.model.response.PRelation;
 import com.acharyaamrit.medicare.doctor.model.response.PRelationResponse;
+import com.acharyaamrit.medicare.doctor.model.response.PrescriptionRelationResponse;
 import com.acharyaamrit.medicare.patient.model.request.PatientDocumentRequest;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -106,6 +110,7 @@ public class MedicineSearch extends AppCompatActivity {
 
     private final Handler handler = new Handler(Looper.getMainLooper());
     private Runnable searchRunnable;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private MedicineSearchAdapter adapter;
     private final Map<String, List<Medicine>> searchCache = new HashMap<>();
@@ -160,6 +165,12 @@ public class MedicineSearch extends AppCompatActivity {
         tv_name.setText(name);
         tv_pid.setText("PID: " + patientId);
         noMedicine.setVisibility(VISIBLE);
+
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            handler.postDelayed(this::recreate, 300);
+            swipeRefreshLayout.setRefreshing(false);
+
+        });
     }
 
     private void initializeData() {
@@ -183,6 +194,8 @@ public class MedicineSearch extends AppCompatActivity {
         upload_doc = findViewById(R.id.upload_doc);
         nestedScrollView = findViewById(R.id.nestedScrollView);
         loadMoreProgress = findViewById(R.id.loadMoreProgress);
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+
 
         // Initialize upload progress dialog
         uploadProgressDialog = new ProgressDialog(this);
@@ -304,11 +317,42 @@ public class MedicineSearch extends AppCompatActivity {
         }
     }
 
-    // ==================== Document Upload Methods ====================
+    private void createNewPrescriptionRelation(){
+        try{
 
-    /**
-     * Show bottom sheet with document upload options
-     */
+
+        SharedPreferences sharedPreferences = getSharedPreferences("user_preference", MODE_PRIVATE);
+        String token = sharedPreferences.getString("token", null);
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        DatabaseHelper databaseHelper = new DatabaseHelper(this);
+        Doctor doctor = databaseHelper.getDoctorByToken(token);
+        PrescriptionRelationRequest request = new PrescriptionRelationRequest(doctor.getDoctor_id(),Integer.parseInt(getIntent().getStringExtra("patient_id")));
+        Call<PrescriptionRelationResponse> call = apiService.addPrescriptionRelation("Bearer " + token, request);
+        call.enqueue(new Callback<PrescriptionRelationResponse>() {
+
+            @Override
+            public void onResponse(Call<PrescriptionRelationResponse> call, Response<PrescriptionRelationResponse> response) {
+                if (response.isSuccessful() && response.body() != null){
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("prescriptionRelation_id", String.valueOf(response.body().getPreciptionRelation().getId()));
+                    editor.apply();
+
+                }else{
+                    Toast.makeText(MedicineSearch.this, response.errorBody().toString(), Toast.LENGTH_SHORT).show();
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PrescriptionRelationResponse> call, Throwable t) {
+            }
+
+        });
+        } catch (Exception e) {
+            Toast.makeText(this, "Failed to create New Prescription", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void showDocumentUploadOptions() {
         // Check if prescription relation is selected
         SharedPreferences sharedPreferences = getSharedPreferences("user_preference", MODE_PRIVATE);
@@ -316,13 +360,14 @@ public class MedicineSearch extends AppCompatActivity {
 
         if (presId == null) {
             // Show warning dialog
-            new AlertDialog.Builder(this)
-                    .setTitle("Select Prescription")
-                    .setMessage("Please select a prescription first.")
-                    .setPositiveButton("Select", (dialog, which) -> fetchPrecriptionsForPatient())
-                    .setNegativeButton("Cancel", null)
-                    .show();
-            return;
+//            new AlertDialog.Builder(this)
+//                    .setTitle("Select Prescription")
+//                    .setMessage("Please select a prescription first.")
+//                    .setPositiveButton("Select", (dialog, which) -> fetchPrecriptionsForPatient())
+//                    .setNegativeButton("Cancel", null)
+//                    .show();
+//            return;
+            createNewPrescriptionRelation();
         }
 
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
