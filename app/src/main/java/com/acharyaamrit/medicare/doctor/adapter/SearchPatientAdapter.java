@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,9 @@ import com.acharyaamrit.medicare.R;
 import com.acharyaamrit.medicare.doctor.DoctorPatientDetailActivity;
 import com.acharyaamrit.medicare.doctor.MedicineSearch;
 import com.acharyaamrit.medicare.patient.model.patientModel.Patient;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.material.imageview.ShapeableImageView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -43,6 +47,7 @@ public class SearchPatientAdapter extends RecyclerView.Adapter<SearchPatientAdap
         String pAddress = String.valueOf(patient.getAddress());
         String pBloodGroup = String.valueOf(patient.getBlood_group());
         String pAge = String.valueOf(patient.getDob());
+        String PImage = String.valueOf(patient.getImage());
         String pGender;
         if(String.valueOf(patient.getGender()).equals("1")){
             pGender = "Male";
@@ -58,6 +63,16 @@ public class SearchPatientAdapter extends RecyclerView.Adapter<SearchPatientAdap
         holder.age.setText(calculateAge(pAge));
         holder.gender.setText(pGender);
         holder.phone.setText(pPhone);
+        if (patient.getImage() != null && !patient.getImage().isEmpty()) {
+            Glide.with(context)
+                    .load(patient.getImage())
+                    .placeholder(R.drawable.logo)
+                    .error(R.drawable.logo)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(holder.iv_profile);
+        } else {
+            holder.iv_profile.setImageResource(R.drawable.logo);
+        }
         holder.btn_view_details.setOnClickListener(v->{
             Intent intent = new Intent(context, DoctorPatientDetailActivity.class);
             intent.putExtra("patient_id", pId);
@@ -67,6 +82,7 @@ public class SearchPatientAdapter extends RecyclerView.Adapter<SearchPatientAdap
             intent.putExtra("patient_age", calculateAge(pAge));
             intent.putExtra("patient_gender", pGender);
             intent.putExtra("patient_phone", pPhone);
+            intent.putExtra("profileImage",PImage);
             context.startActivity(intent);
 
         });
@@ -79,6 +95,8 @@ public class SearchPatientAdapter extends RecyclerView.Adapter<SearchPatientAdap
             intent.putExtra("patient_age", calculateAge(pAge));
             intent.putExtra("patient_gender", pGender);
             intent.putExtra("patient_phone", pPhone);
+            intent.putExtra("profileImage",PImage);
+
             context.startActivity(intent);
         });
 
@@ -113,6 +131,7 @@ public class SearchPatientAdapter extends RecyclerView.Adapter<SearchPatientAdap
         TextView name, patientId, address, bloodGroup, age, gender,phone;
         CardView patient_card;
         Button btn_prescribe, btn_view_details;
+        ImageView iv_profile;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -127,6 +146,7 @@ public class SearchPatientAdapter extends RecyclerView.Adapter<SearchPatientAdap
             btn_view_details = itemView.findViewById(R.id.btn_view_details);
             phone = itemView.findViewById(R.id.tv_phone);
             patient_card=itemView.findViewById(R.id.patient_card);
+            iv_profile = itemView.findViewById(R.id.iv_profile);
 
         }
 

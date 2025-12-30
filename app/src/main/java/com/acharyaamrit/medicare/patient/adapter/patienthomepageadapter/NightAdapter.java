@@ -1,6 +1,7 @@
 package com.acharyaamrit.medicare.patient.adapter.patienthomepageadapter;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -29,7 +30,8 @@ public class NightAdapter extends RecyclerView.Adapter<NightAdapter.ViewHolder>{
     @NonNull
     @Override
     public NightAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LinearLayout.inflate(context, R.layout.item_homepage_layout, null);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_homepage_layout, parent, false);
         return new NightAdapter.ViewHolder(view);
     }
 
@@ -71,9 +73,7 @@ public class NightAdapter extends RecyclerView.Adapter<NightAdapter.ViewHolder>{
         if (medicine.getCompany_name() != null) {
             holder.textViewManufacturer.setText(medicine.getCompany_name());
         }
-        if (position == medicineList.size() - 1){
-            holder.line_view.setVisibility(View.GONE);
-        }
+
     }
 
     @Override
@@ -89,7 +89,6 @@ public class NightAdapter extends RecyclerView.Adapter<NightAdapter.ViewHolder>{
         TextView textViewDosageFrequency;
         TextView textViewManufacturer;
 
-        View line_view;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -100,7 +99,6 @@ public class NightAdapter extends RecyclerView.Adapter<NightAdapter.ViewHolder>{
             textViewMedicineDoseUnit = itemView.findViewById(R.id.textMedicineDoseUnit);
             textViewDosageFrequency = itemView.findViewById(R.id.textDosageFrequency);
             textViewManufacturer = itemView.findViewById(R.id.textManufacturer);
-            line_view = itemView.findViewById(R.id.line_view);
         }
     }
 }

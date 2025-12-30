@@ -12,12 +12,14 @@ public class Clicnic {
 
     private String lat;
     private String longt;
+    private String image;
+
     private String[] topic;
 
     public Clicnic() {
     }
 
-    public Clicnic(int id, int clicnic_id, String user_type, String name, String email, String contact, String dob, String address, String lat, String longt, String[] topic) {
+    public Clicnic(int id, int clicnic_id, String user_type, String name, String email, String contact, String dob, String address, String lat, String longt, String image, String[] topic) {
         this.id = id;
         this.clicnic_id = clicnic_id;
         this.user_type = user_type;
@@ -28,7 +30,16 @@ public class Clicnic {
         this.address = address;
         this.lat = lat;
         this.longt = longt;
+        this.image = image;
         this.topic = topic;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String[] getTopic() {

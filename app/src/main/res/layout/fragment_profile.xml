@@ -57,11 +57,35 @@
                     app:cardCornerRadius="@dimen/_45sdp"
                     app:cardElevation="@dimen/_6sdp">
 
-                    <ImageView
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/logo" />
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:id="@+id/profileImage"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/logo" />
+
+                        <!-- Edit button - styled like Facebook's profile picture edit overlay -->
+                        <ImageView
+                            android:id="@+id/editProfileImage"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_gravity="end|bottom"
+                            android:layout_marginEnd="4dp"
+                            android:layout_marginBottom="4dp"
+                            android:background="@drawable/ic_circle_image"
+                            android:contentDescription="Edit Profile Picture"
+                            android:padding="8dp"
+                            android:src="@drawable/camera_icon"
+                            android:scaleType="centerInside"
+                            android:clickable="true"
+                            android:focusable="true"
+                            tools:ignore="UseAppTint" />
+
+                    </FrameLayout>
                 </androidx.cardview.widget.CardView>
 
                 <!-- Name -->

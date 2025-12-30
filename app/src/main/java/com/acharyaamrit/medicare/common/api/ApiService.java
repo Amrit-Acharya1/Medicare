@@ -203,4 +203,11 @@ public interface ApiService {
             @Header("Authorization") String bearerToken,
             @Body OldPrecriptionRequest request
     );
+
+    @Multipart
+    @POST("user/update-profile-image")
+    Call<UserResponse> updateProfileImage(
+            @Header("Authorization") String bearerToken,
+            @Part MultipartBody.Part image
+    );
 }

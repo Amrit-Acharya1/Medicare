@@ -12,11 +12,12 @@ public class Doctor {
     private  String speciality;
     private String clicnic;
     private String gender;
+    private String image;
+
     private String[] topic;
 
 
-
-    public Doctor(int id, int doctor_id, String user_type, String name, String email, String contact, String dob, String address, String speciality, String clicnic, String gender, String[] topic) {
+    public Doctor(int id, int doctor_id, String user_type, String name, String email, String contact, String dob, String address, String speciality, String clicnic, String gender, String image, String[] topic) {
         this.id = id;
         this.doctor_id = doctor_id;
         this.user_type = user_type;
@@ -28,6 +29,7 @@ public class Doctor {
         this.speciality = speciality;
         this.clicnic = clicnic;
         this.gender = gender;
+        this.image = image;
         this.topic = topic;
     }
 
@@ -36,6 +38,14 @@ public class Doctor {
 
     public String[] getTopic() {
         return topic;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public void setTopic(String[] topic) {

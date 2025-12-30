@@ -1,119 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="@dimen/_4sdp"
+    android:layout_marginHorizontal="@dimen/_4sdp"
+    app:cardCornerRadius="@dimen/_12sdp"
+    app:cardElevation="@dimen/_2sdp"
+    app:cardBackgroundColor="@color/white">
 
     <LinearLayout
         android:orientation="horizontal"
         android:padding="@dimen/_12sdp"
+        android:gravity="center_vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <androidx.cardview.widget.CardView
-            android:layout_gravity="center_vertical"
-            android:elevation="@dimen/_7sdp"
-            app:cardCornerRadius="@dimen/_7sdp"
-            android:layout_width="@dimen/_30sdp"
-            android:layout_height="@dimen/_30sdp">
 
-            <ImageView
-                android:id="@+id/imageMedicineIcon"
-                android:scaleType="centerCrop"
-                android:src="@drawable/baloon"
+        <!-- Medicine Icon with Gradient Background -->
+        <FrameLayout
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp">
+
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-        </androidx.cardview.widget.CardView>
+                android:layout_height="match_parent"
+                app:cardCornerRadius="@dimen/_12sdp"
+                app:cardElevation="0dp"
+                android:backgroundTint="#E8F5E9">
+
+                <ImageView
+                    android:id="@+id/imageMedicineIcon"
+                    android:layout_width="@dimen/_28sdp"
+                    android:layout_height="@dimen/_28sdp"
+                    android:layout_gravity="center"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/baloon" />
+            </androidx.cardview.widget.CardView>
+        </FrameLayout>
+
+        <!-- Medicine Details -->
         <LinearLayout
-            android:layout_weight="0.7"
-            android:layout_gravity="center_horizontal"
             android:layout_marginStart="@dimen/_12sdp"
             android:orientation="vertical"
-            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_width="0dp"
             android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/textMedicineName"
                 android:fontFamily="@font/inter_semibold"
-                android:textStyle="italic"
-                android:textSize="@dimen/_12sdp"
-                android:textColor="@color/black"
+                android:textSize="@dimen/_13sdp"
+                android:textColor="#1A1A2E"
                 android:text="Paracetamol"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
             <LinearLayout
+                android:layout_marginTop="@dimen/_4sdp"
                 android:orientation="horizontal"
+                android:gravity="center_vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-                <TextView
-                    android:id="@+id/textMedicineDoseQty"
-                    android:fontFamily="@font/inter"
-                    android:textStyle="normal"
-                    android:textSize="@dimen/_9sdp"
-                    android:textColor="#66000000"
-                    android:text="10"
+                <!-- Dosage Badge -->
+                <LinearLayout
+                    android:background="@drawable/dosage_badge_background"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:paddingVertical="@dimen/_3sdp"
+                    android:orientation="horizontal"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-                <TextView
-                    android:id="@+id/textMedicineDoseUnit"
-                    android:fontFamily="@font/inter"
-                    android:textStyle="normal"
-                    android:textSize="@dimen/_9sdp"
-                    android:textColor="#66000000"
-                    android:text="mg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content">
 
-                <TextView
-                    android:id="@+id/textSeparatorDot"
-                    android:fontFamily="@font/inter"
-                    android:textStyle="normal"
-                    android:textSize="@dimen/_9sdp"
-                    android:textColor="#66000000"
-                    android:text=" • "
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    <TextView
+                        android:id="@+id/textMedicineDoseQty"
+                        android:fontFamily="@font/inter_semibold"
+                        android:textSize="@dimen/_9sdp"
+                        android:textColor="#4CAF50"
+                        android:text="10"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:id="@+id/textMedicineDoseUnit"
+                        android:fontFamily="@font/inter_semibold"
+                        android:textSize="@dimen/_9sdp"
+                        android:textColor="#4CAF50"
+                        android:text=" mg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_marginHorizontal="@dimen/_8sdp"
+                    android:background="#E0E0E0"
+                    android:layout_width="@dimen/_4sdp"
+                    android:layout_height="@dimen/_4sdp"/>
 
                 <TextView
                     android:id="@+id/textDosageFrequency"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
                     android:fontFamily="@font/inter"
                     android:text="2"
-                    android:textColor="#66000000"
-                    android:textSize="@dimen/_9sdp"
-                    android:textStyle="normal" />
-                <TextView
+                    android:textColor="#666666"
+                    android:textSize="@dimen/_10sdp"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:fontFamily="@font/inter"
-                    android:text=" times a day"
-                    android:textColor="#66000000"
-                    android:textSize="@dimen/_9sdp"
-                    android:textStyle="normal" />
+                    android:layout_height="wrap_content"/>
 
+                <TextView
+                    android:fontFamily="@font/inter"
+                    android:text=" times/day"
+                    android:textColor="#666666"
+                    android:textSize="@dimen/_10sdp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
             </LinearLayout>
 
             <TextView
                 android:id="@+id/textManufacturer"
+                android:layout_marginTop="@dimen/_4sdp"
                 android:fontFamily="@font/inter"
-                android:textStyle="normal"
                 android:textSize="@dimen/_9sdp"
-                android:textColor="#66000000"
-                android:text="Quest Pharmaceutical PVT .Ltd"
+                android:textColor="#999999"
+                android:text="Quest Pharmaceutical PVT. Ltd"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
 
+        <!-- Checkbox/Status -->
+        <CheckBox
+            android:id="@+id/checkTaken"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:button="@drawable/custom_checkbox"
+            android:layout_marginStart="@dimen/_8sdp"/>
+
     </LinearLayout>
-    <View
-        android:id="@+id/line_view"
-        android:layout_marginHorizontal="@dimen/_12sdp"
-        android:background="#15000000"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"/>
-
-
-</LinearLayout>
+</androidx.cardview.widget.CardView>

@@ -46,7 +46,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "lat TEXT," +
                 "longt TEXT," +
                 "emergency_contact TEXT," +
-                "gender TEXT)";
+                "gender TEXT," +
+                "image TEXT)";
         db.execSQL(createPatientTable);
 
         String createDoctorTable = "CREATE TABLE doctor (" +
@@ -61,7 +62,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "address TEXT," +
                 "speciality TEXT," +
                 "clicnic TEXT," +
-                "gender TEXT)";
+                "gender TEXT," +
+                "image TEXT)";
         db.execSQL(createDoctorTable);
 
         String createPharmacyTable = "CREATE TABLE pharmacy (" +
@@ -77,7 +79,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "pan_no TEXT," +
                 "lat TEXT," +
                 "longt TEXT," +
-                "clicnic TEXT)";
+                "clicnic TEXT," +
+                "image TEXT)";
         db.execSQL(createPharmacyTable);
 
 
@@ -93,7 +96,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "dob TEXT," +
                 "address TEXT," +
                 "lat TEXT," +
-                "longt TEXT)";
+                "longt TEXT," +
+                "image TEXT)";
         db.execSQL(createClinicTable);
 
         String CREATE_CURRENT_PRESCRIPTIONS_TABLE = "CREATE TABLE current_prescriptions (" +
@@ -184,6 +188,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("longt", patient.getLongt());
         values.put("emergency_contact", patient.getEmergency_contact());
         values.put("gender", patient.getGender());
+        values.put("image", patient.getImage());
 
         // Clear existing patient data to avoid duplicates
         db.delete("patient", null, null);
@@ -216,6 +221,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             patient.setLongt(cursor.getString(cursor.getColumnIndexOrThrow("longt")));
             patient.setEmergency_contact(cursor.getString(cursor.getColumnIndexOrThrow("emergency_contact")));
             patient.setGender(cursor.getString(cursor.getColumnIndexOrThrow("gender")));
+            patient.setImage(cursor.getString(cursor.getColumnIndexOrThrow("image")));
+
         }
 
         cursor.close();
@@ -242,6 +249,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("speciality", doctor.getSpeciality());
         values.put("clicnic", doctor.getClicnic());
         values.put("gender", doctor.getGender());
+        values.put("image", doctor.getImage());
+
 
 
         // Clear existing patient data to avoid duplicates
@@ -277,6 +286,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             doctor.setSpeciality(cursor.getString(cursor.getColumnIndexOrThrow("speciality")));
             doctor.setClicnic(cursor.getString(cursor.getColumnIndexOrThrow("clicnic")));
             doctor.setGender(cursor.getString(cursor.getColumnIndexOrThrow("gender")));
+            doctor.setImage(cursor.getString(cursor.getColumnIndexOrThrow("image")));
+
 
         }
 
@@ -303,6 +314,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("lat", pharmacy.getLat());
         values.put("longt", pharmacy.getLongt());
         values.put("clicnic", pharmacy.getClicnic());
+        values.put("image", pharmacy.getImage());
+
 
 
         // Clear existing patient data to avoid duplicates
@@ -338,6 +351,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             pharmacy.setLat(cursor.getString(cursor.getColumnIndexOrThrow("lat")));
             pharmacy.setLongt(cursor.getString(cursor.getColumnIndexOrThrow("longt")));
             pharmacy.setClicnic(cursor.getString(cursor.getColumnIndexOrThrow("clicnic")));
+            pharmacy.setImage(cursor.getString(cursor.getColumnIndexOrThrow("image")));
+
         }
 
         cursor.close();
@@ -361,6 +376,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("address", clicnic.getAddress());
         values.put("lat", clicnic.getLat());
         values.put("longt", clicnic.getLongt());
+        values.put("image", clicnic.getImage());
+
 
 
         // Clear existing patient data to avoid duplicates
@@ -393,6 +410,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             clicnic.setAddress(cursor.getString(cursor.getColumnIndexOrThrow("address")));
             clicnic.setLat(cursor.getString(cursor.getColumnIndexOrThrow("lat")));
             clicnic.setLongt(cursor.getString(cursor.getColumnIndexOrThrow("longt")));
+            clicnic.setImage(cursor.getString(cursor.getColumnIndexOrThrow("image")));
+
         }
 
         cursor.close();

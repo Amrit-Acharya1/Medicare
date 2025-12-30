@@ -20,7 +20,7 @@
         android:padding="16dp">
 
         <!-- Profile Image -->
-        <com.google.android.material.imageview.ShapeableImageView
+        <ImageView
             android:id="@+id/iv_profile"
             android:layout_width="70dp"
             android:layout_height="70dp"

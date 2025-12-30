@@ -34,6 +34,8 @@ import com.acharyaamrit.medicare.common.model.request.TimelineRequest;
 import com.acharyaamrit.medicare.common.model.response.TimelineResponse;
 import com.acharyaamrit.medicare.patient.adapter.patientmedicineadapter.UserTimelineAdapter;
 import com.acharyaamrit.medicare.patient.model.patientModel.Patient;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.List;
 
@@ -47,6 +49,7 @@ public class DoctorPatientDetailActivity extends AppCompatActivity {
     TextView tv_name, tv_patient_id, tv_blood_group, tv_age, tv_gender, tv_phone,tv_location, tv_name_patient_detail, tv_pid_patient_detail;
     ConstraintLayout timelineMain;
     Button btn_prescribe;
+    ImageView iv_profile;
 
 
     @Override
@@ -78,6 +81,8 @@ public class DoctorPatientDetailActivity extends AppCompatActivity {
         btn_prescribe = findViewById(R.id.btn_prescribe);
         tv_name_patient_detail = findViewById(R.id.tv_name_patient_detail);
         tv_pid_patient_detail = findViewById(R.id.tv_pid_patient_detail);
+        iv_profile = findViewById(R.id.iv_profile);
+
 
     }
     private void setUpListeners(){
@@ -101,6 +106,7 @@ public class DoctorPatientDetailActivity extends AppCompatActivity {
         String gender = intent.getStringExtra("patient_gender");
         String phone = intent.getStringExtra("patient_phone");
         String address = intent.getStringExtra("patient_address");
+        String image = intent.getStringExtra("profileImage");
         Boolean is_pharmacy = intent.getBooleanExtra("pharmacy", false);
         tv_name_patient_detail.setText(name);
         tv_pid_patient_detail.setText("PID: "+patientId);
@@ -119,6 +125,18 @@ public class DoctorPatientDetailActivity extends AppCompatActivity {
         tv_gender.setText(gender);
         tv_phone.setText(phone);
         tv_location.setText(address);
+
+        if (image != null ) {
+            Glide.with(DoctorPatientDetailActivity.this)
+                    .load(image)
+                    .placeholder(R.drawable.logo)
+                    .error(R.drawable.logo)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(iv_profile);
+        } else {
+            iv_profile.setImageResource(R.drawable.logo);
+        }
+
         fetchTimeLine(patientId);
 
 

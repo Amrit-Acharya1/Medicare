@@ -14,9 +14,11 @@ public class Patient {
     private String longt;
     private String emergency_contact;
     private String gender;
+
+    private String image;
     private String[] topic;
 
-    public Patient(int id, int patient_id, String user_type, String name, String email, String contact, String dob, String address, String blood_group, String lat, String longt, String emergency_contact, String gender, String[] topic) {
+    public Patient(int id, int patient_id, String user_type, String name, String email, String contact, String dob, String address, String blood_group, String lat, String longt, String emergency_contact, String gender,String image ,String[] topic) {
         this.id = id;
         this.patient_id = patient_id;
         this.user_type = user_type;
@@ -30,6 +32,7 @@ public class Patient {
         this.longt = longt;
         this.emergency_contact = emergency_contact;
         this.gender = gender;
+        this.image = image;
         this.topic = topic;
     }
     public Patient(){}
@@ -136,6 +139,14 @@ public class Patient {
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String[] getTopic() {

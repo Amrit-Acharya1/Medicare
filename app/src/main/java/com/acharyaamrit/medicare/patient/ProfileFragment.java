@@ -7,6 +7,7 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.AppCompatButton;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,12 +28,17 @@ import com.acharyaamrit.medicare.R;
 import com.acharyaamrit.medicare.common.api.ApiClient;
 import com.acharyaamrit.medicare.common.api.ApiService;
 import com.acharyaamrit.medicare.common.database.DatabaseHelper;
+import com.acharyaamrit.medicare.common.utils.FileUtils;
+import com.acharyaamrit.medicare.common.utils.ImagePickerBottomSheet;
 import com.acharyaamrit.medicare.patient.model.patientModel.Patient;
 import com.acharyaamrit.medicare.patient.model.request.PatientUpdateRequest;
 import com.acharyaamrit.medicare.common.model.response.UserResponse;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,13 +47,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ProfileFragment extends Fragment {
 
-
+    private ImagePickerBottomSheet bottomSheet;
+    ImageView profileImage;
+    private String currentImageUrl;
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -64,14 +76,24 @@ public class ProfileFragment extends Fragment {
         AppCompatButton btn = view.findViewById(R.id.logout_button);
 
         AppCompatButton edit_profile = view.findViewById(R.id.edit_profile);
-
         SwitchMaterial notificationOn = view.findViewById(R.id.notificationOn);
+        ImageView editProfileImage = view.findViewById(R.id.editProfileImage);
+        profileImage = view.findViewById(R.id.profileImage);
+        editProfileImage.setOnClickListener(v->{
+            showImagePickerBottomSheet();
+        });
+        profileImage.setOnClickListener(v->{
+            showImagePickerBottomSheet();
+
+        });
+
         notificationOn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getContext(), "turn on", Toast.LENGTH_SHORT).show();
             }
         });
+
 
 
         edit_profile.setOnClickListener(new View.OnClickListener() {
@@ -299,6 +321,7 @@ public class ProfileFragment extends Fragment {
 
 
 
+
             name.setText(patient.getName() !=null  ? patient.getName(): "xxxx");
             address.setText(patient.getAddress() !=null  ? patient.getAddress(): "xxxx");
             age.setText(patient.getDob() != null ? calculateAge(patient.getDob()): "xxxx");
@@ -309,8 +332,161 @@ public class ProfileFragment extends Fragment {
             dob.setText(patient.getDob()!=null  ? patient.getDob(): "xxxx");
             address2.setText(patient.getAddress()!=null  ? patient.getAddress(): "xxxx");
             emergency_contact.setText(patient.getEmergency_contact()!=null  ? patient.getEmergency_contact(): "xxxxx" );
+            if (patient.getImage() != null && !patient.getImage().isEmpty()) {
+                currentImageUrl = patient.getImage();
+
+                Glide.with(requireContext())
+                        .load(patient.getImage())
+                        .placeholder(R.drawable.logo)
+                        .error(R.drawable.logo)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(profileImage);
+            } else {
+                currentImageUrl = null;
+                profileImage.setImageResource(R.drawable.logo);
+            }
         }
     }
+
+
+    private void showImagePickerBottomSheet() {
+        bottomSheet = ImagePickerBottomSheet.newInstance(currentImageUrl);
+
+        bottomSheet.setOnImageSelectedListener(new ImagePickerBottomSheet.OnImageSelectedListener() {
+            @Override
+            public void onImageSelected(Uri imageUri) {
+
+            }
+
+            @Override
+            public void onUploadClicked(Uri imageUri) {
+                uploadProfileImage(imageUri);
+            }
+        });
+
+        bottomSheet.show(getChildFragmentManager(), "ImagePicker");
+    }
+    private void uploadProfileImage(Uri imageUri) {
+        try {
+            // Get file from URI
+            File file = FileUtils.getFileFromUri(requireContext(), imageUri);
+
+            if (file == null) {
+                bottomSheet.onUploadError("Failed to process image");
+                return;
+            }
+
+            SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
+            String token = sharedPreferences.getString("token", null);
+            ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+            // FIX 1: Get actual MIME type from ContentResolver
+            String mimeType = requireContext().getContentResolver().getType(imageUri);
+            if (mimeType == null) {
+                // Fallback based on file extension
+                String extension = getFileExtension(file.getName());
+                mimeType = getMimeTypeFromExtension(extension);
+            }
+
+            RequestBody fileReqBody = RequestBody.create(
+                    MediaType.parse(mimeType),
+                    file
+            );
+
+            MultipartBody.Part imagePart = MultipartBody.Part.createFormData(
+                    "image",
+                    file.getName(),
+                    fileReqBody
+            );
+
+            apiService.updateProfileImage("Bearer " + token, imagePart).enqueue(new Callback<UserResponse>() {
+                @Override
+                public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        try {
+                            DatabaseHelper dbHelper = new DatabaseHelper(requireContext());
+                            Patient patient = dbHelper.getPatientByToken(token);
+                            String newUrl = response.body().getPatient().getImage();
+
+                            patient.setImage(newUrl);
+                            dbHelper.insertPatient(patient, token);
+                            currentImageUrl = newUrl;
+
+                            Glide.with(requireContext())
+                                    .load(patient.getImage())
+                                    .placeholder(R.drawable.logo)
+                                    .error(R.drawable.logo)
+                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                    .into(profileImage);
+
+                            if (bottomSheet != null) {
+                                bottomSheet.onUploadSuccess();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            if (bottomSheet != null) {
+                                bottomSheet.onUploadError("Error saving image");
+                            }
+                        }
+                    } else {
+                        String errorMessage = "Upload failed";
+                        try {
+                            if (response.errorBody() != null) {
+                                errorMessage = response.errorBody().string();
+                                android.util.Log.e("UploadError", "Code: " + response.code() + " Body: " + errorMessage);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        if (bottomSheet != null) {
+                            bottomSheet.onUploadError("Upload failed: " + response.code());
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UserResponse> call, Throwable t) {
+                    android.util.Log.e("UploadError", "Network error: " + t.getMessage());
+                    if (bottomSheet != null) {
+                        bottomSheet.onUploadError("Network error. Please try again.");
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            android.util.Log.e("UploadError", "Exception: " + e.getMessage());
+            if (bottomSheet != null) {
+                bottomSheet.onUploadError("Error: " + e.getMessage());
+            }
+        }
+    }
+
+    private String getFileExtension(String fileName) {
+        int lastDot = fileName.lastIndexOf('.');
+        if (lastDot >= 0) {
+            return fileName.substring(lastDot + 1).toLowerCase();
+        }
+        return "jpg";
+    }
+
+    private String getMimeTypeFromExtension(String extension) {
+        switch (extension.toLowerCase()) {
+            case "jpg":
+            case "jpeg":
+                return "image/jpeg";
+            case "png":
+                return "image/png";
+            case "gif":
+                return "image/gif";
+            case "webp":
+                return "image/webp";
+            default:
+                return "image/jpeg";
+        }
+    }
+
+
     private void updatePatientProfile(String name, String phone, String dob, int gender, String blood_group, String address, String emergencyContactStr) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
         PatientUpdateRequest request = new PatientUpdateRequest(name, address, phone, dob, gender, blood_group, emergencyContactStr);

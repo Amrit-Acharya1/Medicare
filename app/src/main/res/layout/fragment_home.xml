@@ -4,7 +4,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -114,7 +113,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 
-
     <!-- ========================= -->
     <!-- SCROLLABLE MEDICINE BODY -->
     <!-- ========================= -->
@@ -131,9 +129,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="center"
             android:paddingBottom="@dimen/_73sdp">
 
             <!-- No Routine Medicine Placeholder -->
@@ -181,7 +178,7 @@
                     android:textSize="@dimen/_14sdp" />
             </LinearLayout>
 
-            <!-- MORNING -->
+            <!-- ============ MORNING ============ -->
             <LinearLayout
                 android:id="@+id/morningLayout"
                 android:layout_width="match_parent"
@@ -193,6 +190,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <TextView
@@ -200,31 +198,35 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="@dimen/_9sdp"
+                        android:fontFamily="@font/inter_semibold"
                         android:text="Morning"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_11sdp" />
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="@dimen/_24sdp"
+                        android:layout_height="@dimen/_24sdp"
                         android:src="@drawable/half_sun" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_6sdp"
                     android:background="@drawable/morning_bakground"
                     android:orientation="vertical"
-                    android:padding="@dimen/_2sdp">
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:paddingVertical="@dimen/_8sdp">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/morningRecycler"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false" />
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- AFTERNOON -->
+            <!-- ============ AFTERNOON ============ -->
             <LinearLayout
                 android:id="@+id/afternoonLayout"
                 android:layout_width="match_parent"
@@ -236,40 +238,43 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <TextView
-                        android:layout_marginBottom="@dimen/_2sdp"
-                        android:layout_gravity="bottom"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="@dimen/_9sdp"
+                        android:fontFamily="@font/inter_semibold"
                         android:text="Afternoon"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_11sdp" />
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="@dimen/_24sdp"
+                        android:layout_height="@dimen/_24sdp"
                         android:src="@drawable/sun" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_6sdp"
                     android:background="@drawable/afternoon_background"
                     android:orientation="vertical"
-                    android:padding="@dimen/_12sdp">
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:paddingVertical="@dimen/_8sdp">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/afternoonRecycler"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false" />
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- EVENING -->
+            <!-- ============ EVENING ============ -->
             <LinearLayout
                 android:id="@+id/eveningLayout"
                 android:layout_width="match_parent"
@@ -281,6 +286,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <TextView
@@ -288,103 +294,112 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="@dimen/_9sdp"
+                        android:fontFamily="@font/inter_semibold"
                         android:text="Evening"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_11sdp" />
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="@dimen/_24sdp"
+                        android:layout_height="@dimen/_24sdp"
                         android:src="@drawable/half_sun" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_6sdp"
                     android:background="@drawable/evening_background"
                     android:orientation="vertical"
-                    android:padding="@dimen/_12sdp">
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:paddingVertical="@dimen/_8sdp">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/eveningRecycler"
+                        tools:listitem="@layout/item_homepage_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false" />
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- NIGHT -->
+            <!-- ============ NIGHT ============ -->
             <LinearLayout
                 android:id="@+id/nightLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_12sdp"
                 android:layout_marginTop="@dimen/_12sdp"
-                android:orientation="vertical"
-                android:layout_marginBottom="@dimen/_24sdp">
+                android:layout_marginBottom="@dimen/_24sdp"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <TextView
-                        android:gravity="center"
-                        android:layout_marginBottom="@dimen/_2sdp"
-                        android:layout_gravity="bottom"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="@dimen/_9sdp"
+                        android:fontFamily="@font/inter_semibold"
                         android:text="Night"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_11sdp" />
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="@dimen/_24sdp"
+                        android:layout_height="@dimen/_24sdp"
                         android:src="@drawable/moon" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_6sdp"
                     android:background="@drawable/night_background"
                     android:orientation="vertical"
-                    android:padding="@dimen/_12sdp">
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:paddingVertical="@dimen/_8sdp">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/nightRecycler"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false" />
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- ============ TIMELINE ============ -->
             <LinearLayout
                 android:id="@+id/timelineMain"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:backgroundTint="#F1FEEF"
-                android:background="@drawable/card_background"
-                android:padding="@dimen/_12sdp"
-                android:layout_marginHorizontal="@dimen/_12sdp"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:background="@drawable/card_background"
                 android:orientation="vertical"
-                android:layout_height="wrap_content">
+                android:padding="@dimen/_12sdp">
+
                 <LinearLayout
-                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
                     <ImageView
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_time"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_time" />
+
                     <TextView
-                        android:fontFamily="@font/inter_semibold"
-                        android:layout_marginBottom="@dimen/_2sdp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:layout_marginStart="@dimen/_9sdp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/inter_semibold"
                         android:text="User Timeline"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_11sdp" />
@@ -392,26 +407,27 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/timelineRecycler"
-                    tools:listitem="@layout/item_usertimeline_home"
-                    tools:itemCount="3"
-                    android:layout_marginTop="@dimen/_7sdp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_7sdp"
+                    android:nestedScrollingEnabled="false"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/item_usertimeline_home" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/viewAll"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/_19sdp"
+                    android:background="@drawable/call_background"
+                    android:backgroundTint="@color/green"
                     android:fontFamily="@font/inter"
-                    android:textSize="@dimen/_11sdp"
                     android:paddingHorizontal="@dimen/_40sdp"
                     android:text="View all"
-                    android:layout_marginTop="@dimen/_19sdp"
-                    android:layout_gravity="center_horizontal"
-                    android:backgroundTint="@color/green"
-                    android:background="@drawable/call_background"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_11sdp" />
             </LinearLayout>
 
         </LinearLayout>

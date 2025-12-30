@@ -7,6 +7,7 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.AppCompatButton;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,22 +29,19 @@ import com.acharyaamrit.medicare.common.api.ApiClient;
 import com.acharyaamrit.medicare.common.api.ApiService;
 import com.acharyaamrit.medicare.common.database.DatabaseHelper;
 import com.acharyaamrit.medicare.common.model.response.UserResponse;
-import com.acharyaamrit.medicare.doctor.DoctorHomePageActivity;
-import com.acharyaamrit.medicare.doctor.model.Doctor;
-import com.acharyaamrit.medicare.doctor.model.request.DoctorUpdateRequest;
+import com.acharyaamrit.medicare.common.utils.FileUtils;
+import com.acharyaamrit.medicare.common.utils.ImagePickerBottomSheet;
 import com.acharyaamrit.medicare.pharmacy.model.Pharmacy;
 import com.acharyaamrit.medicare.pharmacy.model.request.PharmacyUpdateRequest;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.switchmaterial.SwitchMaterial;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.io.File;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -51,7 +50,9 @@ import retrofit2.Response;
 public class PharmacyProfileFragment extends Fragment {
 
 
-
+    private ImagePickerBottomSheet bottomSheet;
+    ImageView pharmacyProfileImage;
+    private String currentImageUrl;
     public PharmacyProfileFragment() {
 
     }
@@ -71,6 +72,17 @@ public class PharmacyProfileFragment extends Fragment {
         AppCompatButton edit_profile = view.findViewById(R.id.edit_profile);
 
         SwitchMaterial notificationOn = view.findViewById(R.id.notificationOn);
+        pharmacyProfileImage = view.findViewById(R.id.pharmacyProfileImage);
+        ImageView editPharmacyProfileImage = view.findViewById(R.id.editPharmacyProfileImage);
+        editPharmacyProfileImage.setOnClickListener(v->{
+            showImagePickerBottomSheet();
+
+        });
+        pharmacyProfileImage.setOnClickListener(v->{
+            showImagePickerBottomSheet();
+
+        });
+
 
         notificationOn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -234,6 +246,142 @@ public class PharmacyProfileFragment extends Fragment {
         return view;
     }
 
+    private void showImagePickerBottomSheet() {
+        bottomSheet = ImagePickerBottomSheet.newInstance(currentImageUrl);
+
+        bottomSheet.setOnImageSelectedListener(new ImagePickerBottomSheet.OnImageSelectedListener() {
+            @Override
+            public void onImageSelected(Uri imageUri) {
+
+            }
+
+            @Override
+            public void onUploadClicked(Uri imageUri) {
+                uploadProfileImage(imageUri);
+            }
+        });
+
+        bottomSheet.show(getChildFragmentManager(), "ImagePicker");
+    }
+    private void uploadProfileImage(Uri imageUri) {
+        try {
+            // Get file from URI
+            File file = FileUtils.getFileFromUri(requireContext(), imageUri);
+
+            if (file == null) {
+                bottomSheet.onUploadError("Failed to process image");
+                return;
+            }
+
+            SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
+            String token = sharedPreferences.getString("token", null);
+            ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+            // FIX 1: Get actual MIME type from ContentResolver
+            String mimeType = requireContext().getContentResolver().getType(imageUri);
+            if (mimeType == null) {
+                // Fallback based on file extension
+                String extension = getFileExtension(file.getName());
+                mimeType = getMimeTypeFromExtension(extension);
+            }
+
+            RequestBody fileReqBody = RequestBody.create(
+                    MediaType.parse(mimeType),
+                    file
+            );
+
+            MultipartBody.Part imagePart = MultipartBody.Part.createFormData(
+                    "image",
+                    file.getName(),
+                    fileReqBody
+            );
+
+            apiService.updateProfileImage("Bearer " + token, imagePart).enqueue(new Callback<UserResponse>() {
+                @Override
+                public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        try {
+                            DatabaseHelper dbHelper = new DatabaseHelper(requireContext());
+                            Pharmacy pharmacy = dbHelper.getPharmacyByToken(token);
+                            String newUrl = response.body().getPharmacy().getImage();
+                            pharmacy.setImage(newUrl);
+                            dbHelper.insertPharmacy(pharmacy, token);
+                            currentImageUrl = newUrl;
+
+                            Glide.with(requireContext())
+                                    .load(pharmacy.getImage())
+                                    .placeholder(R.drawable.logo)
+                                    .error(R.drawable.logo)
+                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                    .into(pharmacyProfileImage);
+
+                            if (bottomSheet != null) {
+                                bottomSheet.onUploadSuccess();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            if (bottomSheet != null) {
+                                bottomSheet.onUploadError("Error saving image");
+                            }
+                        }
+                    } else {
+                        // FIX 2: Log the error response for debugging
+                        String errorMessage = "Upload failed";
+                        try {
+                            if (response.errorBody() != null) {
+                                errorMessage = response.errorBody().string();
+                                android.util.Log.e("UploadError", "Code: " + response.code() + " Body: " + errorMessage);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        if (bottomSheet != null) {
+                            bottomSheet.onUploadError("Upload failed: " + response.code());
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UserResponse> call, Throwable t) {
+                    android.util.Log.e("UploadError", "Network error: " + t.getMessage());
+                    if (bottomSheet != null) {
+                        bottomSheet.onUploadError("Network error. Please try again.");
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            android.util.Log.e("UploadError", "Exception: " + e.getMessage());
+            if (bottomSheet != null) {
+                bottomSheet.onUploadError("Error: " + e.getMessage());
+            }
+        }
+    }
+
+    private String getFileExtension(String fileName) {
+        int lastDot = fileName.lastIndexOf('.');
+        if (lastDot >= 0) {
+            return fileName.substring(lastDot + 1).toLowerCase();
+        }
+        return "jpg";
+    }
+
+    private String getMimeTypeFromExtension(String extension) {
+        switch (extension.toLowerCase()) {
+            case "jpg":
+            case "jpeg":
+                return "image/jpeg";
+            case "png":
+                return "image/png";
+            case "gif":
+                return "image/gif";
+            case "webp":
+                return "image/webp";
+            default:
+                return "image/jpeg";
+        }
+    }
     private void updatePharmacyProfile(String name, String phone, String dob,String address, String panno) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
         PharmacyUpdateRequest request = new PharmacyUpdateRequest(address, phone,dob, panno);
@@ -297,7 +445,6 @@ public class PharmacyProfileFragment extends Fragment {
 
 
 
-
             name.setText(pharmacy.getName() !=null  ? pharmacy.getName(): "xxxx");
             address.setText(pharmacy.getAddress() !=null  ? pharmacy.getAddress(): "xxxx");
             pan_no.setText(pharmacy.getPan_no() !=null  ? pharmacy.getPan_no(): "xxxx");
@@ -307,6 +454,20 @@ public class PharmacyProfileFragment extends Fragment {
             panTxt.setText(pharmacy.getPan_no()!=null  ? pharmacy.getPan_no(): "xxxx");
             address2.setText(pharmacy.getAddress()!=null  ? pharmacy.getAddress(): "xxxx");
             status.setText("Open");
+
+            if (pharmacy.getImage() != null && !pharmacy.getImage().isEmpty()) {
+                currentImageUrl = pharmacy.getImage();
+                Glide.with(requireContext())
+                        .load(pharmacy.getImage())
+                        .placeholder(R.drawable.logo)
+                        .error(R.drawable.logo)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(pharmacyProfileImage);
+            } else {
+                currentImageUrl = null;
+                pharmacyProfileImage.setImageResource(R.drawable.logo);
+            }
+
         }
     }
     private void logout(String token) {

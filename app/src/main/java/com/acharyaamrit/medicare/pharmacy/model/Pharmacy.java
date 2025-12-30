@@ -13,13 +13,15 @@ public class Pharmacy {
     private String lat;
     private String longt;
     private String clicnic;
+    private String image;
+
     private String[] topic;
 
     public Pharmacy() {
     }
 
 
-    public Pharmacy(int id, int pharmacy_id, String user_type, String name, String email, String contact, String dob, String address, String pan_no, String lat, String longt, String clicnic, String[] topic) {
+    public Pharmacy(int id, int pharmacy_id, String user_type, String name, String email, String contact, String dob, String address, String pan_no, String lat, String longt, String clicnic, String image, String[] topic) {
         this.id = id;
         this.pharmacy_id = pharmacy_id;
         this.user_type = user_type;
@@ -32,6 +34,16 @@ public class Pharmacy {
         this.lat = lat;
         this.longt = longt;
         this.clicnic = clicnic;
+        this.image = image;
+        this.topic = topic;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String[] getTopic() {

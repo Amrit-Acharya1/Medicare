@@ -74,9 +74,7 @@ public class MorningAdapter extends RecyclerView.Adapter<MorningAdapter.ViewHold
              holder.textViewManufacturer.setText(medicine.getCompany_name());
          }
 
-         if (position == medicineList.size() - 1){
-             holder.line_view.setVisibility(View.GONE);
-        }
+
 
     }
 
@@ -96,7 +94,6 @@ public class MorningAdapter extends RecyclerView.Adapter<MorningAdapter.ViewHold
         TextView textViewMedicineDoseUnit;
         TextView textViewDosageFrequency;
         TextView textViewManufacturer;
-        View line_view;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -107,7 +104,6 @@ public class MorningAdapter extends RecyclerView.Adapter<MorningAdapter.ViewHold
             textViewMedicineDoseUnit = itemView.findViewById(R.id.textMedicineDoseUnit);
             textViewDosageFrequency = itemView.findViewById(R.id.textDosageFrequency);
             textViewManufacturer = itemView.findViewById(R.id.textManufacturer);
-            line_view = itemView.findViewById(R.id.line_view);
         }
     }
 }
