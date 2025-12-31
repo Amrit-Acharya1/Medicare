@@ -5,7 +5,6 @@ import static android.content.Context.MODE_PRIVATE;
 import static android.view.View.GONE;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -43,6 +42,7 @@ import com.acharyaamrit.medicare.R;
 import com.acharyaamrit.medicare.common.NotificationActivity;
 import com.acharyaamrit.medicare.common.controller.api.UploadDocumentOfPatient;
 import com.acharyaamrit.medicare.common.database.DatabaseHelper;
+import com.acharyaamrit.medicare.common.utils.CustomAlertDialog;
 import com.acharyaamrit.medicare.common.utils.ImageCompressor;
 import com.acharyaamrit.medicare.patient.adapter.patientmedicineadapter.UserDocumentAdapter;
 import com.acharyaamrit.medicare.patient.controller.api.FetchDocumentOfPatient;
@@ -67,7 +67,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
 
 public class DetailDocumentFragment extends Fragment {
 
@@ -111,12 +110,11 @@ public class DetailDocumentFragment extends Fragment {
      */
     private void initializeDocumentScanner() {
         GmsDocumentScannerOptions options = new GmsDocumentScannerOptions.Builder()
-                .setGalleryImportAllowed(true)  // Allow importing from gallery
-                .setPageLimit(5)                 // Limit pages for performance
+                .setGalleryImportAllowed(true) // Allow importing from gallery
+                .setPageLimit(5) // Limit pages for performance
                 .setResultFormats(
                         GmsDocumentScannerOptions.RESULT_FORMAT_JPEG,
-                        GmsDocumentScannerOptions.RESULT_FORMAT_PDF
-                )
+                        GmsDocumentScannerOptions.RESULT_FORMAT_PDF)
                 .setScannerMode(GmsDocumentScannerOptions.SCANNER_MODE_FULL) // Full mode with UI
                 .build();
 
@@ -138,16 +136,14 @@ public class DetailDocumentFragment extends Fragment {
                     } else {
                         Toast.makeText(getContext(), "Scan cancelled", Toast.LENGTH_SHORT).show();
                     }
-                }
-        );
+                });
     }
 
     /**
      * Handle scanned document result
      */
     private void handleScannerResult(Intent data) {
-        GmsDocumentScanningResult result =
-                GmsDocumentScanningResult.fromActivityResultIntent(data);
+        GmsDocumentScanningResult result = GmsDocumentScanningResult.fromActivityResultIntent(data);
 
         if (result == null) {
             Toast.makeText(getContext(), "Failed to process document", Toast.LENGTH_SHORT).show();
@@ -178,20 +174,17 @@ public class DetailDocumentFragment extends Fragment {
 
                 if (scannedFile != null && scannedFile.exists()) {
                     // Show preview on main thread
-                    requireActivity().runOnUiThread(() ->
-                            showPreviewAndUpload(scannedFile));
+                    requireActivity().runOnUiThread(() -> showPreviewAndUpload(scannedFile));
                 } else {
-                    requireActivity().runOnUiThread(() ->
-                            Toast.makeText(getContext(),
-                                    "Failed to process scanned document",
-                                    Toast.LENGTH_SHORT).show());
+                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(),
+                            "Failed to process scanned document",
+                            Toast.LENGTH_SHORT).show());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                requireActivity().runOnUiThread(() ->
-                        Toast.makeText(getContext(),
-                                "Error: " + e.getMessage(),
-                                Toast.LENGTH_SHORT).show());
+                requireActivity().runOnUiThread(() -> Toast.makeText(getContext(),
+                        "Error: " + e.getMessage(),
+                        Toast.LENGTH_SHORT).show());
             }
         }).start();
     }
@@ -209,7 +202,8 @@ public class DetailDocumentFragment extends Fragment {
             File outputFile = new File(outputDir, fileName);
 
             InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
-            if (inputStream == null) return null;
+            if (inputStream == null)
+                return null;
 
             FileOutputStream outputStream = new FileOutputStream(outputFile);
             byte[] buffer = new byte[8192];
@@ -310,7 +304,7 @@ public class DetailDocumentFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail_document, container, false);
         initializeViews(view);
         initializeData(view);
@@ -372,8 +366,9 @@ public class DetailDocumentFragment extends Fragment {
                 "other"
         };
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Select Document Type")
+        new CustomAlertDialog.Builder(getContext())
+                .setTitle("Select Document Type")
+                .setAlertType(CustomAlertDialog.AlertType.INFO)
                 .setItems(documentTypes, (dialog, which) -> {
                     selectedDocType = documentTypeValues[which];
 
@@ -393,19 +388,18 @@ public class DetailDocumentFragment extends Fragment {
      * Check camera permission and open camera
      */
     private void checkCameraPermissionAndOpen() {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(requireContext(),
+                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(requireActivity(),
-                    new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA);
+                    new String[] { Manifest.permission.CAMERA }, REQUEST_CAMERA);
             return;
         }
 
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
             if (ContextCompat.checkSelfPermission(requireContext(),
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(requireActivity(),
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE },
                         REQUEST_STORAGE);
                 return;
             }
@@ -424,8 +418,7 @@ public class DetailDocumentFragment extends Fragment {
 
         startActivityForResult(
                 Intent.createChooser(intent, "Select Image"),
-                REQUEST_PICK_IMAGE
-        );
+                REQUEST_PICK_IMAGE);
     }
 
     /**
@@ -449,8 +442,7 @@ public class DetailDocumentFragment extends Fragment {
             Uri photoURI = FileProvider.getUriForFile(
                     requireContext(),
                     requireContext().getPackageName() + ".fileprovider",
-                    photoFile
-            );
+                    photoFile);
 
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
             takePictureIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -483,8 +475,7 @@ public class DetailDocumentFragment extends Fragment {
             File imageFile = File.createTempFile(
                     imageFileName,
                     ".jpg",
-                    storageDir
-            );
+                    storageDir);
 
             return imageFile;
 
@@ -497,7 +488,7 @@ public class DetailDocumentFragment extends Fragment {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == REQUEST_CAMERA && grantResults.length > 0
@@ -536,22 +527,9 @@ public class DetailDocumentFragment extends Fragment {
      * Show preview dialog and confirm upload
      */
     private void showPreviewAndUpload(File imageFile) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_image_preview, null);
-
-        ImageView previewImage = dialogView.findViewById(R.id.previewImage);
-        TextView tvDocType = dialogView.findViewById(R.id.tvDocumentType);
-        TextView tvFileSize = dialogView.findViewById(R.id.tvFileSize);
-
-        double fileSizeKB = imageFile.length() / 1024.0;
-        tvFileSize.setText(String.format(Locale.getDefault(), "Size: %.2f KB", fileSizeKB));
-        tvDocType.setText("Type: " + selectedDocType);
-
-        Uri imageUri = Uri.fromFile(imageFile);
-        previewImage.setImageURI(imageUri);
-
-        builder.setView(dialogView)
+        new CustomAlertDialog.Builder(getContext())
                 .setTitle("Confirm Upload")
+                .setAlertType(CustomAlertDialog.AlertType.CONFIRMATION)
                 .setPositiveButton("Upload", (dialog, which) -> {
                     File compressedFile = ImageCompressor.compressImage(
                             requireContext(), imageFile, selectedDocType);
@@ -589,8 +567,7 @@ public class DetailDocumentFragment extends Fragment {
                 selectedDocType,
                 String.valueOf(currentPatient.getPatient_id()),
                 doctorId,
-                imageFile
-        );
+                imageFile);
 
         UploadDocumentOfPatient uploadDocument = new UploadDocumentOfPatient(token, request);
         uploadDocument.uploadDocument(requireContext(),
@@ -629,7 +606,8 @@ public class DetailDocumentFragment extends Fragment {
      * Load and display documents
      */
     private void loadDocuments() {
-        if (currentPatient == null) return;
+        if (currentPatient == null)
+            return;
 
         SharedPreferences sharedPreferences = requireContext()
                 .getSharedPreferences("user_preference", MODE_PRIVATE);
@@ -642,7 +620,8 @@ public class DetailDocumentFragment extends Fragment {
                     @Override
                     public void onSuccess() {
                         String json = sharedPreferences.getString("document", null);
-                        if (json == null) return;
+                        if (json == null)
+                            return;
 
                         Type listType = new TypeToken<List<PatientDocument>>() {
                         }.getType();

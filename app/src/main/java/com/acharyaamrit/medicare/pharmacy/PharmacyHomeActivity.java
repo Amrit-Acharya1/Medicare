@@ -64,6 +64,7 @@ public class PharmacyHomeActivity extends AppCompatActivity {
     // Camera Permission Launcher
     private ActivityResultLauncher<String> cameraPermissionLauncher;
     private boolean isInitialized = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,9 +84,7 @@ public class PharmacyHomeActivity extends AppCompatActivity {
                     } else {
                         Toast.makeText(PharmacyHomeActivity.this, "Scan cancelled", Toast.LENGTH_SHORT).show();
                     }
-                }
-        );
-
+                });
 
         cameraPermissionLauncher = registerForActivityResult(
                 new ActivityResultContracts.RequestPermission(),
@@ -93,11 +92,10 @@ public class PharmacyHomeActivity extends AppCompatActivity {
                     if (isGranted) {
                         openQRScanner();
                     } else {
-                        Toast.makeText(PharmacyHomeActivity.this, "Camera permission is required to scan QR codes", Toast.LENGTH_LONG).show();
+                        Toast.makeText(PharmacyHomeActivity.this, "Camera permission is required to scan QR codes",
+                                Toast.LENGTH_LONG).show();
                     }
-                }
-        );
-
+                });
 
         lottieAnimationView = findViewById(R.id.loading_lottie);
 
@@ -108,20 +106,14 @@ public class PharmacyHomeActivity extends AppCompatActivity {
             return;
         }
 
-
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         onApiCallComplete();
-
 
         swipeRefreshLayout.setOnRefreshListener(() -> {
             pendingApiCalls.set(2);
             runOnUiThread(this::loadHomeFragment);
             swipeRefreshLayout.setRefreshing(false);
         });
-
-
-
-
 
     }
 
@@ -133,6 +125,7 @@ public class PharmacyHomeActivity extends AppCompatActivity {
             initializeUI();
         }
     }
+
     private void initializeUI() {
         runOnUiThread(() -> {
             lottieAnimationView.setVisibility(GONE);
@@ -153,6 +146,7 @@ public class PharmacyHomeActivity extends AppCompatActivity {
                 .addToBackStack("PharmacyPatient")
                 .commit();
     }
+
     private void navigateToLogin() {
         SharedPreferences sharedPreferences = getSharedPreferences("user_preference", MODE_PRIVATE);
         sharedPreferences.edit().clear().apply();
@@ -169,11 +163,12 @@ public class PharmacyHomeActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.chat).setOnClickListener(v -> {
-        //chat here
+            Intent intent = new Intent(this, com.acharyaamrit.medicare.chat.ChatListActivity.class);
+            startActivity(intent);
         });
 
         findViewById(R.id.qr_button).setOnClickListener(v -> {
-//            setSelectedBackground(R.id.qr_button_background);
+            // setSelectedBackground(R.id.qr_button_background);
 
             checkCameraPermissionAndScan();
         });
@@ -200,14 +195,16 @@ public class PharmacyHomeActivity extends AppCompatActivity {
         findViewById(selectedId)
                 .setBackground(ContextCompat.getDrawable(this, R.drawable.bottom_selected_back));
     }
+
     private void checkCameraPermissionAndScan() {
-        if (ContextCompat.checkSelfPermission(PharmacyHomeActivity.this, Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(PharmacyHomeActivity.this,
+                Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             openQRScanner();
         } else {
             cameraPermissionLauncher.launch(Manifest.permission.CAMERA);
         }
     }
+
     private void openQRScanner() {
         ScanOptions options = new ScanOptions();
         options.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
@@ -225,7 +222,6 @@ public class PharmacyHomeActivity extends AppCompatActivity {
 
         fetchPrescriptionFromQr(scannedData);
 
-
         Toast.makeText(PharmacyHomeActivity.this, "Scanned: " + scannedData, Toast.LENGTH_SHORT).show();
     }
 
@@ -237,14 +233,14 @@ public class PharmacyHomeActivity extends AppCompatActivity {
         Call<PrescriptionPharmacyResponse> call = apiService.fetchPrescriptionByQr("Bearer " + token, request);
         call.enqueue(new Callback<PrescriptionPharmacyResponse>() {
             @Override
-            public void onResponse(Call<PrescriptionPharmacyResponse> call, retrofit2.Response<PrescriptionPharmacyResponse> response) {
+            public void onResponse(Call<PrescriptionPharmacyResponse> call,
+                    retrofit2.Response<PrescriptionPharmacyResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     try {
 
                         PrescriptionPharmacy currentPreciption = response.body().getpRelationPharmacyList().get(0);
                         String createdAt = currentPreciption.getCreated_at();
-                        SimpleDateFormat inputFormat =
-                                new SimpleDateFormat("MMM dd, yyyy HH:mm:ss", Locale.ENGLISH);
+                        SimpleDateFormat inputFormat = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss", Locale.ENGLISH);
 
                         Date date = null;
                         try {
@@ -266,21 +262,21 @@ public class PharmacyHomeActivity extends AppCompatActivity {
                         String presJson = gson.toJson(pres);
                         Intent intent = new Intent(PharmacyHomeActivity.this, PrescriptionDetailsActivity.class);
                         intent.putExtra("prescription_id", String.valueOf(currentPreciption.getId()));
-                        intent.putExtra("doctor_name",currentPreciption.getDoctor_name());
-                        intent.putExtra("patient_id",currentPreciption.getPatient_id());
-                        intent.putExtra("day",day);
-                        intent.putExtra("month",month);
-                        intent.putExtra("time",time);
+                        intent.putExtra("doctor_name", currentPreciption.getDoctor_name());
+                        intent.putExtra("patient_id", currentPreciption.getPatient_id());
+                        intent.putExtra("day", day);
+                        intent.putExtra("month", month);
+                        intent.putExtra("time", time);
                         intent.putExtra("presList", presJson);
                         startActivity(intent);
 
-                       
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(PharmacyHomeActivity.this, "Failed to execute", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(PharmacyHomeActivity.this, "No Active Prescriptions Found", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PharmacyHomeActivity.this, "No Active Prescriptions Found", Toast.LENGTH_SHORT)
+                            .show();
                 }
             }
 
@@ -288,13 +284,8 @@ public class PharmacyHomeActivity extends AppCompatActivity {
             public void onFailure(Call<PrescriptionPharmacyResponse> call, Throwable t) {
             }
         });
-        
-
-
-
 
     }
-
 
     public void disableSwipeRefresh() {
         swipeRefreshLayout.setEnabled(false);

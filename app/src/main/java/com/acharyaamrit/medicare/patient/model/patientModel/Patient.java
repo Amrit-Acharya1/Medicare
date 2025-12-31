@@ -16,9 +16,11 @@ public class Patient {
     private String gender;
 
     private String image;
+    private String fcm_token;
+
     private String[] topic;
 
-    public Patient(int id, int patient_id, String user_type, String name, String email, String contact, String dob, String address, String blood_group, String lat, String longt, String emergency_contact, String gender,String image ,String[] topic) {
+    public Patient(int id, int patient_id, String user_type, String name, String email, String contact, String dob, String address, String blood_group, String lat, String longt, String emergency_contact, String gender,String image,String fcm_token ,String[] topic) {
         this.id = id;
         this.patient_id = patient_id;
         this.user_type = user_type;
@@ -33,9 +35,18 @@ public class Patient {
         this.emergency_contact = emergency_contact;
         this.gender = gender;
         this.image = image;
+        this.fcm_token = fcm_token;
         this.topic = topic;
     }
     public Patient(){}
+
+    public String getFcm_token() {
+        return fcm_token;
+    }
+
+    public void setFcm_token(String fcm_token) {
+        this.fcm_token = fcm_token;
+    }
 
     public int getId() {
         return id;

@@ -7,7 +7,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -18,6 +17,7 @@ import com.acharyaamrit.medicare.common.api.ApiClient;
 import com.acharyaamrit.medicare.common.api.ApiService;
 import com.acharyaamrit.medicare.common.model.ApiResponseTitleSuccess;
 import com.acharyaamrit.medicare.common.model.request.OtpValidateRequest;
+import com.acharyaamrit.medicare.common.utils.CustomAlertDialog;
 import com.google.gson.Gson;
 
 import retrofit2.Call;
@@ -64,7 +64,7 @@ public class OtpActivity extends AppCompatActivity {
             call.enqueue(new Callback<ApiResponseTitleSuccess>() {
                 @Override
                 public void onResponse(Call<ApiResponseTitleSuccess> call, Response<ApiResponseTitleSuccess> response) {
-                    if (response.isSuccessful() && response.body() != null){
+                    if (response.isSuccessful() && response.body() != null) {
                         String title = response.body().getTitle();
                         String message = response.body().getMessage();
 
@@ -74,26 +74,26 @@ public class OtpActivity extends AppCompatActivity {
 
                         startActivity(intent);
                         finish();
-                        
-                    }else {
+
+                    } else {
                         try {
                             try {
                                 String errorJson = response.errorBody().string();
 
                                 // Parse JSON error into your OtpResponse
                                 Gson gson = new Gson();
-                                ApiResponseTitleSuccess errorResponse = gson.fromJson(errorJson, ApiResponseTitleSuccess.class);
+                                ApiResponseTitleSuccess errorResponse = gson.fromJson(errorJson,
+                                        ApiResponseTitleSuccess.class);
 
                                 String title = errorResponse.getTitle();
                                 String message = errorResponse.getMessage();
 
-                                AlertDialog alertDialog = new AlertDialog.Builder(OtpActivity.this)
+                                new CustomAlertDialog.Builder(OtpActivity.this)
                                         .setTitle(title)
                                         .setMessage(message)
+                                        .setAlertType(CustomAlertDialog.AlertType.ERROR)
                                         .setPositiveButton("OK", null)
-                                        .create();
-                                alertDialog.show();
-
+                                        .show();
 
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -113,8 +113,7 @@ public class OtpActivity extends AppCompatActivity {
                 }
             });
 
-        }
-        else {
+        } else {
             ((EditText) findViewById(R.id.otp_input)).setError("Invalid OTP");
         }
 

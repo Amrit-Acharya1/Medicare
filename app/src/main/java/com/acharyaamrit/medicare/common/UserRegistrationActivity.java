@@ -9,7 +9,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -20,6 +19,7 @@ import com.acharyaamrit.medicare.common.api.ApiClient;
 import com.acharyaamrit.medicare.common.api.ApiService;
 import com.acharyaamrit.medicare.common.model.ApiResponseTitleSuccess;
 import com.acharyaamrit.medicare.common.model.request.UserRegisterRequest;
+import com.acharyaamrit.medicare.common.utils.CustomAlertDialog;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
@@ -31,6 +31,7 @@ import retrofit2.Response;
 public class UserRegistrationActivity extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,40 +72,37 @@ public class UserRegistrationActivity extends AppCompatActivity {
             }
         });
 
-
-
     }
 
     private void validationFunction(int userType) {
         String email = ((EditText) findViewById(R.id.patient_registration_email)).getText().toString();
         String password = ((EditText) findViewById(R.id.patient_registration_password)).getText().toString();
-        String confirmPassword = ((EditText) findViewById(R.id.patient_registration_confirm_password)).getText().toString();
+        String confirmPassword = ((EditText) findViewById(R.id.patient_registration_confirm_password)).getText()
+                .toString();
         String name = ((EditText) findViewById(R.id.patient_registration_name)).getText().toString();
 
         if (email.isEmpty()) {
             ((EditText) findViewById(R.id.patient_registration_email)).setError("Email cannot be empty");
-        } else if (name.isEmpty()){
+        } else if (name.isEmpty()) {
             ((EditText) findViewById(R.id.patient_registration_name)).setError("Name cannot be empty");
         } else if (password.isEmpty()) {
             ((EditText) findViewById(R.id.patient_registration_password)).setError("Password cannot be empty");
-        }
-        else if (confirmPassword.isEmpty()) {
-            ((EditText) findViewById(R.id.patient_registration_confirm_password)).setError("Confirm password cannot be empty");
-        }
-        else if (!password.equals(confirmPassword)) {
+        } else if (confirmPassword.isEmpty()) {
+            ((EditText) findViewById(R.id.patient_registration_confirm_password))
+                    .setError("Confirm password cannot be empty");
+        } else if (!password.equals(confirmPassword)) {
             ((EditText) findViewById(R.id.patient_registration_confirm_password)).setError("Password does not match");
-        }
-        else {
-            //backend API ko code here
+        } else {
+            // backend API ko code here
             progressDialog.show();
-            userResister( userType, name, email, password);
+            userResister(userType, name, email, password);
 
         }
 
     }
 
     private void userResister(int userType, String name, String email, String password) {
-        //backend API ko code here
+        // backend API ko code here
 
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
@@ -118,22 +116,20 @@ public class UserRegistrationActivity extends AppCompatActivity {
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
-                if (response.isSuccessful() && response.body() != null){
+                if (response.isSuccessful() && response.body() != null) {
 
                     String title = response.body().getTitle();
                     String message = response.body().getMessage();
 
-
-
                     finish();
-                    
+
                 } else {
-                    AlertDialog alertDialog = new AlertDialog.Builder(UserRegistrationActivity.this)
-                            .setTitle("Error")
+                    new CustomAlertDialog.Builder(UserRegistrationActivity.this)
+                            .setTitle("Registration Error")
                             .setMessage("Something went wrong")
+                            .setAlertType(CustomAlertDialog.AlertType.ERROR)
                             .setPositiveButton("OK", null)
-                            .create();
-                    alertDialog.show();
+                            .show();
                 }
             }
 
@@ -144,18 +140,18 @@ public class UserRegistrationActivity extends AppCompatActivity {
                 }
                 Toast.makeText(UserRegistrationActivity.this, "something went wrong", Toast.LENGTH_SHORT).show();
 
-                AlertDialog alertDialog = new AlertDialog.Builder(UserRegistrationActivity.this)
-                        .setTitle("Unexpected error")
+                new CustomAlertDialog.Builder(UserRegistrationActivity.this)
+                        .setTitle("Network Error")
                         .setMessage("Unexpected error: " + t.getMessage())
+                        .setAlertType(CustomAlertDialog.AlertType.ERROR)
                         .setPositiveButton("OK", null)
-                        .create();
-                alertDialog.show();
+                        .show();
 
             }
         });
 
-
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

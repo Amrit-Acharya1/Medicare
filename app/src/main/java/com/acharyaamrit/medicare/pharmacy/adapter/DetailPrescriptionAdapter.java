@@ -2,7 +2,6 @@ package com.acharyaamrit.medicare.pharmacy.adapter;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -21,6 +20,7 @@ import com.acharyaamrit.medicare.R;
 import com.acharyaamrit.medicare.common.api.ApiClient;
 import com.acharyaamrit.medicare.common.api.ApiService;
 import com.acharyaamrit.medicare.common.database.DatabaseHelper;
+import com.acharyaamrit.medicare.common.utils.CustomAlertDialog;
 import com.acharyaamrit.medicare.common.model.response.UserResponse;
 import com.acharyaamrit.medicare.patient.model.patientModel.Preciption;
 import com.acharyaamrit.medicare.pharmacy.model.Pharmacy;
@@ -43,7 +43,8 @@ public class DetailPrescriptionAdapter extends RecyclerView.Adapter<DetailPrescr
     }
 
     // Updated constructor with listener
-    public DetailPrescriptionAdapter(List<Preciption> prescriptionList, Context context, OnMedicineDispatchedListener listener) {
+    public DetailPrescriptionAdapter(List<Preciption> prescriptionList, Context context,
+            OnMedicineDispatchedListener listener) {
         this.prescriptionList = prescriptionList;
         this.context = context;
         this.listener = listener;
@@ -60,13 +61,14 @@ public class DetailPrescriptionAdapter extends RecyclerView.Adapter<DetailPrescr
         holder.tvCategory.setText("X " + preciption.getQty());
 
         holder.addBtn.setOnClickListener(v -> {
-            // Inflate custom view
+            // Inflate custom view for price input
             View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_price, null);
             EditText etPrice = dialogView.findViewById(R.id.etPrice);
 
-            // Build the dialog
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle("Add Price")
+            // Build the price input dialog with CustomAlertDialog
+            new CustomAlertDialog.Builder(context)
+                    .setTitle("Add Price")
+                    .setAlertType(CustomAlertDialog.AlertType.INFO)
                     .setView(dialogView)
                     .setPositiveButton("Accept", (dialog, which) -> {
                         String price = etPrice.getText().toString().trim();
@@ -79,20 +81,23 @@ public class DetailPrescriptionAdapter extends RecyclerView.Adapter<DetailPrescr
                                     return;
                                 }
 
-                                AlertDialog.Builder confirmBuilder = new AlertDialog.Builder(context);
-                                confirmBuilder.setTitle("Confirm Request")
-                                        .setMessage("This Action Cannot Be Changed. Are You Sure You Want To Accept?\n\nMedicine: " + preciption.getMedicine_name() + "\nPrice: Rs. " + price);
-                                confirmBuilder.setPositiveButton("Yes", (confirmDialog, confirmWhich) -> {
+                                // Show confirmation dialog
+                                new CustomAlertDialog.Builder(context)
+                                        .setTitle("Confirm Request")
+                                        .setMessage(
+                                                "This Action Cannot Be Changed. Are You Sure You Want To Accept?\n\nMedicine: "
+                                                        + preciption.getMedicine_name() + "\nPrice: Rs. " + price)
+                                        .setAlertType(CustomAlertDialog.AlertType.WARNING)
+                                        .setPositiveButton("Yes", (confirmDialog, confirmWhich) -> {
                                             // Get the current adapter position
                                             int adapterPosition = holder.getAdapterPosition();
                                             if (adapterPosition != RecyclerView.NO_POSITION) {
-                                                updatePriceAndPharmacyId(price, preciption.getId(), confirmDialog, dialog, adapterPosition, priceValue);
+                                                updatePriceAndPharmacyId(price, preciption.getId(), confirmDialog,
+                                                        dialog, adapterPosition, priceValue);
                                             }
                                         })
-                                        .setNegativeButton("No", (confirmDialog, confirmWhich) -> {
-                                            confirmDialog.dismiss();
-                                        });
-                                confirmBuilder.show();
+                                        .setNegativeButton("No", null)
+                                        .show();
 
                             } catch (NumberFormatException e) {
                                 Toast.makeText(context, "Please enter a valid number", Toast.LENGTH_SHORT).show();
@@ -101,17 +106,13 @@ public class DetailPrescriptionAdapter extends RecyclerView.Adapter<DetailPrescr
                             Toast.makeText(context, "Price Empty", Toast.LENGTH_SHORT).show();
                         }
                     })
-                    .setNegativeButton("Cancel", (dialog, which) -> {
-                        dialog.dismiss();
-                    });
-
-            // Create and show
-            AlertDialog dialog = builder.create();
-            dialog.show();
+                    .setNegativeButton("Cancel", null)
+                    .show();
         });
     }
 
-    private void updatePriceAndPharmacyId(String priceValue, int prescriptionId, DialogInterface confirmDialog, DialogInterface dialog, int position, double price) {
+    private void updatePriceAndPharmacyId(String priceValue, int prescriptionId, DialogInterface confirmDialog,
+            DialogInterface dialog, int position, double price) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("user_preference", MODE_PRIVATE);
         String token = sharedPreferences.getString("token", null);
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
@@ -154,7 +155,8 @@ public class DetailPrescriptionAdapter extends RecyclerView.Adapter<DetailPrescr
     @NonNull
     @Override
     public DetailPrescriptionAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_medicine_list_pharmacy, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_medicine_list_pharmacy, parent,
+                false);
         return new DetailPrescriptionAdapter.ViewHolder(view);
     }
 

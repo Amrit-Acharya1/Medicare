@@ -2,7 +2,6 @@ package com.acharyaamrit.medicare.patient;
 
 import static android.view.View.GONE;
 
-import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -32,6 +31,7 @@ import com.acharyaamrit.medicare.R;
 import com.acharyaamrit.medicare.common.api.ApiClient;
 import com.acharyaamrit.medicare.common.api.ApiService;
 import com.acharyaamrit.medicare.common.database.DatabaseHelper;
+import com.acharyaamrit.medicare.common.utils.CustomAlertDialog;
 import com.acharyaamrit.medicare.patient.model.patientModel.Patient;
 import com.acharyaamrit.medicare.patient.model.response.CurrentPreciptionResponse;
 import com.acharyaamrit.medicare.patient.model.response.RoutineMedicineResponse;
@@ -101,11 +101,8 @@ public class PatientHomepageActivity extends AppCompatActivity {
         fetchCurrentPrescription(token);
         fetchRoutineMedicine(token);
 
-
-//        fetchNotices(token);
+        // fetchNotices(token);
     }
-
-
 
     /**
      * Called when an API call completes (success or failure)
@@ -146,9 +143,9 @@ public class PatientHomepageActivity extends AppCompatActivity {
 
         findViewById(R.id.qr_button).setOnClickListener(v -> {
             showQrBottomSheet();
-//            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
-//            bottomSheetDialog.setContentView(R.layout.item_bottom_sheet_qr);
-//            bottomSheetDialog.show();
+            // BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+            // bottomSheetDialog.setContentView(R.layout.item_bottom_sheet_qr);
+            // bottomSheetDialog.show();
         });
 
         findViewById(R.id.medicine_button).setOnClickListener(v -> {
@@ -257,14 +254,12 @@ public class PatientHomepageActivity extends AppCompatActivity {
 
         // Use MediaScannerConnection instead of deprecated broadcast
         MediaScannerConnection.scanFile(this,
-                new String[]{imageFile.getAbsolutePath()},
-                new String[]{"image/png"},
+                new String[] { imageFile.getAbsolutePath() },
+                new String[] { "image/png" },
                 null);
 
         Toast.makeText(this, "QR Code saved to gallery", Toast.LENGTH_SHORT).show();
     }
-
-
 
     private Bitmap generateQRCode(String text) {
         QRCodeWriter writer = new QRCodeWriter();
@@ -286,7 +281,6 @@ public class PatientHomepageActivity extends AppCompatActivity {
             return null;
         }
     }
-
 
     /**
      * Load home fragment and set as selected
@@ -316,8 +310,6 @@ public class PatientHomepageActivity extends AppCompatActivity {
                 .setBackground(ContextCompat.getDrawable(this, R.drawable.bottom_selected_back));
     }
 
-
-
     /**
      * Fetch current prescription from API
      */
@@ -329,7 +321,8 @@ public class PatientHomepageActivity extends AppCompatActivity {
             Call<CurrentPreciptionResponse> call = apiService.getCurrentPreciption("Bearer " + token);
             call.enqueue(new Callback<CurrentPreciptionResponse>() {
                 @Override
-                public void onResponse(Call<CurrentPreciptionResponse> call, Response<CurrentPreciptionResponse> response) {
+                public void onResponse(Call<CurrentPreciptionResponse> call,
+                        Response<CurrentPreciptionResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         handlePrescriptionSuccess(response.body(), dbHelper);
                     } else {
@@ -386,9 +379,9 @@ public class PatientHomepageActivity extends AppCompatActivity {
                     }
                 }
 
-//                if (successCount > 0) {
-//                    showToast(successCount + " prescription items saved successfully");
-//                }
+                // if (successCount > 0) {
+                // showToast(successCount + " prescription items saved successfully");
+                // }
             }
         } catch (Exception e) {
             showToast("Error processing data: " + e.getMessage());
@@ -407,8 +400,7 @@ public class PatientHomepageActivity extends AppCompatActivity {
             String title = errorResponse.getTitle();
             String message = errorResponse.getMessage();
 
-
-            if (message.equalsIgnoreCase("No preciption Found")){
+            if (message.equalsIgnoreCase("No preciption Found")) {
                 DatabaseHelper dbHelper = new DatabaseHelper(this);
                 dbHelper.deleteCurrentPreciption();
                 dbHelper.deletePreciptionItem();
@@ -492,9 +484,10 @@ public class PatientHomepageActivity extends AppCompatActivity {
      * Show error dialog on UI thread
      */
     private void showErrorDialog(String title, String message) {
-        runOnUiThread(() -> new AlertDialog.Builder(this)
+        runOnUiThread(() -> new CustomAlertDialog.Builder(this)
                 .setTitle(title)
                 .setMessage(message)
+                .setAlertType(CustomAlertDialog.AlertType.ERROR)
                 .setPositiveButton("OK", null)
                 .show());
     }

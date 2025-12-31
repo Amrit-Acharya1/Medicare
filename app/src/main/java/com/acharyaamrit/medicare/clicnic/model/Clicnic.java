@@ -13,13 +13,14 @@ public class Clicnic {
     private String lat;
     private String longt;
     private String image;
+    private String fcm_token;
 
     private String[] topic;
 
     public Clicnic() {
     }
 
-    public Clicnic(int id, int clicnic_id, String user_type, String name, String email, String contact, String dob, String address, String lat, String longt, String image, String[] topic) {
+    public Clicnic(int id, int clicnic_id, String user_type, String name, String email, String contact, String dob, String address, String lat, String longt, String image,String fcm_token ,String[] topic) {
         this.id = id;
         this.clicnic_id = clicnic_id;
         this.user_type = user_type;
@@ -31,7 +32,16 @@ public class Clicnic {
         this.lat = lat;
         this.longt = longt;
         this.image = image;
+        this.fcm_token = fcm_token;
         this.topic = topic;
+    }
+
+    public String getFcm_token() {
+        return fcm_token;
+    }
+
+    public void setFcm_token(String fcm_token) {
+        this.fcm_token = fcm_token;
     }
 
     public String getImage() {

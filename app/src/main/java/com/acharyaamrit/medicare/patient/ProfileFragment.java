@@ -2,7 +2,6 @@ package com.acharyaamrit.medicare.patient;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,6 +27,7 @@ import com.acharyaamrit.medicare.R;
 import com.acharyaamrit.medicare.common.api.ApiClient;
 import com.acharyaamrit.medicare.common.api.ApiService;
 import com.acharyaamrit.medicare.common.database.DatabaseHelper;
+import com.acharyaamrit.medicare.common.utils.CustomAlertDialog;
 import com.acharyaamrit.medicare.common.utils.FileUtils;
 import com.acharyaamrit.medicare.common.utils.ImagePickerBottomSheet;
 import com.acharyaamrit.medicare.patient.model.patientModel.Patient;
@@ -59,15 +59,16 @@ public class ProfileFragment extends Fragment {
     private ImagePickerBottomSheet bottomSheet;
     ImageView profileImage;
     private String currentImageUrl;
+
     public ProfileFragment() {
         // Required empty public constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         DatabaseHelper dbHelper = new DatabaseHelper(getContext());
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
@@ -79,10 +80,10 @@ public class ProfileFragment extends Fragment {
         SwitchMaterial notificationOn = view.findViewById(R.id.notificationOn);
         ImageView editProfileImage = view.findViewById(R.id.editProfileImage);
         profileImage = view.findViewById(R.id.profileImage);
-        editProfileImage.setOnClickListener(v->{
+        editProfileImage.setOnClickListener(v -> {
             showImagePickerBottomSheet();
         });
-        profileImage.setOnClickListener(v->{
+        profileImage.setOnClickListener(v -> {
             showImagePickerBottomSheet();
 
         });
@@ -93,8 +94,6 @@ public class ProfileFragment extends Fragment {
                 Toast.makeText(getContext(), "turn on", Toast.LENGTH_SHORT).show();
             }
         });
-
-
 
         edit_profile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,7 +113,7 @@ public class ProfileFragment extends Fragment {
                     }
                 });
 
-                //editText
+                // editText
                 EditText fullName = bottomSheetDialog.findViewById(R.id.editTextName);
                 EditText phoneNumber = bottomSheetDialog.findViewById(R.id.editTextPhone);
                 EditText location = bottomSheetDialog.findViewById(R.id.editTextAddress);
@@ -134,9 +133,10 @@ public class ProfileFragment extends Fragment {
                 bloodGroupList.add("O+");
                 bloodGroupList.add("O-");
 
-
-                ArrayAdapter genderAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, genderList);
-                ArrayAdapter bloodGroupAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, bloodGroupList);
+                ArrayAdapter genderAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item,
+                        genderList);
+                ArrayAdapter bloodGroupAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item,
+                        bloodGroupList);
 
                 genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 bloodGroupAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -144,7 +144,7 @@ public class ProfileFragment extends Fragment {
                 spinnerGender.setAdapter(genderAdapter);
                 spinnerBloodGroup.setAdapter(bloodGroupAdapter);
 
-                //Populate Data in Edittext
+                // Populate Data in Edittext
                 Patient patient = dbHelper.getPatientByToken(token);
 
                 EditText editTextDate = bottomSheetDialog.findViewById(R.id.editTextDOB);
@@ -163,8 +163,7 @@ public class ProfileFragment extends Fragment {
                                     String selectedDate = selectedYear + "/" + (selectedMonth + 1) + "/" + selectedDay;
                                     editTextDate.setText(selectedDate);
                                 },
-                                year, month, day
-                        );
+                                year, month, day);
 
                         datePickerDialog.show();
                     }
@@ -225,8 +224,10 @@ public class ProfileFragment extends Fragment {
 
                         // Validate Emergency Contact
                         String emergencyContactStr = emergencyContact.getText().toString().trim();
-                        if (emergencyContactStr.length() != 10 || !emergencyContactStr.matches("\\d{10}") || (!emergencyContactStr.startsWith("97") && !emergencyContactStr.startsWith("98"))) {
-                            emergencyContact.setError("Emergency contact must be exactly 10 digits starting with 97 or 98");
+                        if (emergencyContactStr.length() != 10 || !emergencyContactStr.matches("\\d{10}")
+                                || (!emergencyContactStr.startsWith("97") && !emergencyContactStr.startsWith("98"))) {
+                            emergencyContact
+                                    .setError("Emergency contact must be exactly 10 digits starting with 97 or 98");
                             isValid = false;
                         } else {
                             emergencyContact.setError(null);
@@ -239,12 +240,13 @@ public class ProfileFragment extends Fragment {
 
                             int genderInt = 1;
 
-                            if (gender.equals("male")){
+                            if (gender.equals("male")) {
                                 genderInt = 1;
-                            }else{
+                            } else {
                                 genderInt = 0;
                             }
-                            updatePatientProfile(name, phone, dob, genderInt, spinnerBloodGroup.getSelectedItem().toString(), address, emergencyContactStr);
+                            updatePatientProfile(name, phone, dob, genderInt,
+                                    spinnerBloodGroup.getSelectedItem().toString(), address, emergencyContactStr);
                             fullName.setText("");
                             phoneNumber.setText("");
                             editTextDate.setText("");
@@ -253,15 +255,12 @@ public class ProfileFragment extends Fragment {
                             spinnerGender.setSelection(0);
                             spinnerBloodGroup.setSelection(0);
 
-
-
                             bottomSheetDialog.dismiss();
                         }
                     }
                 });
 
-
-                if (patient != null){
+                if (patient != null) {
                     fullName.setText(patient.getName());
                     phoneNumber.setText(patient.getContact());
                     location.setText(patient.getAddress());
@@ -279,9 +278,10 @@ public class ProfileFragment extends Fragment {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AlertDialog.Builder(getContext())
+                new CustomAlertDialog.Builder(getContext())
                         .setTitle("Logout")
                         .setMessage("Are you sure you want to logout?")
+                        .setAlertType(CustomAlertDialog.AlertType.CONFIRMATION)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -293,20 +293,17 @@ public class ProfileFragment extends Fragment {
                         .show();
             }
 
-
         });
 
         loadPatient(token, dbHelper, view);
 
-
-
-
         return view;
     }
-    private void loadPatient(String token, DatabaseHelper dbHelper, View view){
+
+    private void loadPatient(String token, DatabaseHelper dbHelper, View view) {
 
         Patient patient = dbHelper.getPatientByToken(token);
-        if(patient != null){
+        if (patient != null) {
             TextView name = view.findViewById(R.id.name);
             TextView address = view.findViewById(R.id.address);
             TextView age = view.findViewById(R.id.age);
@@ -318,20 +315,18 @@ public class ProfileFragment extends Fragment {
             TextView address2 = view.findViewById(R.id.address2);
             TextView emergency_contact = view.findViewById(R.id.emergency_contact);
 
-
-
-
-
-            name.setText(patient.getName() !=null  ? patient.getName(): "xxxx");
-            address.setText(patient.getAddress() !=null  ? patient.getAddress(): "xxxx");
-            age.setText(patient.getDob() != null ? calculateAge(patient.getDob()): "xxxx");
-            blood_group.setText(patient.getBlood_group() !=null  ? patient.getBlood_group(): "xxxx");
-            gender.setText(patient.getGender() !=null  ? (patient.getGender().equals("1") ?"Male" : "Female"): "xxxx");
-            email.setText(patient.getEmail()!=null  ? patient.getEmail(): "xxxx");
-            contact.setText(patient.getContact()!=null  ? patient.getContact(): "xxxx");
-            dob.setText(patient.getDob()!=null  ? patient.getDob(): "xxxx");
-            address2.setText(patient.getAddress()!=null  ? patient.getAddress(): "xxxx");
-            emergency_contact.setText(patient.getEmergency_contact()!=null  ? patient.getEmergency_contact(): "xxxxx" );
+            name.setText(patient.getName() != null ? patient.getName() : "xxxx");
+            address.setText(patient.getAddress() != null ? patient.getAddress() : "xxxx");
+            age.setText(patient.getDob() != null ? calculateAge(patient.getDob()) : "xxxx");
+            blood_group.setText(patient.getBlood_group() != null ? patient.getBlood_group() : "xxxx");
+            gender.setText(
+                    patient.getGender() != null ? (patient.getGender().equals("1") ? "Male" : "Female") : "xxxx");
+            email.setText(patient.getEmail() != null ? patient.getEmail() : "xxxx");
+            contact.setText(patient.getContact() != null ? patient.getContact() : "xxxx");
+            dob.setText(patient.getDob() != null ? patient.getDob() : "xxxx");
+            address2.setText(patient.getAddress() != null ? patient.getAddress() : "xxxx");
+            emergency_contact
+                    .setText(patient.getEmergency_contact() != null ? patient.getEmergency_contact() : "xxxxx");
             if (patient.getImage() != null && !patient.getImage().isEmpty()) {
                 currentImageUrl = patient.getImage();
 
@@ -347,7 +342,6 @@ public class ProfileFragment extends Fragment {
             }
         }
     }
-
 
     private void showImagePickerBottomSheet() {
         bottomSheet = ImagePickerBottomSheet.newInstance(currentImageUrl);
@@ -366,6 +360,7 @@ public class ProfileFragment extends Fragment {
 
         bottomSheet.show(getChildFragmentManager(), "ImagePicker");
     }
+
     private void uploadProfileImage(Uri imageUri) {
         try {
             // Get file from URI
@@ -376,7 +371,8 @@ public class ProfileFragment extends Fragment {
                 return;
             }
 
-            SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
+            SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference",
+                    MODE_PRIVATE);
             String token = sharedPreferences.getString("token", null);
             ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
@@ -390,14 +386,12 @@ public class ProfileFragment extends Fragment {
 
             RequestBody fileReqBody = RequestBody.create(
                     MediaType.parse(mimeType),
-                    file
-            );
+                    file);
 
             MultipartBody.Part imagePart = MultipartBody.Part.createFormData(
                     "image",
                     file.getName(),
-                    fileReqBody
-            );
+                    fileReqBody);
 
             apiService.updateProfileImage("Bearer " + token, imagePart).enqueue(new Callback<UserResponse>() {
                 @Override
@@ -433,7 +427,8 @@ public class ProfileFragment extends Fragment {
                         try {
                             if (response.errorBody() != null) {
                                 errorMessage = response.errorBody().string();
-                                android.util.Log.e("UploadError", "Code: " + response.code() + " Body: " + errorMessage);
+                                android.util.Log.e("UploadError",
+                                        "Code: " + response.code() + " Body: " + errorMessage);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -486,10 +481,11 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-
-    private void updatePatientProfile(String name, String phone, String dob, int gender, String blood_group, String address, String emergencyContactStr) {
+    private void updatePatientProfile(String name, String phone, String dob, int gender, String blood_group,
+            String address, String emergencyContactStr) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
-        PatientUpdateRequest request = new PatientUpdateRequest(name, address, phone, dob, gender, blood_group, emergencyContactStr);
+        PatientUpdateRequest request = new PatientUpdateRequest(name, address, phone, dob, gender, blood_group,
+                emergencyContactStr);
 
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
         String token = sharedPreferences.getString("token", null);
@@ -499,11 +495,11 @@ public class ProfileFragment extends Fragment {
         call.enqueue(new Callback<UserResponse>() {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
-                if (response.isSuccessful() && response.body() != null){
+                if (response.isSuccessful() && response.body() != null) {
                     try {
                         Toast.makeText(getContext(), "Profile updated", Toast.LENGTH_SHORT).show();
 
-                        if (response.body().getMessage().equals("User updated successfully")){
+                        if (response.body().getMessage().equals("User updated successfully")) {
                             DatabaseHelper dbHelperTwo = new DatabaseHelper(getContext());
 
                             dbHelperTwo.insertPatient(response.body().getPatient(), token);
@@ -511,14 +507,13 @@ public class ProfileFragment extends Fragment {
                             loadPatient(token, dbHelperTwo, getView());
                         }
 
-
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-                }else{
+                } else {
                     try {
                         Toast.makeText(getContext(), "Failed to update", Toast.LENGTH_SHORT).show();
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }
@@ -529,7 +524,6 @@ public class ProfileFragment extends Fragment {
 
             }
         });
-
 
     }
 
@@ -544,7 +538,8 @@ public class ProfileFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     try {
 
-                        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
+                        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference",
+                                MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.clear();
                         editor.apply();
@@ -555,15 +550,16 @@ public class ProfileFragment extends Fragment {
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-                }else{
+                } else {
                     try {
-                    SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.clear();
-                    editor.apply();
-                    Intent intent = new Intent(getContext(), LoginActivity.class);
-                    startActivity(intent);
-                    getActivity().finish();
+                        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference",
+                                MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.clear();
+                        editor.apply();
+                        Intent intent = new Intent(getContext(), LoginActivity.class);
+                        startActivity(intent);
+                        getActivity().finish();
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -572,7 +568,8 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public void onFailure(Call<UserResponse> call, Throwable t) {
-                Toast.makeText(getContext(), "No Internet Connection, Please Connect to Internet", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "No Internet Connection, Please Connect to Internet", Toast.LENGTH_SHORT)
+                        .show();
 
             }
         });

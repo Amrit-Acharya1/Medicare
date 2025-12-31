@@ -2,7 +2,6 @@ package com.acharyaamrit.medicare.doctor;
 
 import static android.view.View.GONE;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -20,6 +19,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.acharyaamrit.medicare.R;
 import com.acharyaamrit.medicare.common.LoginActivity;
 import com.acharyaamrit.medicare.common.database.DatabaseHelper;
+import com.acharyaamrit.medicare.common.utils.CustomAlertDialog;
 import com.airbnb.lottie.LottieAnimationView;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,6 +34,7 @@ public class DoctorHomePageActivity extends AppCompatActivity {
     private TextView name, did, specialist;
 
     DatabaseHelper databaseHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,9 +65,7 @@ public class DoctorHomePageActivity extends AppCompatActivity {
             swipeRefreshLayout.setRefreshing(false);
         });
 
-
     }
-
 
     private synchronized void onApiCallComplete() {
         int remaining = pendingApiCalls.decrementAndGet();
@@ -92,12 +91,14 @@ public class DoctorHomePageActivity extends AppCompatActivity {
 
         });
     }
+
     private void loadHomeFragment() {
         setSelectedBackground(R.id.home_button_background);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragmentContainer, new DoctorHomeFragment())
                 .commit();
     }
+
     private void navigateToLogin() {
         SharedPreferences sharedPreferences = getSharedPreferences("user_preference", MODE_PRIVATE);
         sharedPreferences.edit().clear().apply();
@@ -106,6 +107,7 @@ public class DoctorHomePageActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
     private void setupBottomNavigation() {
         findViewById(R.id.home_button).setOnClickListener(v -> {
             setSelectedBackground(R.id.home_button_background);
@@ -113,12 +115,8 @@ public class DoctorHomePageActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.chat).setOnClickListener(v -> {
-
-//            showQrBottomSheet();
-//            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
-//            bottomSheetDialog.setContentView(R.layout.item_bottom_sheet_qr);
-//            bottomSheetDialog.show()
-
+            Intent intent = new Intent(this, com.acharyaamrit.medicare.chat.ChatListActivity.class);
+            startActivity(intent);
         });
 
         findViewById(R.id.medicine_button).setOnClickListener(v -> {
@@ -152,9 +150,6 @@ public class DoctorHomePageActivity extends AppCompatActivity {
                 .setBackground(ContextCompat.getDrawable(this, R.drawable.bottom_selected_back));
     }
 
-
-
-
     /**
      * Show toast message on UI thread
      */
@@ -166,9 +161,10 @@ public class DoctorHomePageActivity extends AppCompatActivity {
      * Show error dialog on UI thread
      */
     private void showErrorDialog(String title, String message) {
-        runOnUiThread(() -> new AlertDialog.Builder(this)
+        runOnUiThread(() -> new CustomAlertDialog.Builder(this)
                 .setTitle(title)
                 .setMessage(message)
+                .setAlertType(CustomAlertDialog.AlertType.ERROR)
                 .setPositiveButton("OK", null)
                 .show());
     }

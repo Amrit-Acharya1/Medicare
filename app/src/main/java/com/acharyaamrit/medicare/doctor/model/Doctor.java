@@ -13,11 +13,11 @@ public class Doctor {
     private String clicnic;
     private String gender;
     private String image;
-
+    private String fcm_token;
     private String[] topic;
 
 
-    public Doctor(int id, int doctor_id, String user_type, String name, String email, String contact, String dob, String address, String speciality, String clicnic, String gender, String image, String[] topic) {
+    public Doctor(int id, int doctor_id, String user_type, String name, String email, String contact, String dob, String address, String speciality, String clicnic, String gender, String image,String fcm_token, String[] topic) {
         this.id = id;
         this.doctor_id = doctor_id;
         this.user_type = user_type;
@@ -30,10 +30,19 @@ public class Doctor {
         this.clicnic = clicnic;
         this.gender = gender;
         this.image = image;
+        this.fcm_token = fcm_token;
         this.topic = topic;
     }
 
     public Doctor() {
+    }
+
+    public String getFcm_token() {
+        return fcm_token;
+    }
+
+    public void setFcm_token(String fcm_token) {
+        this.fcm_token = fcm_token;
     }
 
     public String[] getTopic() {

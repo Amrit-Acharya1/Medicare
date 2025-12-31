@@ -1,5 +1,6 @@
 package com.acharyaamrit.medicare.pharmacy;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -21,6 +22,7 @@ import com.acharyaamrit.medicare.R;
 import com.acharyaamrit.medicare.common.api.ApiClient;
 import com.acharyaamrit.medicare.common.api.ApiService;
 import com.acharyaamrit.medicare.common.model.response.UserResponse;
+import com.acharyaamrit.medicare.common.utils.CustomAlertDialog;
 import com.acharyaamrit.medicare.doctor.model.request.OldPrecriptionRequest;
 import com.acharyaamrit.medicare.patient.model.patientModel.Preciption;
 import com.acharyaamrit.medicare.pharmacy.adapter.DetailPrescriptionAdapter;
@@ -83,17 +85,21 @@ public class PrescriptionDetailsActivity extends AppCompatActivity implements De
     }
 
     private void showDispatchSummary() {
-        new androidx.appcompat.app.AlertDialog.Builder(this)
+
+
+        new CustomAlertDialog.Builder(this)
                 .setTitle("Dispatch Summary")
                 .setMessage("Total Medicines Dispatched: " + totalMedicinesDispatched +
                         "\nTotal Amount: Rs. " + decimalFormat.format(totalAmount))
-                .setPositiveButton("Confirm", (dialog, which) -> {
-                    sendBillMail();
-                    finish();
+                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        sendBillMail();
+                        finish();
+                    }
                 })
-                .setNegativeButton("Cancel", (dialog, which) -> {
-                    dialog.dismiss();
-                })
+                .setNegativeButton("Cancel", null)
                 .show();
     }
 

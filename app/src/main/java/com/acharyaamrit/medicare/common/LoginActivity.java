@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -40,6 +39,7 @@ import com.acharyaamrit.medicare.patient.model.request.UserLocationUpdateRequest
 import com.acharyaamrit.medicare.common.model.response.NoticeResponse;
 import com.acharyaamrit.medicare.common.model.response.UserResponse;
 import com.acharyaamrit.medicare.common.model.request.UserRequest;
+import com.acharyaamrit.medicare.common.utils.CustomAlertDialog;
 import com.acharyaamrit.medicare.patient.PatientHomepageActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -58,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
     interface TokenCallback {
         void onTokenReceived(String token);
     }
+
     private ProgressDialog progressDialog;
     private String GlobalToken;
     private String fcm_token;
@@ -95,8 +96,6 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-
-
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Logging...");
         progressDialog.setCancelable(false);
@@ -108,21 +107,19 @@ public class LoginActivity extends AppCompatActivity {
             validationFunction();
         });
 
-
-
-
     }
 
     private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    new String[] { Manifest.permission.ACCESS_FINE_LOCATION },
                     LOCATION_PERMISSION_REQUEST_CODE);
         } else {
             getUserLocation();
         }
     }
+
     @SuppressLint("MissingPermission")
     private void getUserLocation() {
         FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -130,9 +127,8 @@ public class LoginActivity extends AppCompatActivity {
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(location -> {
                     if (location != null) {
-                       String userLatitude = String.valueOf(location.getLatitude());
+                        String userLatitude = String.valueOf(location.getLatitude());
                         String userLongitude = String.valueOf(location.getLongitude());
-
 
                         updateUserLocation(GlobalToken, userLatitude, userLongitude);
                     } else {
@@ -157,9 +153,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-
     }
-
 
     private void validationFunction() {
         String email = ((EditText) findViewById(R.id.email_login)).getText().toString().trim();
@@ -168,8 +162,7 @@ public class LoginActivity extends AppCompatActivity {
         @SuppressLint("HardwareIds")
         String deviceId = Settings.Secure.getString(
                 getApplicationContext().getContentResolver(),
-                Settings.Secure.ANDROID_ID
-        );
+                Settings.Secure.ANDROID_ID);
 
         if (email.isEmpty()) {
             ((EditText) findViewById(R.id.email_login)).setError("Email cannot be empty");
@@ -193,7 +186,6 @@ public class LoginActivity extends AppCompatActivity {
 
         login(email, password, deviceId);
 
-
     }
 
     private void fetchNotices(String token) {
@@ -207,7 +199,6 @@ public class LoginActivity extends AppCompatActivity {
                     try {
                         if (response.isSuccessful() && response.body() != null) {
                             List<Notice> notices = response.body().getNotice();
-
 
                             if (notices != null && !notices.isEmpty()) {
                                 // Execute database operations on background thread
@@ -262,7 +253,7 @@ public class LoginActivity extends AppCompatActivity {
                         SharedPreferences sharedPreferences = getSharedPreferences("user_preference", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-                        if (user_type != null && user_type.equals("3")){
+                        if (user_type != null && user_type.equals("3")) {
                             Patient patient = response.body().getPatient();
                             String[] topics = patient.getTopic();
                             subscribeToTopics(topics);
@@ -275,7 +266,7 @@ public class LoginActivity extends AppCompatActivity {
                                 intentHome = new Intent(LoginActivity.this, PatientHomepageActivity.class);
                                 databaseHelper.insertPatient(patient, token);
                                 startActivity(intentHome);
-                            }catch (Exception e){
+                            } catch (Exception e) {
                                 Toast.makeText(LoginActivity.this, "Database error", Toast.LENGTH_SHORT).show();
                                 e.printStackTrace();
                             }
@@ -291,11 +282,11 @@ public class LoginActivity extends AppCompatActivity {
                                 intentHome = new Intent(LoginActivity.this, DoctorHomePageActivity.class);
                                 databaseHelper.insertDoctor(doctor, token);
                                 startActivity(intentHome);
-                            }catch (Exception e){
+                            } catch (Exception e) {
                                 Toast.makeText(LoginActivity.this, "Database error", Toast.LENGTH_SHORT).show();
                                 e.printStackTrace();
                             }
-                        }else if (user_type != null && user_type.equals("5")) {
+                        } else if (user_type != null && user_type.equals("5")) {
                             Clicnic clicnic = response.body().getClicnic();
                             String[] topics = clicnic.getTopic();
                             subscribeToTopics(topics);
@@ -306,11 +297,11 @@ public class LoginActivity extends AppCompatActivity {
                                 intentHome = new Intent(LoginActivity.this, ClicnicHomePageActivity.class);
                                 databaseHelper.insertClicnic(clicnic, token);
                                 startActivity(intentHome);
-                            }catch (Exception e){
+                            } catch (Exception e) {
                                 Toast.makeText(LoginActivity.this, "Database error", Toast.LENGTH_SHORT).show();
                                 e.printStackTrace();
                             }
-                        }else if (user_type != null && user_type.equals("4")) {
+                        } else if (user_type != null && user_type.equals("4")) {
                             Pharmacy pharmacy = response.body().getPharmacy();
                             String[] topics = pharmacy.getTopic();
                             subscribeToTopics(topics);
@@ -321,7 +312,7 @@ public class LoginActivity extends AppCompatActivity {
                                 intentHome = new Intent(LoginActivity.this, PharmacyHomeActivity.class);
                                 databaseHelper.insertPharmacy(pharmacy, token);
                                 startActivity(intentHome);
-                            }catch (Exception e){
+                            } catch (Exception e) {
                                 Toast.makeText(LoginActivity.this, "Database error", Toast.LENGTH_SHORT).show();
                                 e.printStackTrace();
                             }
@@ -338,20 +329,20 @@ public class LoginActivity extends AppCompatActivity {
                             String title = errorResponse.getTitle();
                             String message = errorResponse.getMessage();
 
-                            AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this)
+                            new CustomAlertDialog.Builder(LoginActivity.this)
                                     .setTitle(title)
                                     .setMessage(message)
+                                    .setAlertType(CustomAlertDialog.AlertType.ERROR)
                                     .setPositiveButton("OK", null)
-                                    .create();
-                            alertDialog.show();
+                                    .show();
                         } catch (Exception e) {
                             e.printStackTrace();
-                            AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this)
-                                    .setTitle("Unexpected error")
+                            new CustomAlertDialog.Builder(LoginActivity.this)
+                                    .setTitle("Unexpected Error")
                                     .setMessage("Unexpected error: " + response.code())
+                                    .setAlertType(CustomAlertDialog.AlertType.ERROR)
                                     .setPositiveButton("OK", null)
-                                    .create();
-                            alertDialog.show();
+                                    .show();
                         }
                     }
                 }
@@ -363,12 +354,12 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     loginButton.setEnabled(true);
 
-                    AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this)
-                            .setTitle("Error")
+                    new CustomAlertDialog.Builder(LoginActivity.this)
+                            .setTitle("Network Error")
                             .setMessage("Error: " + t.getMessage())
+                            .setAlertType(CustomAlertDialog.AlertType.ERROR)
                             .setPositiveButton("OK", null)
-                            .create();
-                    alertDialog.show();
+                            .show();
                 }
             });
         });
@@ -388,7 +379,6 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -396,6 +386,7 @@ public class LoginActivity extends AppCompatActivity {
             progressDialog.dismiss();
         }
     }
+
     private void getFCMToken(TokenCallback callback) {
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(new OnCompleteListener<String>() {
@@ -413,15 +404,13 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-
     private void requestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.POST_NOTIFICATIONS) !=
-                    PackageManager.PERMISSION_GRANTED) {
+                    Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
 
                 ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        new String[] { Manifest.permission.POST_NOTIFICATIONS },
                         101);
             }
         }
@@ -429,7 +418,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         switch (requestCode) {

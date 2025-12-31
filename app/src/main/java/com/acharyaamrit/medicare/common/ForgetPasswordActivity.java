@@ -7,7 +7,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -18,6 +17,7 @@ import com.acharyaamrit.medicare.common.api.ApiClient;
 import com.acharyaamrit.medicare.common.api.ApiService;
 import com.acharyaamrit.medicare.common.model.ApiResponseTitleSuccess;
 import com.acharyaamrit.medicare.common.model.request.OtpRequest;
+import com.acharyaamrit.medicare.common.utils.CustomAlertDialog;
 import com.google.gson.Gson;
 
 import retrofit2.Call;
@@ -27,6 +27,7 @@ import retrofit2.Response;
 public class ForgetPasswordActivity extends AppCompatActivity {
 
     private EditText emailInput;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,10 +46,9 @@ public class ForgetPasswordActivity extends AppCompatActivity {
         findViewById(R.id.send_code_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               validationFunction();
+                validationFunction();
             }
         });
-
 
     }
 
@@ -102,40 +102,38 @@ public class ForgetPasswordActivity extends AppCompatActivity {
                         String title = errorResponse.getTitle();
                         String message = errorResponse.getMessage();
 
-                        AlertDialog alertDialog = new AlertDialog.Builder(ForgetPasswordActivity.this)
+                        new CustomAlertDialog.Builder(ForgetPasswordActivity.this)
                                 .setTitle(title)
                                 .setMessage(message)
+                                .setAlertType(CustomAlertDialog.AlertType.ERROR)
                                 .setPositiveButton("OK", null)
-                                .create();
-                        alertDialog.show();
+                                .show();
 
                     } catch (Exception e) {
                         e.printStackTrace();
-//                        Toast.makeText(ForgetPasswordActivity.this,
-//                                "Unexpected error: " + response.code(),
-//                                Toast.LENGTH_SHORT).show();
-                        AlertDialog alertDialog = new AlertDialog.Builder(ForgetPasswordActivity.this)
-                                .setTitle("Unexpected error")
+                        // Toast.makeText(ForgetPasswordActivity.this,
+                        // "Unexpected error: " + response.code(),
+                        // Toast.LENGTH_SHORT).show();
+                        new CustomAlertDialog.Builder(ForgetPasswordActivity.this)
+                                .setTitle("Unexpected Error")
                                 .setMessage("Unexpected error: " + response.code())
+                                .setAlertType(CustomAlertDialog.AlertType.ERROR)
                                 .setPositiveButton("OK", null)
-                                .create();
-                        alertDialog.show();
+                                .show();
                     }
                 }
             }
 
-
             @Override
             public void onFailure(Call<ApiResponseTitleSuccess> call, Throwable t) {
-                AlertDialog alertDialog = new AlertDialog.Builder(ForgetPasswordActivity.this)
-                        .setTitle("Error")
+                new CustomAlertDialog.Builder(ForgetPasswordActivity.this)
+                        .setTitle("Network Error")
                         .setMessage("Error: " + t.getMessage())
+                        .setAlertType(CustomAlertDialog.AlertType.ERROR)
                         .setPositiveButton("OK", null)
-                        .create();
-                alertDialog.show();
+                        .show();
             }
         });
     }
-
 
 }

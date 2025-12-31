@@ -6,7 +6,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -17,6 +16,7 @@ import com.acharyaamrit.medicare.common.api.ApiClient;
 import com.acharyaamrit.medicare.common.api.ApiService;
 import com.acharyaamrit.medicare.common.model.ApiResponseTitleSuccess;
 import com.acharyaamrit.medicare.common.model.request.PasswordResetRequest;
+import com.acharyaamrit.medicare.common.utils.CustomAlertDialog;
 import com.google.gson.Gson;
 
 import retrofit2.Call;
@@ -58,11 +58,10 @@ public class PasswordResetActivity extends AppCompatActivity {
 
             resetPassword(otp, password);
 
-//            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-//            startActivity(intent);
-//            finish();
-        }
-        else {
+            // Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            // startActivity(intent);
+            // finish();
+        } else {
             ((EditText) findViewById(R.id.new_password)).setError("Password does not match");
         }
 
@@ -90,7 +89,6 @@ public class PasswordResetActivity extends AppCompatActivity {
                     startActivity(intent);
                     finish();
 
-
                 } else {
                     try {
                         // ✅ Error case (like 404)
@@ -103,35 +101,34 @@ public class PasswordResetActivity extends AppCompatActivity {
                         String title = errorResponse.getTitle();
                         String message = errorResponse.getMessage();
 
-                        AlertDialog alertDialog = new AlertDialog.Builder(PasswordResetActivity.this)
+                        new CustomAlertDialog.Builder(PasswordResetActivity.this)
                                 .setTitle(title)
                                 .setMessage(message)
+                                .setAlertType(CustomAlertDialog.AlertType.ERROR)
                                 .setPositiveButton("OK", null)
-                                .create();
-                        alertDialog.show();
+                                .show();
 
                     } catch (Exception e) {
                         e.printStackTrace();
 
-                        AlertDialog alertDialog = new AlertDialog.Builder(PasswordResetActivity.this)
-                                .setTitle("Unexpected error")
+                        new CustomAlertDialog.Builder(PasswordResetActivity.this)
+                                .setTitle("Unexpected Error")
                                 .setMessage("Unexpected error: " + response.code())
+                                .setAlertType(CustomAlertDialog.AlertType.ERROR)
                                 .setPositiveButton("OK", null)
-                                .create();
-                        alertDialog.show();
+                                .show();
                     }
                 }
             }
 
-
             @Override
             public void onFailure(Call<ApiResponseTitleSuccess> call, Throwable t) {
-                AlertDialog alertDialog = new AlertDialog.Builder(PasswordResetActivity.this)
-                        .setTitle("Error")
+                new CustomAlertDialog.Builder(PasswordResetActivity.this)
+                        .setTitle("Network Error")
                         .setMessage("Error: " + t.getMessage())
+                        .setAlertType(CustomAlertDialog.AlertType.ERROR)
                         .setPositiveButton("OK", null)
-                        .create();
-                alertDialog.show();
+                        .show();
             }
         });
     }

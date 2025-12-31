@@ -47,7 +47,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "longt TEXT," +
                 "emergency_contact TEXT," +
                 "gender TEXT," +
-                "image TEXT)";
+                "image TEXT," +
+                "fcm_token TEXT)";
         db.execSQL(createPatientTable);
 
         String createDoctorTable = "CREATE TABLE doctor (" +
@@ -63,7 +64,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "speciality TEXT," +
                 "clicnic TEXT," +
                 "gender TEXT," +
-                "image TEXT)";
+                "image TEXT," +
+                "fcm_token TEXT)";
         db.execSQL(createDoctorTable);
 
         String createPharmacyTable = "CREATE TABLE pharmacy (" +
@@ -80,7 +82,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "lat TEXT," +
                 "longt TEXT," +
                 "clicnic TEXT," +
-                "image TEXT)";
+                "image TEXT," +
+                "fcm_token TEXT)";
         db.execSQL(createPharmacyTable);
 
 
@@ -97,7 +100,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "address TEXT," +
                 "lat TEXT," +
                 "longt TEXT," +
-                "image TEXT)";
+                "image TEXT," +
+                "fcm_token TEXT)";
         db.execSQL(createClinicTable);
 
         String CREATE_CURRENT_PRESCRIPTIONS_TABLE = "CREATE TABLE current_prescriptions (" +
@@ -189,6 +193,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("emergency_contact", patient.getEmergency_contact());
         values.put("gender", patient.getGender());
         values.put("image", patient.getImage());
+        values.put("fcm_token", patient.getFcm_token());
+
 
         // Clear existing patient data to avoid duplicates
         db.delete("patient", null, null);
@@ -222,6 +228,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             patient.setEmergency_contact(cursor.getString(cursor.getColumnIndexOrThrow("emergency_contact")));
             patient.setGender(cursor.getString(cursor.getColumnIndexOrThrow("gender")));
             patient.setImage(cursor.getString(cursor.getColumnIndexOrThrow("image")));
+            patient.setFcm_token(cursor.getString(cursor.getColumnIndexOrThrow("fcm_token")));
 
         }
 
@@ -250,6 +257,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("clicnic", doctor.getClicnic());
         values.put("gender", doctor.getGender());
         values.put("image", doctor.getImage());
+        values.put("fcm_token", doctor.getFcm_token());
 
 
 
@@ -287,6 +295,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             doctor.setClicnic(cursor.getString(cursor.getColumnIndexOrThrow("clicnic")));
             doctor.setGender(cursor.getString(cursor.getColumnIndexOrThrow("gender")));
             doctor.setImage(cursor.getString(cursor.getColumnIndexOrThrow("image")));
+            doctor.setFcm_token(cursor.getString(cursor.getColumnIndexOrThrow("fcm_token")));
 
 
         }
@@ -315,6 +324,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("longt", pharmacy.getLongt());
         values.put("clicnic", pharmacy.getClicnic());
         values.put("image", pharmacy.getImage());
+        values.put("fcm_token", pharmacy.getFcm_token());
 
 
 
@@ -352,6 +362,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             pharmacy.setLongt(cursor.getString(cursor.getColumnIndexOrThrow("longt")));
             pharmacy.setClicnic(cursor.getString(cursor.getColumnIndexOrThrow("clicnic")));
             pharmacy.setImage(cursor.getString(cursor.getColumnIndexOrThrow("image")));
+            pharmacy.setFcm_token(cursor.getString(cursor.getColumnIndexOrThrow("fcm_token")));
 
         }
 
@@ -377,6 +388,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("lat", clicnic.getLat());
         values.put("longt", clicnic.getLongt());
         values.put("image", clicnic.getImage());
+        values.put("fcm_token", clicnic.getFcm_token());
 
 
 
@@ -411,6 +423,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             clicnic.setLat(cursor.getString(cursor.getColumnIndexOrThrow("lat")));
             clicnic.setLongt(cursor.getString(cursor.getColumnIndexOrThrow("longt")));
             clicnic.setImage(cursor.getString(cursor.getColumnIndexOrThrow("image")));
+            clicnic.setFcm_token(cursor.getString(cursor.getColumnIndexOrThrow("fcm_token")));
 
         }
 

@@ -2,7 +2,6 @@ package com.acharyaamrit.medicare.pharmacy;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -29,6 +28,7 @@ import com.acharyaamrit.medicare.common.api.ApiClient;
 import com.acharyaamrit.medicare.common.api.ApiService;
 import com.acharyaamrit.medicare.common.database.DatabaseHelper;
 import com.acharyaamrit.medicare.common.model.response.UserResponse;
+import com.acharyaamrit.medicare.common.utils.CustomAlertDialog;
 import com.acharyaamrit.medicare.common.utils.FileUtils;
 import com.acharyaamrit.medicare.common.utils.ImagePickerBottomSheet;
 import com.acharyaamrit.medicare.pharmacy.model.Pharmacy;
@@ -46,23 +46,21 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-
 public class PharmacyProfileFragment extends Fragment {
-
 
     private ImagePickerBottomSheet bottomSheet;
     ImageView pharmacyProfileImage;
     private String currentImageUrl;
+
     public PharmacyProfileFragment() {
 
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
 
-        View view =  inflater.inflate(R.layout.fragment_pharmacy_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_pharmacy_profile, container, false);
         DatabaseHelper dbHelper = new DatabaseHelper(getContext());
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
         String token = sharedPreferences.getString("token", null);
@@ -74,15 +72,14 @@ public class PharmacyProfileFragment extends Fragment {
         SwitchMaterial notificationOn = view.findViewById(R.id.notificationOn);
         pharmacyProfileImage = view.findViewById(R.id.pharmacyProfileImage);
         ImageView editPharmacyProfileImage = view.findViewById(R.id.editPharmacyProfileImage);
-        editPharmacyProfileImage.setOnClickListener(v->{
+        editPharmacyProfileImage.setOnClickListener(v -> {
             showImagePickerBottomSheet();
 
         });
-        pharmacyProfileImage.setOnClickListener(v->{
+        pharmacyProfileImage.setOnClickListener(v -> {
             showImagePickerBottomSheet();
 
         });
-
 
         notificationOn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,7 +97,6 @@ public class PharmacyProfileFragment extends Fragment {
                 AppCompatButton saveBtn = bottomSheetDialog.findViewById(R.id.btnSave);
                 AppCompatButton btnCancel = bottomSheetDialog.findViewById(R.id.btnCancel);
 
-
                 btnCancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -108,15 +104,13 @@ public class PharmacyProfileFragment extends Fragment {
                     }
                 });
 
-                //editText
+                // editText
                 EditText fullName = bottomSheetDialog.findViewById(R.id.editTextName);
                 EditText phoneNumber = bottomSheetDialog.findViewById(R.id.editTextPhone);
                 EditText location = bottomSheetDialog.findViewById(R.id.editTextAddress);
                 EditText edPan = bottomSheetDialog.findViewById(R.id.edPan);
 
-
-
-                //Populate Data in Edittext
+                // Populate Data in Edittext
                 Pharmacy pharmacy = dbHelper.getPharmacyByToken(token);
 
                 EditText editTextDate = bottomSheetDialog.findViewById(R.id.editTextDOB);
@@ -135,8 +129,7 @@ public class PharmacyProfileFragment extends Fragment {
                                     String selectedDate = selectedYear + "/" + (selectedMonth + 1) + "/" + selectedDay;
                                     editTextDate.setText(selectedDate);
                                 },
-                                year, month, day
-                        );
+                                year, month, day);
 
                         datePickerDialog.show();
                     }
@@ -173,8 +166,6 @@ public class PharmacyProfileFragment extends Fragment {
                             editTextDate.setError(null);
                         }
 
-
-
                         // Validate Address
                         String address = location.getText().toString().trim();
                         if (address.isEmpty()) {
@@ -203,15 +194,12 @@ public class PharmacyProfileFragment extends Fragment {
                             location.setText("");
                             edPan.setText("");
 
-
-
                             bottomSheetDialog.dismiss();
                         }
                     }
                 });
 
-
-                if (pharmacy != null){
+                if (pharmacy != null) {
                     fullName.setText(pharmacy.getName());
                     phoneNumber.setText(pharmacy.getContact());
                     location.setText(pharmacy.getAddress());
@@ -225,9 +213,10 @@ public class PharmacyProfileFragment extends Fragment {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AlertDialog.Builder(getContext())
+                new CustomAlertDialog.Builder(getContext())
                         .setTitle("Logout")
                         .setMessage("Are you sure you want to logout?")
+                        .setAlertType(CustomAlertDialog.AlertType.CONFIRMATION)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -238,7 +227,6 @@ public class PharmacyProfileFragment extends Fragment {
                         .setNegativeButton("No", null)
                         .show();
             }
-
 
         });
 
@@ -263,6 +251,7 @@ public class PharmacyProfileFragment extends Fragment {
 
         bottomSheet.show(getChildFragmentManager(), "ImagePicker");
     }
+
     private void uploadProfileImage(Uri imageUri) {
         try {
             // Get file from URI
@@ -273,7 +262,8 @@ public class PharmacyProfileFragment extends Fragment {
                 return;
             }
 
-            SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
+            SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference",
+                    MODE_PRIVATE);
             String token = sharedPreferences.getString("token", null);
             ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
@@ -287,14 +277,12 @@ public class PharmacyProfileFragment extends Fragment {
 
             RequestBody fileReqBody = RequestBody.create(
                     MediaType.parse(mimeType),
-                    file
-            );
+                    file);
 
             MultipartBody.Part imagePart = MultipartBody.Part.createFormData(
                     "image",
                     file.getName(),
-                    fileReqBody
-            );
+                    fileReqBody);
 
             apiService.updateProfileImage("Bearer " + token, imagePart).enqueue(new Callback<UserResponse>() {
                 @Override
@@ -330,7 +318,8 @@ public class PharmacyProfileFragment extends Fragment {
                         try {
                             if (response.errorBody() != null) {
                                 errorMessage = response.errorBody().string();
-                                android.util.Log.e("UploadError", "Code: " + response.code() + " Body: " + errorMessage);
+                                android.util.Log.e("UploadError",
+                                        "Code: " + response.code() + " Body: " + errorMessage);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -382,9 +371,10 @@ public class PharmacyProfileFragment extends Fragment {
                 return "image/jpeg";
         }
     }
-    private void updatePharmacyProfile(String name, String phone, String dob,String address, String panno) {
+
+    private void updatePharmacyProfile(String name, String phone, String dob, String address, String panno) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
-        PharmacyUpdateRequest request = new PharmacyUpdateRequest(address, phone,dob, panno);
+        PharmacyUpdateRequest request = new PharmacyUpdateRequest(address, phone, dob, panno);
 
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
         String token = sharedPreferences.getString("token", null);
@@ -394,11 +384,11 @@ public class PharmacyProfileFragment extends Fragment {
         call.enqueue(new Callback<UserResponse>() {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
-                if (response.isSuccessful() && response.body() != null){
+                if (response.isSuccessful() && response.body() != null) {
                     try {
                         Toast.makeText(getContext(), "Profile updated", Toast.LENGTH_SHORT).show();
 
-                        if (response.body().getMessage().equals("User updated successfully")){
+                        if (response.body().getMessage().equals("User updated successfully")) {
                             DatabaseHelper dbHelperTwo = new DatabaseHelper(getContext());
                             Pharmacy pharmacy = response.body().getPharmacy();
 
@@ -407,14 +397,13 @@ public class PharmacyProfileFragment extends Fragment {
                             loadPharmacy(token, dbHelperTwo, getView());
                         }
 
-
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-                }else{
+                } else {
                     try {
                         Toast.makeText(getContext(), "Failed to update", Toast.LENGTH_SHORT).show();
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }
@@ -426,13 +415,12 @@ public class PharmacyProfileFragment extends Fragment {
             }
         });
 
-
     }
 
-    private void loadPharmacy(String token, DatabaseHelper dbHelper, View view){
+    private void loadPharmacy(String token, DatabaseHelper dbHelper, View view) {
 
         Pharmacy pharmacy = dbHelper.getPharmacyByToken(token);
-        if(pharmacy != null){
+        if (pharmacy != null) {
             TextView name = view.findViewById(R.id.name);
             TextView address = view.findViewById(R.id.address);
             TextView pharmacy_id = view.findViewById(R.id.pharmacy_id);
@@ -443,16 +431,14 @@ public class PharmacyProfileFragment extends Fragment {
             TextView address2 = view.findViewById(R.id.address2);
             TextView status = view.findViewById(R.id.status);
 
-
-
-            name.setText(pharmacy.getName() !=null  ? pharmacy.getName(): "xxxx");
-            address.setText(pharmacy.getAddress() !=null  ? pharmacy.getAddress(): "xxxx");
-            pan_no.setText(pharmacy.getPan_no() !=null  ? pharmacy.getPan_no(): "xxxx");
+            name.setText(pharmacy.getName() != null ? pharmacy.getName() : "xxxx");
+            address.setText(pharmacy.getAddress() != null ? pharmacy.getAddress() : "xxxx");
+            pan_no.setText(pharmacy.getPan_no() != null ? pharmacy.getPan_no() : "xxxx");
             pharmacy_id.setText(String.valueOf(pharmacy.getPharmacy_id()));
-            email.setText(pharmacy.getEmail()!=null  ? pharmacy.getEmail(): "xxxx");
-            contact.setText(pharmacy.getContact()!=null  ? pharmacy.getContact(): "xxxx");
-            panTxt.setText(pharmacy.getPan_no()!=null  ? pharmacy.getPan_no(): "xxxx");
-            address2.setText(pharmacy.getAddress()!=null  ? pharmacy.getAddress(): "xxxx");
+            email.setText(pharmacy.getEmail() != null ? pharmacy.getEmail() : "xxxx");
+            contact.setText(pharmacy.getContact() != null ? pharmacy.getContact() : "xxxx");
+            panTxt.setText(pharmacy.getPan_no() != null ? pharmacy.getPan_no() : "xxxx");
+            address2.setText(pharmacy.getAddress() != null ? pharmacy.getAddress() : "xxxx");
             status.setText("Open");
 
             if (pharmacy.getImage() != null && !pharmacy.getImage().isEmpty()) {
@@ -470,6 +456,7 @@ public class PharmacyProfileFragment extends Fragment {
 
         }
     }
+
     private void logout(String token) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
@@ -481,7 +468,8 @@ public class PharmacyProfileFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     try {
 
-                        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
+                        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference",
+                                MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.clear();
                         editor.apply();
@@ -492,9 +480,10 @@ public class PharmacyProfileFragment extends Fragment {
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-                }else{
+                } else {
                     try {
-                        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
+                        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference",
+                                MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.clear();
                         editor.apply();
@@ -509,7 +498,8 @@ public class PharmacyProfileFragment extends Fragment {
 
             @Override
             public void onFailure(Call<UserResponse> call, Throwable t) {
-                Toast.makeText(getContext(), "No Internet Connection, Please Connect to Internet", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "No Internet Connection, Please Connect to Internet", Toast.LENGTH_SHORT)
+                        .show();
 
             }
         });

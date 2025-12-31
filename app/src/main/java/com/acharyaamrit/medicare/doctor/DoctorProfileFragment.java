@@ -2,7 +2,6 @@ package com.acharyaamrit.medicare.doctor;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,6 +27,7 @@ import com.acharyaamrit.medicare.R;
 import com.acharyaamrit.medicare.common.api.ApiClient;
 import com.acharyaamrit.medicare.common.api.ApiService;
 import com.acharyaamrit.medicare.common.database.DatabaseHelper;
+import com.acharyaamrit.medicare.common.utils.CustomAlertDialog;
 import com.acharyaamrit.medicare.common.utils.FileUtils;
 import com.acharyaamrit.medicare.common.utils.ImagePickerBottomSheet;
 import com.acharyaamrit.medicare.doctor.model.Doctor;
@@ -59,16 +59,15 @@ public class DoctorProfileFragment extends Fragment {
     private ImagePickerBottomSheet bottomSheet;
     private String currentImageUrl;
 
-
     public DoctorProfileFragment() {
         // Required empty public constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_doctor_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_doctor_profile, container, false);
 
         DatabaseHelper dbHelper = new DatabaseHelper(getContext());
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
@@ -83,11 +82,11 @@ public class DoctorProfileFragment extends Fragment {
 
         doctorProfileImage = view.findViewById(R.id.doctorProfileImage);
 
-        editProfileImage.setOnClickListener(v->{
+        editProfileImage.setOnClickListener(v -> {
             showImagePickerBottomSheet();
 
         });
-        doctorProfileImage.setOnClickListener(v->{
+        doctorProfileImage.setOnClickListener(v -> {
             showImagePickerBottomSheet();
 
         });
@@ -98,7 +97,6 @@ public class DoctorProfileFragment extends Fragment {
                 Toast.makeText(getContext(), "turn on", Toast.LENGTH_SHORT).show();
             }
         });
-
 
         edit_profile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,7 +115,7 @@ public class DoctorProfileFragment extends Fragment {
                     }
                 });
 
-                //editText
+                // editText
                 EditText fullName = bottomSheetDialog.findViewById(R.id.editTextName);
                 EditText phoneNumber = bottomSheetDialog.findViewById(R.id.editTextPhone);
                 EditText location = bottomSheetDialog.findViewById(R.id.editTextAddress);
@@ -127,13 +125,14 @@ public class DoctorProfileFragment extends Fragment {
                 genderList.add("male");
                 genderList.add("female");
 
-                ArrayAdapter genderAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, genderList);
+                ArrayAdapter genderAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item,
+                        genderList);
 
                 genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
                 spinnerGender.setAdapter(genderAdapter);
 
-                //Populate Data in Edittext
+                // Populate Data in Edittext
                 Doctor doctor = dbHelper.getDoctorByToken(token);
 
                 EditText editTextDate = bottomSheetDialog.findViewById(R.id.editTextDOB);
@@ -152,8 +151,7 @@ public class DoctorProfileFragment extends Fragment {
                                     String selectedDate = selectedYear + "/" + (selectedMonth + 1) + "/" + selectedDay;
                                     editTextDate.setText(selectedDate);
                                 },
-                                year, month, day
-                        );
+                                year, month, day);
 
                         datePickerDialog.show();
                     }
@@ -197,8 +195,6 @@ public class DoctorProfileFragment extends Fragment {
                             isValid = false;
                         }
 
-
-
                         // Validate Address
                         String address = location.getText().toString().trim();
                         if (address.isEmpty()) {
@@ -224,9 +220,9 @@ public class DoctorProfileFragment extends Fragment {
 
                             int genderInt = 1;
 
-                            if (gender.equals("male")){
+                            if (gender.equals("male")) {
                                 genderInt = 1;
-                            }else{
+                            } else {
                                 genderInt = 0;
                             }
                             updateDoctorProfile(name, phone, dob, genderInt, address, specialityText);
@@ -237,15 +233,12 @@ public class DoctorProfileFragment extends Fragment {
                             speciality.setText("");
                             spinnerGender.setSelection(0);
 
-
-
                             bottomSheetDialog.dismiss();
                         }
                     }
                 });
 
-
-                if (doctor != null){
+                if (doctor != null) {
                     fullName.setText(doctor.getName());
                     phoneNumber.setText(doctor.getContact());
                     location.setText(doctor.getAddress());
@@ -262,9 +255,10 @@ public class DoctorProfileFragment extends Fragment {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AlertDialog.Builder(getContext())
+                new CustomAlertDialog.Builder(getContext())
                         .setTitle("Logout")
                         .setMessage("Are you sure you want to logout?")
+                        .setAlertType(CustomAlertDialog.AlertType.CONFIRMATION)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -276,16 +270,13 @@ public class DoctorProfileFragment extends Fragment {
                         .show();
             }
 
-
         });
 
         loadDoctor(token, dbHelper, view);
 
-
-
-
         return view;
     }
+
     private void showImagePickerBottomSheet() {
         bottomSheet = ImagePickerBottomSheet.newInstance(currentImageUrl);
 
@@ -304,7 +295,6 @@ public class DoctorProfileFragment extends Fragment {
         bottomSheet.show(getChildFragmentManager(), "ImagePicker");
     }
 
-
     private void uploadProfileImage(Uri imageUri) {
         try {
             // Get file from URI
@@ -315,7 +305,8 @@ public class DoctorProfileFragment extends Fragment {
                 return;
             }
 
-            SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
+            SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference",
+                    MODE_PRIVATE);
             String token = sharedPreferences.getString("token", null);
             ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
@@ -329,14 +320,12 @@ public class DoctorProfileFragment extends Fragment {
 
             RequestBody fileReqBody = RequestBody.create(
                     MediaType.parse(mimeType),
-                    file
-            );
+                    file);
 
             MultipartBody.Part imagePart = MultipartBody.Part.createFormData(
-                    "image",  // This must match Laravel's expected field name
+                    "image", // This must match Laravel's expected field name
                     file.getName(),
-                    fileReqBody
-            );
+                    fileReqBody);
 
             apiService.updateProfileImage("Bearer " + token, imagePart).enqueue(new Callback<UserResponse>() {
                 @Override
@@ -350,7 +339,6 @@ public class DoctorProfileFragment extends Fragment {
                             doctor.setImage(newUrl);
                             dbHelper.insertDoctor(doctor, token);
                             currentImageUrl = newUrl;
-
 
                             Glide.with(requireContext())
                                     .load(doctor.getImage())
@@ -374,7 +362,8 @@ public class DoctorProfileFragment extends Fragment {
                         try {
                             if (response.errorBody() != null) {
                                 errorMessage = response.errorBody().string();
-                                android.util.Log.e("UploadError", "Code: " + response.code() + " Body: " + errorMessage);
+                                android.util.Log.e("UploadError",
+                                        "Code: " + response.code() + " Body: " + errorMessage);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -402,6 +391,7 @@ public class DoctorProfileFragment extends Fragment {
             }
         }
     }
+
     private String getFileExtension(String fileName) {
         int lastDot = fileName.lastIndexOf('.');
         if (lastDot >= 0) {
@@ -425,10 +415,11 @@ public class DoctorProfileFragment extends Fragment {
                 return "image/jpeg";
         }
     }
-    private void loadDoctor(String token, DatabaseHelper dbHelper, View view){
+
+    private void loadDoctor(String token, DatabaseHelper dbHelper, View view) {
 
         Doctor doctor = dbHelper.getDoctorByToken(token);
-        if(doctor != null){
+        if (doctor != null) {
             TextView name = view.findViewById(R.id.name);
             TextView address = view.findViewById(R.id.address);
             TextView age = view.findViewById(R.id.age);
@@ -439,19 +430,15 @@ public class DoctorProfileFragment extends Fragment {
             TextView address2 = view.findViewById(R.id.address2);
             TextView speciality = view.findViewById(R.id.specialityTv);
 
-
-
-
-
-            name.setText(doctor.getName() !=null  ? doctor.getName(): "xxxx");
-            address.setText(doctor.getAddress() !=null  ? doctor.getAddress(): "xxxx");
-            age.setText(doctor.getDob() != null ? calculateAge(doctor.getDob()): "xxxx");
-            gender.setText(doctor.getGender() !=null  ? (doctor.getGender().equals("1") ?"Male" : "Female"): "xxxx");
-            email.setText(doctor.getEmail()!=null  ? doctor.getEmail(): "xxxx");
-            contact.setText(doctor.getContact()!=null  ? doctor.getContact(): "xxxx");
-            dob.setText(doctor.getDob()!=null  ? doctor.getDob(): "xxxx");
-            address2.setText(doctor.getAddress()!=null  ? doctor.getAddress(): "xxxx");
-            speciality.setText(doctor.getSpeciality()!=null  ? doctor.getSpeciality(): "xxxxx" );
+            name.setText(doctor.getName() != null ? doctor.getName() : "xxxx");
+            address.setText(doctor.getAddress() != null ? doctor.getAddress() : "xxxx");
+            age.setText(doctor.getDob() != null ? calculateAge(doctor.getDob()) : "xxxx");
+            gender.setText(doctor.getGender() != null ? (doctor.getGender().equals("1") ? "Male" : "Female") : "xxxx");
+            email.setText(doctor.getEmail() != null ? doctor.getEmail() : "xxxx");
+            contact.setText(doctor.getContact() != null ? doctor.getContact() : "xxxx");
+            dob.setText(doctor.getDob() != null ? doctor.getDob() : "xxxx");
+            address2.setText(doctor.getAddress() != null ? doctor.getAddress() : "xxxx");
+            speciality.setText(doctor.getSpeciality() != null ? doctor.getSpeciality() : "xxxxx");
             if (doctor.getImage() != null && !doctor.getImage().isEmpty()) {
                 currentImageUrl = doctor.getImage();
 
@@ -462,14 +449,16 @@ public class DoctorProfileFragment extends Fragment {
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(doctorProfileImage);
             } else {
-                currentImageUrl=null;
+                currentImageUrl = null;
                 doctorProfileImage.setImageResource(R.drawable.logo);
             }
         }
     }
-    private void updateDoctorProfile(String name, String phone, String dob, int gender, String address, String speciality) {
+
+    private void updateDoctorProfile(String name, String phone, String dob, int gender, String address,
+            String speciality) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
-        DoctorUpdateRequest request = new DoctorUpdateRequest(name, address, phone, dob,gender, speciality);
+        DoctorUpdateRequest request = new DoctorUpdateRequest(name, address, phone, dob, gender, speciality);
 
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
         String token = sharedPreferences.getString("token", null);
@@ -479,11 +468,11 @@ public class DoctorProfileFragment extends Fragment {
         call.enqueue(new Callback<UserResponse>() {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
-                if (response.isSuccessful() && response.body() != null){
+                if (response.isSuccessful() && response.body() != null) {
                     try {
                         Toast.makeText(getContext(), "Profile updated", Toast.LENGTH_SHORT).show();
 
-                        if (response.body().getMessage().equals("User updated successfully")){
+                        if (response.body().getMessage().equals("User updated successfully")) {
                             DatabaseHelper dbHelperTwo = new DatabaseHelper(getContext());
 
                             dbHelperTwo.insertDoctor(response.body().getDoctor(), token);
@@ -491,14 +480,13 @@ public class DoctorProfileFragment extends Fragment {
                             loadDoctor(token, dbHelperTwo, getView());
                         }
 
-
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-                }else{
+                } else {
                     try {
                         Toast.makeText(getContext(), "Failed to update", Toast.LENGTH_SHORT).show();
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }
@@ -509,7 +497,6 @@ public class DoctorProfileFragment extends Fragment {
 
             }
         });
-
 
     }
 
@@ -524,7 +511,8 @@ public class DoctorProfileFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     try {
 
-                        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
+                        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference",
+                                MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.clear();
                         editor.apply();
@@ -535,9 +523,10 @@ public class DoctorProfileFragment extends Fragment {
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-                }else{
+                } else {
                     try {
-                        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
+                        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference",
+                                MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.clear();
                         editor.apply();
@@ -552,7 +541,8 @@ public class DoctorProfileFragment extends Fragment {
 
             @Override
             public void onFailure(Call<UserResponse> call, Throwable t) {
-                Toast.makeText(getContext(), "No Internet Connection, Please Connect to Internet", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "No Internet Connection, Please Connect to Internet", Toast.LENGTH_SHORT)
+                        .show();
 
             }
         });
