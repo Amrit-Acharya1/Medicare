@@ -385,7 +385,11 @@ public class MedicineSearchAdapter extends RecyclerView.Adapter<MedicineSearchAd
                     if (response.isSuccessful() && response.body() != null) {
                         try {
                             int prescriptionRelationId = response.body().getPreciptionRelation().getId();
-
+                            SharedPreferences sharedPreferences = itemView.getContext()
+                                    .getSharedPreferences("user_preference", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("prescriptionRelation_id", String.valueOf(prescriptionRelationId));
+                            editor.apply();
                             adapter.setSessionPrescriptionRelationId(prescriptionRelationId);
 
                             PrescriptionRequest prescriptionRequest = new PrescriptionRequest(

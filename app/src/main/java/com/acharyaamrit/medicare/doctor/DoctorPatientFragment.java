@@ -256,6 +256,10 @@ public class DoctorPatientFragment extends Fragment {
             public void onResponse(Call<SearchPatientResponse> call, retrofit2.Response<SearchPatientResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     try {
+                        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("user_preference", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.remove("prescriptionRelation_id");
+                        editor.apply();
                         noUserImage.setVisibility(GONE);
                         SearchPatientResponse searchPatientResponse = response.body();
                         List<Patient> lp = searchPatientResponse.getPatients();

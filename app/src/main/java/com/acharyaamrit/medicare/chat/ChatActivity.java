@@ -34,10 +34,8 @@ public class ChatActivity extends AppCompatActivity {
     private TextView tvUserName, tvUserStatus, tvUserAvatar;
     private View onlineIndicator;
     private ImageView btnBack;
-
     private ChatMessageAdapter adapter;
     private FirebaseChatHelper firebaseHelper;
-
     private String currentUserId;
     private String currentUserName;
     private String currentUserType;
@@ -88,7 +86,7 @@ public class ChatActivity extends AppCompatActivity {
             String token = sharedPreferences.getString("token", "");
             Doctor doctor = databaseHelper.getDoctorByToken(token);
             if (doctor != null) {
-                currentUserId = String.valueOf(doctor.getDoctor_id());
+                currentUserId = String.valueOf(doctor.getId());
                 currentUserName = doctor.getName();
                 currentUserType = "doctor";
 
@@ -103,7 +101,7 @@ public class ChatActivity extends AppCompatActivity {
             String token = sharedPreferences.getString("token", "");
             Pharmacy pharmacy = databaseHelper.getPharmacyByToken(token);
             if (pharmacy != null) {
-                currentUserId = String.valueOf(pharmacy.getPharmacy_id());
+                currentUserId = String.valueOf(pharmacy.getId());
                 currentUserName = pharmacy.getName();
                 currentUserType = "pharmacy";
 

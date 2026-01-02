@@ -2,22 +2,32 @@ package com.acharyaamrit.medicare.doctor;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.provider.Browser;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,6 +68,17 @@ public class DoctorProfileFragment extends Fragment {
     ImageView doctorProfileImage;
     private ImagePickerBottomSheet bottomSheet;
     private String currentImageUrl;
+    private LinearLayout privacy_policy, termsAndCondition, helpAndSupport;
+    private SwitchMaterial notificationOn;
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                notificationOn.setChecked(isGranted);
+                if (isGranted) {
+                    Toast.makeText(getContext(), "Notifications enabled", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Notifications disabled", Toast.LENGTH_SHORT).show();
+                }
+            });
 
     public DoctorProfileFragment() {
         // Required empty public constructor
@@ -77,8 +98,26 @@ public class DoctorProfileFragment extends Fragment {
 
         AppCompatButton edit_profile = view.findViewById(R.id.edit_profile);
 
-        SwitchMaterial notificationOn = view.findViewById(R.id.notificationOn);
+         notificationOn = view.findViewById(R.id.notificationOn);
         ImageView editProfileImage = view.findViewById(R.id.editDoctorProfileImage);
+        privacy_policy = view.findViewById(R.id.privacy_policy);
+        termsAndCondition = view.findViewById(R.id.termsAndCondition);
+        helpAndSupport = view.findViewById(R.id.helpAndSupport);
+
+        privacy_policy.setOnClickListener(v->{
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://medicare.kritishmovie.xyz/privacypolicy"));
+            startActivity(intent);
+        });
+
+        termsAndCondition.setOnClickListener(v->{
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://medicare.kritishmovie.xyz/termsandconditions"));
+            startActivity(intent);
+        });
+
+        helpAndSupport.setOnClickListener(v->{
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://medicare.kritishmovie.xyz/helpandsupport"));
+            startActivity(intent);
+        });
 
         doctorProfileImage = view.findViewById(R.id.doctorProfileImage);
 
@@ -90,13 +129,21 @@ public class DoctorProfileFragment extends Fragment {
             showImagePickerBottomSheet();
 
         });
+        updateSwitchState();
+        notificationOn.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (!buttonView.isPressed()) return;
 
-        notificationOn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getContext(), "turn on", Toast.LENGTH_SHORT).show();
+            if (isChecked) {
+                requestNotificationPermission();
+            } else {
+                openNotificationSettings();
+                Toast.makeText(getContext(), "Please disable notifications in settings", Toast.LENGTH_SHORT).show();
             }
         });
+
+
+
+
 
         edit_profile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -578,6 +625,7 @@ public class DoctorProfileFragment extends Fragment {
         if (getActivity() instanceof DoctorHomePageActivity) {
             ((DoctorHomePageActivity) getActivity()).disableSwipeRefresh();
         }
+        updateSwitchState();
     }
 
     @Override
@@ -587,5 +635,65 @@ public class DoctorProfileFragment extends Fragment {
             ((DoctorHomePageActivity) getActivity()).enableSwipeRefresh();
         }
     }
+    private void updateSwitchState() {
+        boolean isEnabled = areNotificationsEnabled();
+        notificationOn.setChecked(isEnabled);
+    }
+    private boolean areNotificationsEnabled() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return ContextCompat.checkSelfPermission(requireContext(),
+                    Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED;
+        } else {
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(requireContext());
+            return notificationManager.areNotificationsEnabled();
+        }
+    }
 
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(requireContext(),
+                    Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+
+                if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                    showPermissionRationale();
+                } else {
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+                }
+            } else {
+                notificationOn.setChecked(true);
+            }
+        } else {
+            if (!areNotificationsEnabled()) {
+                openNotificationSettings();
+                notificationOn.setChecked(false);
+            }
+        }
+    }
+    private void showPermissionRationale() {
+
+
+        new CustomAlertDialog.Builder(getContext())
+                .setTitle("Notification Permission Required")
+                .setMessage("Please enable notifications in settings to receive important updates.")
+                .setAlertType(CustomAlertDialog.AlertType.CONFIRMATION)
+                .setPositiveButton("Open Settings", (dialog, which) -> {
+                    openNotificationSettings();
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> {
+                    notificationOn.setChecked(false);
+                })
+                .show();
+    }
+
+    private void openNotificationSettings() {
+        Intent intent = new Intent();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+            intent.putExtra(Settings.EXTRA_APP_PACKAGE, requireContext().getPackageName());
+        } else {
+            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            intent.setData(Uri.parse("package:" + requireContext().getPackageName()));
+        }
+        startActivity(intent);
+    }
 }

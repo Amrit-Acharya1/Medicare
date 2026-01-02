@@ -90,7 +90,7 @@ public class ChatListActivity extends AppCompatActivity {
             String token = sharedPreferences.getString("token", "");
             Doctor doctor = databaseHelper.getDoctorByToken(token);
             if (doctor != null) {
-                currentUserId = String.valueOf(doctor.getDoctor_id());
+                currentUserId = String.valueOf(doctor.getId());
                 currentUserName = doctor.getName();
                 currentUserType = "doctor";
                 clinicId = doctor.getClicnic();
@@ -106,7 +106,7 @@ public class ChatListActivity extends AppCompatActivity {
             String token = sharedPreferences.getString("token", "");
             Pharmacy pharmacy = databaseHelper.getPharmacyByToken(token);
             if (pharmacy != null) {
-                currentUserId = String.valueOf(pharmacy.getPharmacy_id());
+                currentUserId = String.valueOf(pharmacy.getId());
                 currentUserName = pharmacy.getName();
                 currentUserType = "pharmacy";
                 clinicId = pharmacy.getClicnic();

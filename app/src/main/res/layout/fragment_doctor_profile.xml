@@ -499,6 +499,7 @@
 
                 <!-- Privacy Policy -->
                 <LinearLayout
+                    android:id="@+id/privacy_policy"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -531,6 +532,7 @@
 
                 <!-- Terms and Conditions -->
                 <LinearLayout
+                    android:id="@+id/termsAndCondition"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -563,6 +565,7 @@
 
                 <!-- Help and Support -->
                 <LinearLayout
+                    android:id="@+id/helpAndSupport"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"

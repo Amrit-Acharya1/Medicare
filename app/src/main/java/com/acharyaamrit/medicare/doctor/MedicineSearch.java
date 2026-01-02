@@ -785,8 +785,9 @@ public class MedicineSearch extends AppCompatActivity {
                         e.printStackTrace();
                         Toast.makeText(MedicineSearch.this, "Failed to execute", Toast.LENGTH_SHORT).show();
                     }
-                } else {
-                    Toast.makeText(MedicineSearch.this, "error response", Toast.LENGTH_SHORT).show();
+                }else{
+                    List<PRelation> plist = new ArrayList<>();
+                    showBottomSheet(plist);
                 }
             }
 

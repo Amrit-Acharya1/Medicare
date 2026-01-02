@@ -1,162 +1,309 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout 
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FA">
+    android:fitsSystemWindows="true"
+    android:background="#F5F7FA">
 
-    <!-- Header -->
-    <LinearLayout
-        android:id="@+id/header"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:elevation="@dimen/_4sdp"
-        android:orientation="vertical"
-        android:paddingTop="@dimen/_8sdp"
-        android:paddingBottom="@dimen/_12sdp"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <!-- Professional Header -->
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="@dimen/_12sdp">
-
-            <ImageView
-                android:id="@+id/btn_back"
-                android:layout_width="@dimen/_24sdp"
-                android:layout_height="@dimen/_24sdp"
-                android:src="@drawable/back_icon"
-                android:contentDescription="Back"
-                app:tint="#333333"/>
-
-            <RelativeLayout
-                android:layout_width="@dimen/_40sdp"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_marginStart="@dimen/_12sdp">
-
-                <ImageView
-                    android:id="@+id/iv_user_profile"
-                    android:layout_width="@dimen/_40sdp"
-                    android:layout_height="@dimen/_40sdp"
-                    android:scaleType="centerCrop"
-                    android:background="@drawable/bottom_selected_back"
-                    android:visibility="gone"/>
-
-                <TextView
-                    android:id="@+id/tv_user_avatar"
-                    android:layout_width="@dimen/_40sdp"
-                    android:layout_height="@dimen/_40sdp"
-                    android:background="@drawable/bottom_selected_back"
-                    android:gravity="center"
-                    android:text="D"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"/>
-
-                <View
-                    android:id="@+id/online_indicator"
-                    android:layout_width="@dimen/_10sdp"
-                    android:layout_height="@dimen/_10sdp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true"
-                    android:background="@drawable/bg_online_indicator"
-                    android:visibility="gone"/>
-
-            </RelativeLayout>
+            android:background="@color/white"
+            android:elevation="@dimen/_2sdp"
+            app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="@dimen/_12sdp"
-                android:orientation="vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingVertical="@dimen/_8sdp"
+                android:paddingEnd="@dimen/_8sdp">
 
-                <TextView
-                    android:id="@+id/tv_user_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Dr. John Doe"
-                    android:textColor="#333333"
-                    android:textSize="14sp"
-                    android:textStyle="bold"/>
+                <!-- Back Button -->
+                <ImageView
+                    android:id="@+id/btn_back"
+                    android:layout_width="@dimen/_36sdp"
+                    android:layout_height="@dimen/_36sdp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="@dimen/_6sdp"
+                    android:src="@drawable/back_icon"
+                    app:tint="#1A1A2E"/>
 
-                <TextView
-                    android:id="@+id/tv_user_status"
-                    android:layout_width="wrap_content"
+                <!-- Profile Section -->
+                <LinearLayout
+                    android:id="@+id/profile_section"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_2sdp"
-                    android:text="Online"
-                    android:textColor="#4CAF50"
-                    android:textSize="10sp"/>
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/_4sdp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/_4sdp">
+
+                    <!-- Avatar Container -->
+                    <FrameLayout
+                        android:layout_width="@dimen/_44sdp"
+                        android:layout_height="@dimen/_44sdp">
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/iv_user_profile"
+                            android:layout_width="@dimen/_44sdp"
+                            android:layout_height="@dimen/_44sdp"
+                            android:scaleType="centerCrop"
+                            android:visibility="gone"
+                         />
+
+                        <TextView
+                            android:id="@+id/tv_user_avatar"
+                            android:layout_width="@dimen/_44sdp"
+                            android:layout_height="@dimen/_44sdp"
+                            android:background="@drawable/bottom_selected_back"
+                            android:gravity="center"
+                            android:text="D"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/_16sdp"
+                            android:textStyle="bold"
+                            tools:ignore="HardcodedText"/>
+
+                        <!-- Online Indicator -->
+                        <View
+                            android:id="@+id/online_indicator"
+                            android:layout_width="@dimen/_12sdp"
+                            android:layout_height="@dimen/_12sdp"
+                            android:layout_gravity="bottom|end"
+                            android:background="@drawable/bg_online_indicator"
+                            android:visibility="visible"/>
+
+                    </FrameLayout>
+
+                    <!-- User Info -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_user_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="Dr. John Doe"
+                            android:textColor="#1A1A2E"
+                            android:textSize="@dimen/_14sdp"
+                            android:textStyle="bold"
+                            tools:ignore="HardcodedText"/>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_2sdp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+
+
+                            <TextView
+                                android:id="@+id/tv_user_status"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/_4sdp"
+                                android:text="Online"
+                                android:textColor="#4CAF50"
+                                android:textSize="@dimen/_11sdp"
+                                tools:ignore="HardcodedText"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+
+
+
+
 
             </LinearLayout>
 
-        </LinearLayout>
+        </com.google.android.material.appbar.MaterialToolbar>
 
-    </LinearLayout>
 
-    <!-- Messages RecyclerView -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_messages"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:padding="@dimen/_8sdp"
-        app:layout_constraintTop_toBottomOf="@id/header"
-        app:layout_constraintBottom_toTopOf="@id/input_container"/>
 
-    <!-- Input Container -->
-    <LinearLayout
-        android:id="@+id/input_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:elevation="@dimen/_4sdp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="@dimen/_12sdp"
-        app:layout_constraintBottom_toBottomOf="parent">
+        <!-- Messages RecyclerView -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_messages"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:paddingHorizontal="@dimen/_12sdp"
+            android:paddingTop="@dimen/_8sdp"
+            android:paddingBottom="@dimen/_8sdp"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toTopOf="@id/input_container"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"/>
 
-        <EditText
-            android:id="@+id/et_message"
-            android:layout_width="0dp"
+        <!-- Professional Input Container -->
+        <LinearLayout
+            android:id="@+id/input_container"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/bg_chat_input"
-            android:hint="Type a message..."
-            android:inputType="textCapSentences|textMultiLine"
-            android:maxLines="4"
-            android:minHeight="@dimen/_40sdp"
-            android:paddingStart="@dimen/_16sdp"
-            android:paddingEnd="@dimen/_16sdp"
+            android:background="@drawable/bg_input_container"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/_12sdp"
             android:paddingTop="@dimen/_10sdp"
             android:paddingBottom="@dimen/_10sdp"
-            android:textColor="#333333"
-            android:textSize="12sp"/>
+            app:layout_constraintBottom_toBottomOf="parent">
 
-        <LinearLayout
-            android:id="@+id/btn_send"
-            android:layout_width="@dimen/_44sdp"
-            android:layout_height="@dimen/_44sdp"
-            android:layout_marginStart="@dimen/_8sdp"
-            android:background="@drawable/bg_send_button"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center">
 
-            <ImageView
-                android:layout_width="@dimen/_20sdp"
-                android:layout_height="@dimen/_20sdp"
-                android:src="@drawable/ic_send"
-                android:contentDescription="Send"/>
+
+            <!-- Message Input Field -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                app:cardBackgroundColor="#F5F7FA"
+                app:cardCornerRadius="@dimen/_24sdp"
+                app:cardElevation="0dp"
+                app:strokeWidth="@dimen/_1sdp"
+                app:strokeColor="#E8E8E8">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="@dimen/_4sdp">
+
+
+
+                    <EditText
+                        android:id="@+id/et_message"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@android:color/transparent"
+                        android:hint="Type a message..."
+                        android:textColorHint="#999999"
+                        android:imeOptions="actionSend"
+                        android:inputType="textCapSentences|textMultiLine"
+                        android:maxLines="5"
+                        android:minHeight="@dimen/_44sdp"
+                        android:paddingHorizontal="@dimen/_8sdp"
+                        android:paddingVertical="@dimen/_12sdp"
+                        android:textColor="#1A1A2E"
+                        android:textSize="@dimen/_13sdp"
+                        tools:ignore="Autofill,HardcodedText"/>
+
+
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Send/Voice Button -->
+            <FrameLayout
+                android:layout_width="@dimen/_48sdp"
+                android:layout_height="@dimen/_48sdp">
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/btn_send"
+                    android:layout_width="@dimen/_48sdp"
+                    android:layout_height="@dimen/_48sdp"
+                    android:contentDescription="Send"
+                    android:src="@drawable/ic_send"
+                    app:backgroundTint="@color/blue"
+                    app:elevation="@dimen/_2sdp"
+                    app:fabCustomSize="@dimen/_48sdp"
+                    app:maxImageSize="@dimen/_22sdp"
+                    app:tint="@color/white"
+                    tools:visibility="visible"/>
+
+
+
+            </FrameLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+        <!-- Empty State -->
+        <LinearLayout
+            android:id="@+id/empty_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="@dimen/_24sdp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/input_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:gravity="center"
+                android:text="No messages yet"
+                android:textColor="#666666"
+                android:textSize="@dimen/_14sdp"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:gravity="center"
+                android:text="Start a conversation!"
+                android:textColor="#999999"
+                android:textSize="@dimen/_12sdp"
+                tools:ignore="HardcodedText"/>
+
+        </LinearLayout>
+
+        <!-- Loading Overlay -->
+        <FrameLayout
+            android:id="@+id/loading_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="#80FFFFFF"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/input_container"
+            app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+            <ProgressBar
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/green"/>
+
+        </FrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
